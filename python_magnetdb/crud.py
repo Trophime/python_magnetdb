@@ -235,11 +235,21 @@ def get_magnet_data(session: Session, magnet_name: str ):
             # objects = get_mparts(session=session, magnet_id=magnet.id)
             # for h in objects:
             #    print(session.get(MPart, h.id).dict())
-                
+
     mdata = magnet.dict()
     for key in ['be', 'name', 'status', 'id']:
         mdata.pop(key, None)
     for mtype in ["Helix", "Ring", "Lead"]:
+        if mtype == "Helix":
+            # TODO: check Helix type before getting insulator name and data
+            results = query_material(session, name="MAT_ISOLANT")
+            for material in results:
+                insulator_data = material.dict()
+                print("insulator_data:", insulator_data)
+                # remove uneeded stuff
+                for key in ['furnisher', 'ref', 'name', 'id']:
+                    insulator_data.pop(key, None)
+
         mdata[mtype]=[]
         objects = get_mparts_mtype(session=session, magnet_id=magnet.id, mtype=mtype)
         for h in objects:
@@ -249,7 +259,7 @@ def get_magnet_data(session: Session, magnet_name: str ):
             # remove uneeded stuff
             for key in ['furnisher', 'ref', 'name', 'id']:
                 material_data.pop(key, None)
-            mdata[mtype].append({"geo": h.geom, "material": material_data})
+            mdata[mtype].append({"geo": h.geom, "material": material_data, "insulator": insulator_data})
 
     return mdata
 
