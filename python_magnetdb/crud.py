@@ -225,6 +225,7 @@ def get_magnet_data(session: Session, magnet_name: str ):
     """
     Get magnet data  
     """
+    magnet = None
     results = query_magnet(session, magnet_name)
     if not results:
         print("cannot find magnet %s" % magnet_name)
