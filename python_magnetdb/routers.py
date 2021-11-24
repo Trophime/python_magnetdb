@@ -165,6 +165,15 @@ def read_magnet_data(*, session: Session = Depends(get_session), name: str):
         raise HTTPException(status_code=404, detail="cannot get magnet data for %s" % name)
     return mdata
 
+@itemrouter.get("/api/magnet/type/{name}")
+def get_magnet_type(*, session: Session = Depends(get_session), name: str):
+    results = crud.get_magnet_data(session, name)
+    if not results:
+        raise HTTPException(status_code=404, detail="cannot get type data for %s" % name)
+    for mdata in results:
+        return crud.get_magnet_type(session, mdata.id)
+    
+
 @itemrouter.patch("/api/magnets/{magnet_id}", response_model=MagnetRead)
 def update_magnet(
     *, session: Session = Depends(get_session), magnet_id: int, magnet: MagnetUpdate):
@@ -219,6 +228,14 @@ def read_msite(*, msite_id: int, session: Session = Depends(get_session)):
     if not msite:
         raise HTTPException(status_code=404, detail="MSite not found")
     return msite
+
+@itemrouter.get("/api/msite/mdata/{name}")
+def read_msite_data(*, session: Session = Depends(get_session), name: str):
+    mdata = crud.get_msite_data(session, name)
+    if not mdata:
+        raise HTTPException(status_code=404, detail="cannot get magnet data for %s" % name)
+    return mdata
+
 
 @itemrouter.patch("/api/msites/{msite_id}", response_model=MSiteRead)
 def update_msite(
