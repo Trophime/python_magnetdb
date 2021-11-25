@@ -233,9 +233,8 @@ def read_msite(*, msite_id: int, session: Session = Depends(get_session)):
 def read_msite_data(*, session: Session = Depends(get_session), name: str):
     mdata = crud.get_msite_data(session, name)
     if not mdata:
-        raise HTTPException(status_code=404, detail="cannot get magnet data for %s" % name)
+        raise HTTPException(status_code=404, detail="cannot get msite data for %s" % name)
     return mdata
-
 
 @itemrouter.patch("/api/msites/{msite_id}", response_model=MSiteRead)
 def update_msite(

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi_pagination import Page, add_pagination, paginate
 
 from fastapi.middleware.wsgi import WSGIMiddleware
 from flask import Flask, escape, request
@@ -16,3 +17,5 @@ app = FastAPI()
 app.include_router(itemrouter)
 
 app.mount("/", WSGIMiddleware(flask_app))
+
+add_pagination(app)

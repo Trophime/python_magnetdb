@@ -1,8 +1,9 @@
 from typing import List, Optional
 
+import enum
 #from sqlalchemy import String
 #from sqlalchemy.sql.schema import Column
-from sqlmodel import Field, Relationship, Session, SQLModel, create_engine
+from sqlmodel import Field, Enum, Relationship, Session, SQLModel, create_engine
 from sqlmodel import Column, String
 
 # TODO:
@@ -95,6 +96,12 @@ class MagnetMSiteLink(SQLModel, table=True):
 #
 ##################
 
+class MSiteStatus(str, enum.Enum):
+    study = "in_study"
+    operation = "in_operation"
+    stock = "in_stock"
+    defunct = "defunct"
+
 class MSiteBase(SQLModel):
     """
     Magnet Site
@@ -102,7 +109,7 @@ class MSiteBase(SQLModel):
     
     name: str = Field(sa_column=Column("name", String, unique=True))
     conffile: str
-    status: str
+    status: str #Field(sa_column=Column(Enum(MSiteStatus)))
 
 class MSite(MSiteBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -121,7 +128,7 @@ class MSiteUpdate(SQLModel):
     
     name: str
     conffile: str
-    status: str
+    status: str #Field(sa_column=Column(Enum(MSiteStatus)))
     magnets: List["Magnet"] = [] # Relationship(back_populates="msites", link_model=MagnetMSiteLink)
 
 ##################
