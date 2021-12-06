@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Session, select
 
-from .models import MPart, Magnet, MSite, MRecord
+from .models import MPart, MSimulation, Magnet, MSite, MRecord
 from .models import MaterialBase, Material, MaterialCreate, MaterialRead
 from .models import MPartMagnetLink, MagnetMSiteLink
 from .models import MStatus
@@ -61,7 +61,16 @@ def create_material(session: Session, name: str, ElectricalConductivity: float, 
     session.commit()
     session.refresh(material)
     return material
-    
+
+def create_simulation(session: Session, name: str, method: str, model: str, geom: str, static: bool = False, linear: bool = False):
+
+    simu = MSimulation(name=name, method=method, model=model, geom=geom, static=static, linear=linear)
+
+    session.add(simu)
+    session.commit()
+    session.refresh(simu)
+    return simu
+
 def get_magnets(session: Session, site_id: int):   
     statement = select(MagnetMSiteLink).where(MagnetMSiteLink.msite_id == site_id)
     results = session.exec(statement)

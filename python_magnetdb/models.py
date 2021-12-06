@@ -257,3 +257,26 @@ class MRecordUpdate(SQLModel):
     name: str
     msite_id: Optional[int] = None #Field(default=None, foreign_key="msite.id")
 
+##################
+#
+##################
+
+class MSimulation(SQLModel, table=True):
+    """
+    Magnet Simulation
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    timestamp: str # datetime = Field(default=datetime.utcnow)
+    name: str
+
+    method: str = 'cfpdes'
+    model: str = 'thelec'
+    geom: str = "Axi"
+    static: bool = True
+    linear: bool = True
+
+    mtype: str =  'Site'
+    
+    # shall be an id to magnet or msite
+    msite_id: Optional[int] = None # Field(default=None, foreign_key="msite.id")

@@ -49,45 +49,74 @@ def mpart_choices(mtype: str, status: MStatus):
     
     return choices
 
-def magnet_choices(status: MStatus):
+def magnet_choices(status: Optional[MStatus]):
     with Session(engine) as session:
-        statement = select(Magnet).where(Magnet.status == status)
+        print("magnet_choices: status=", status)
+        if status:
+            #print("magnet_choices: status=", status)
+            statement = select(Magnet).where(Magnet.status == status)
+            # results = session.exec(statement).all()
+        else:
+            # print("magnet_choices: status=", status)
+            statement = select(Magnet)
         results = session.exec(statement).all()
     
-    choices = []
-    for obj in results:
-        desc = obj.name
+        choices = []
+        for obj in results:
+            desc = obj.name
 
-        # TODO add magnet type (aka Insert, Bitter or Supra)
-        (mtype, components) = get_magnet_type(obj.id)
-        desc += "(" + mtype + ")"
+            # TODO add magnet type (aka Insert, Bitter or Supra)
+            (mtype, components) = get_magnet_type(session, obj.id)
+            desc += "(" + mtype + ")"
 
-        # TODO load obj.geom to get basic geom infos (aka inner/outer diameter)
-        # geom = yaml.load(open(obj.name, 'r'))
+            # TODO load obj.geom to get basic geom infos (aka inner/outer diameter)
+            # geom = yaml.load(open(obj.name, 'r'))
 
-        choices.append( (obj, desc))
+            choices.append( (obj, desc))
     
-    return choices
-
-def msite_choices(status: MStatus):
-    with Session(engine) as session:
-        statement = select(MSite).where(MSite.status == status)
-        results = session.exec(statement).all()
-    
-    choices = []
-    for obj in results:
-        desc = obj.name
-
-        # TODO add msite composition (aka Insert + Bitter + Supra)
-        desc += "("
-        for magnet in obj.magnets:
-            (mtype, components) = get_magnet_type(magnet.id)
-            desc += magnet.name + ":" + mtype + "," + len(components) + " objects, "
-        # TODO remove last ','
-        last_char_index = desc.rfind(',')
-        desc = desc[:last_char_index] + "," + desc[last_char_index+1:]
-        desc += ")"
+    if status:
+        print("magnet_choices(%s):" % (status), [tobj[0].name for tobj in choices ])
+    else:
+        print("magnet_choices():", [tobj[0].name for tobj in choices ])
         
-        choices.append( (obj, desc))
+    return choices
+
+def msite_choices(status: Optional[MStatus]):
+    with Session(engine) as session:
+        print("msite_choices: status=", status)
+        if status:
+            statement = select(MSite).where(MSite.status == status)
+        else:
+            statement = select(MSite)
+        results = session.exec(statement).all()
+    
+        choices = []
+        for obj in results:
+            desc = obj.name
+
+            # TODO add msite composition (aka Insert + Bitter + Supra)
+            desc += "("
+            for magnet in obj.magnets:
+                (mtype, components) = get_magnet_type(session, magnet.id)
+                desc += magnet.name + ":" + mtype + "," + str(len(components)) + " objects, "
+            # TODO remove last ','
+            last_char_index = desc.rfind(',')
+            desc = desc[:last_char_index] + "," + desc[last_char_index+1:]
+            desc += ")"
+        
+            choices.append( (obj, desc))
     
     return choices
+
+def objchoices(mtype: str, mstatus: Optional[MStatus]):
+    print("objchoices:", "mtype=", mtype, "mstatus=", mstatus)
+    if mtype == "MSite":
+        return msite_choices(mstatus)
+    elif mtype == "Magnet":
+        return magnet_choices(mstatus)
+    else:
+        print("objchoices: %s unsupported type of object requested" % mtype)
+
+
+
+    

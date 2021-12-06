@@ -3,13 +3,14 @@ from typing import List, Optional
 
 from flask_wtf import FlaskForm
 from starlette_wtf import StarletteForm
-from wtforms import StringField, FloatField, SelectField, SubmitField, FieldList, FormField
+from wtforms import StringField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired, Length
 
 
 from .units import units
 from .status import MStatus, status_choices
 from .choices import material_choices
+from .choices import objchoices
 
 def coerce_for_enum(enum):
     def coerce(name):
@@ -98,4 +99,24 @@ class GeomForm(StarletteForm):
     """
 
     name =  StringField('Name', validators=[DataRequired()])
-    
+
+method_choices = [ ('cfpdes','cfpdes'), ('CG','CG'), ('HDG','HDG'), ('CRB','CRB') ]
+model_choices = [('thelec','thelec'), ('mag','mag'), ('thmag','thmag'), ('thmagel', 'thmagel')]
+geom_choices = [ ('Axi','Axi'), ('3D','3D')]
+mtype_choices = [ ('Magnet', 'Magnet'), ('Site','Site') ]
+
+class SimulationForm(StarletteForm):
+    """
+    Simulation SetUp configuration
+    """
+    print("SimulationForm")
+    method = SelectField('Method', choices=method_choices)
+    model = SelectField('Model', choices=model_choices) # shall depend on method choice
+    geom = SelectField('Geom', choices=geom_choices)
+    static = BooleanField('Static') # bool
+    linear = BooleanField('Linear') # bool
+
+    # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
+
+    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+

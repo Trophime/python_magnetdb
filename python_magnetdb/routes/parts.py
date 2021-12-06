@@ -80,7 +80,7 @@ async def update(request: Request, id: int):
             session.refresh(mpart)
             return RedirectResponse(router.url_path_for('part', id=id), status_code=303)
         else:
-            return templates.TemplateResponse('mpart/edit.html', {
+            return templates.TemplateResponse('parts/edit.html', {
                 "id": id,
                 "request": request,
                 "form": form,

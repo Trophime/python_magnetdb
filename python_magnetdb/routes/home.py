@@ -17,10 +17,6 @@ def index(request: Request):
 def api(request: Request):
     return templates.TemplateResponse('api.html', {"request": request})
 
-@router.get("/simulations.html", response_class=HTMLResponse)
-def simulation(request: Request):
-    return templates.TemplateResponse('simulations.html', {"request": request})
-
 @router.get("/settings.html", response_class=HTMLResponse)
 def settings(request: Request):
     return templates.TemplateResponse('settings.html', {"request": request})

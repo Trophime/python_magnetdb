@@ -75,3 +75,4 @@ async def update(request: Request, id: int):
             })
         
 MSiteUpdate.update_forward_refs()
+MagnetUpdate.update_forward_refs()
