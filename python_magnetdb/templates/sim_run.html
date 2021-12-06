@@ -9,7 +9,7 @@
         {% for field in cmds %}
         <fieldset class="form-field">
             <b>{{ field }}:</b>
-            <input type="text" value={{ cmds[field] }} id="myInput">
+            <input type="text" value={{ cmds[field] }} readonly="readonly" id="myInput">
             <button onclick="myCopy()">Copy text</button>
         </fieldset>
         {% endfor %}
