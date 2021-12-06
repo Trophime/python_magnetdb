@@ -62,15 +62,16 @@ async def edit(request: Request, mtype: str):
 async def do_setup(request: Request):
     print("simulations/do_setup:")
     form = await SimulationForm.from_formdata(request)
-    print("type:", form.mtype, form.mtype.data)
     if form.errors:
         print("errors:", form.errors)
 
     if form.validate_on_submit():
-        # form.populate_obj(msite)
+        # TODO call magnetsetup
+        cmds = { "mesh":"tut", "sim": "titi"}
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,
+            "cmds": cmds
         })
         # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
     else:
