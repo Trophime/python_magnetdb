@@ -41,14 +41,14 @@ def show(request: Request, id: int):
         data.pop('id', None)
         return templates.TemplateResponse('simulations/show.html', {"request": request, "simu": data})
 
-@router.get("/sim_setup/{mtype}", response_class=HTMLResponse)
+@router.get("/sim_setup/{mtype}", response_class=HTMLResponse, name='simsetup')
 async def edit(request: Request, mtype: str):
     print("simulations/setup: mtype=", mtype)
     """
     with Session(engine) as session:
         simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
     """
-    form = SimulationForm(request=request) # SimulationForm.from_formdata(request) # 
+    form = SimulationForm(request=request)
     form.mobject.choices = objchoices(mtype, None)
     print("type:", mtype)
     print("objchoices:", objchoices(mtype, None) )
@@ -56,21 +56,31 @@ async def edit(request: Request, mtype: str):
     return templates.TemplateResponse('sim_setup.html', {
         "request": request,
         "form": form,
+        "mtype": mtype
     })
 
-@router.post("/sim_setup", response_class=HTMLResponse, name='do_setup')
-async def do_setup(request: Request):
-    print("simulations/do_setup:")
+@router.post("/sim_setup/{mtype}", response_class=HTMLResponse, name='do_setup')
+async def do_setup(request: Request, mtype: str):
     form = await SimulationForm.from_formdata(request)
+    print("simulations/do_setup:", form.name.data)
     if form.errors:
         print("errors:", form.errors)
 
     if form.validate_on_submit():
         # TODO call magnetsetup
+        # from python_magnetsetup import setup
+        # from python_magnetsetup.config import appenv
+        # from .queries import query_db
+        # debug = True
+        # MyEnv = appenv()
+        # confdata = query_db(appenv, mtype, name, debug)
+        # jsonfile = form.name.data
+        # cmds = setup(MyEnv, args, confdata, jsonfile)  
         cmds = { "mesh":"tut", "sim": "titi"}
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,
+            "mtype": mtype,
             "cmds": cmds
         })
         # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
@@ -78,5 +88,6 @@ async def do_setup(request: Request):
         return templates.TemplateResponse('sim_setup', {
             "request": request,
             "form": form,
+            "mtype": mtype
         })
         

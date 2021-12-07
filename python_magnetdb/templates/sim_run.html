@@ -5,6 +5,15 @@
   <div class="form-wrapper">
     <h2 class="title">To run Simulation</h2>
 
+    <!-- "Edit cfgfile to fix the meshfile, scale, partition and solver props" -->
+    <p>
+        <li>Review the cfg and json files created</li>
+        <li>Select the server for actually running the simulation</li>
+        <li>Transfer your data to this server</li>
+        <li>Connect to the server</li>
+        <li>Run the following commands</li>
+    </p>
+    
     <form method="POST" action="{{ url_for('do_setup') }}">
         {% for field in cmds %}
         <fieldset class="form-field">

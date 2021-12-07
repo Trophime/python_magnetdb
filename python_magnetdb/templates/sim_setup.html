@@ -4,7 +4,7 @@
   <div class="form-wrapper">
     <h2 class="title">Simulation SetUp</h2>
 
-    <form method="POST" action="{{ url_for('do_setup') }}">
+    <form method="POST" action="{{ url_for('do_setup', mtype=mtype) }}">
       {{ form.csrf_token }}
       {% for field in form %}
         <fieldset class="form-field">
