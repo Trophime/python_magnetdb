@@ -28,6 +28,7 @@
 
 	// Add the IDs of extensions you want installed when the container is created in the array below.
 	"extensions": [
-		"ms-python.python-2020.11.371526539"
+		"ms-python.python",
+		"ms-python.vscode-pylance"
 	]
 }
