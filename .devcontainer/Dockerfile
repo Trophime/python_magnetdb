@@ -44,6 +44,8 @@ RUN apt-get update \
     && apt-get -y install python3-pint \
     && apt-get -y install python3-requests python3-chevron \
     && apt-get -y install python3-python-magnetsetup python3-python-magnetgeo python3-gmsh \
+    #\
+    # Install web stuff for database+api+website \
     && python -m pip install sqlmodel \
     && python -m pip install fastapi "uvicorn[standard]" \
     && python -m pip install fastapi-pagination starlette_wtf \
