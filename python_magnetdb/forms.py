@@ -1,7 +1,7 @@
 """Form object declaration."""
 from typing import List, Optional
 
-from flask_wtf import FlaskForm
+# from flask_wtf import FlaskForm
 from starlette_wtf import StarletteForm
 from wtforms import StringField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired, Length
