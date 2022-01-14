@@ -8,7 +8,7 @@ from .database import create_db_and_tables, engine
 from .models import MPart, Magnet, MSite, MRecord, MSimulation
 from .models import MaterialBase, Material, MaterialCreate, MaterialRead
 from .models import MPartMagnetLink, MagnetMSiteLink
-from .status import MStatus
+from .status import MStatus, MType
 
 from .crud import *
 from .operations import *
@@ -80,20 +80,20 @@ if __name__ == "__main__":
             H13 = create_material(session=session, name="MA10061702", nuance="CuCrZr", Rpe=366e+6, ElectricalConductivity=46.5e+6)
             H14 = create_material(session=session, name="MA10061703", nuance="CuCrZr", Rpe=373e+6, ElectricalConductivity=50.25e+6)
         
-            create_mpart(session=session, name='H15101601', mtype='Helix', be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=H1)
-            create_mpart(session=session, name='H15061703', mtype='Helix', be='HL-34-003-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=H2)
-            create_mpart(session=session, name='H15061801', mtype='Helix', be='HL-34-005-A', geom='HL-31_H3.yaml', status=MStatus.operation, magnets=[Helices], material=H3)
-            create_mpart(session=session, name='H15100501', mtype='Helix', be='HL-34-007-A', geom='HL-31_H4.yaml', status=MStatus.operation, magnets=[Helices], material=H4)
-            create_mpart(session=session, name="H15101501", mtype='Helix', be='HL-34-009-A', geom='HL-31_H5.yaml', status=MStatus.operation, magnets=[Helices], material=H5)
-            create_mpart(session=session, name="H18060101", mtype='Helix', be='HL-34-011-A', geom='HL-31_H6.yaml', status=MStatus.operation, magnets=[Helices], material=H6)
-            create_mpart(session=session, name="H18012501", mtype='Helix', be='HL-34-013-A', geom='HL-31_H7.yaml', status=MStatus.operation, magnets=[Helices], material=H7)
-            create_mpart(session=session, name="H18051801", mtype='Helix', be='HL-34-015-A', geom='HL-31_H8.yaml', status=MStatus.operation, magnets=[Helices], material=H8)
-            create_mpart(session=session, name="H18101201", mtype='Helix', be='HL-34-017', geom='HL-31_H9.yaml', status=MStatus.operation, magnets=[Helices], material=H9)
-            create_mpart(session=session, name="H18110501", mtype='Helix', be='HL-34-019', geom='HL-31_H10.yaml', status=MStatus.operation, magnets=[Helices], material=H10)
-            create_mpart(session=session, name="H19012101", mtype='Helix', be='HL-34-021', geom='HL-31_H11.yaml', status=MStatus.operation, magnets=[Helices], material=H11)
-            create_mpart(session=session, name="H19011601", mtype='Helix', be='HL-34-023', geom='HL-31_H12.yaml', status=MStatus.operation, magnets=[Helices], material=H12)
-            create_mpart(session=session, name="H10061702", mtype='Helix', be='HR-21-125-A', geom='HL-31_H13.yaml', status=MStatus.operation, magnets=[Helices], material=H13)
-            create_mpart(session=session, name="H10061703", mtype='Helix', be='HR-21-127-A', geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[Helices], material=H14)
+            create_mpart(session=session, name='H15101601', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=H1)
+            create_mpart(session=session, name='H15061703', mtype=MType.Helix, be='HL-34-003-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=H2)
+            create_mpart(session=session, name='H15061801', mtype=MType.Helix, be='HL-34-005-A', geom='HL-31_H3.yaml', status=MStatus.operation, magnets=[Helices], material=H3)
+            create_mpart(session=session, name='H15100501', mtype=MType.Helix, be='HL-34-007-A', geom='HL-31_H4.yaml', status=MStatus.operation, magnets=[Helices], material=H4)
+            create_mpart(session=session, name="H15101501", mtype=MType.Helix, be='HL-34-009-A', geom='HL-31_H5.yaml', status=MStatus.operation, magnets=[Helices], material=H5)
+            create_mpart(session=session, name="H18060101", mtype=MType.Helix, be='HL-34-011-A', geom='HL-31_H6.yaml', status=MStatus.operation, magnets=[Helices], material=H6)
+            create_mpart(session=session, name="H18012501", mtype=MType.Helix, be='HL-34-013-A', geom='HL-31_H7.yaml', status=MStatus.operation, magnets=[Helices], material=H7)
+            create_mpart(session=session, name="H18051801", mtype=MType.Helix, be='HL-34-015-A', geom='HL-31_H8.yaml', status=MStatus.operation, magnets=[Helices], material=H8)
+            create_mpart(session=session, name="H18101201", mtype=MType.Helix, be='HL-34-017', geom='HL-31_H9.yaml', status=MStatus.operation, magnets=[Helices], material=H9)
+            create_mpart(session=session, name="H18110501", mtype=MType.Helix, be='HL-34-019', geom='HL-31_H10.yaml', status=MStatus.operation, magnets=[Helices], material=H10)
+            create_mpart(session=session, name="H19012101", mtype=MType.Helix, be='HL-34-021', geom='HL-31_H11.yaml', status=MStatus.operation, magnets=[Helices], material=H11)
+            create_mpart(session=session, name="H19011601", mtype=MType.Helix, be='HL-34-023', geom='HL-31_H12.yaml', status=MStatus.operation, magnets=[Helices], material=H12)
+            create_mpart(session=session, name="H10061702", mtype=MType.Helix, be='HR-21-125-A', geom='HL-31_H13.yaml', status=MStatus.operation, magnets=[Helices], material=H13)
+            create_mpart(session=session, name="H10061703", mtype=MType.Helix, be='HR-21-127-A', geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[Helices], material=H14)
 
             # Rings
             R1 = create_material(session=session, name="MA20072301", nuance="CuNiBe", Rpe=568e+6, ElectricalConductivity=0)
@@ -103,19 +103,19 @@ if __name__ == "__main__":
             R5 = create_material(session=session, name="MA21040901", nuance="CuCrZr", Rpe=0, ElectricalConductivity=0)
             R6 = create_material(session=session, name="MARING", nuance="CuCrZr", Rpe=0, ElectricalConductivity=0)
 
-            create_mpart(session=session, name="B20061903", mtype='Ring', be='HL-27-029-G', geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[Helices], material=R1)
-            create_mpart(session=session, name="B20061904", mtype='Ring', be='HL-27-030-D', geom='Ring-H2H3.yaml', status=MStatus.operation, magnets=[Helices], material=R2)
-            create_mpart(session=session, name="B20061901", mtype='Ring', be='HL-27-031-C', geom='Ring-H3H4.yaml', status=MStatus.operation, magnets=[Helices], material=R3)
-            create_mpart(session=session, name="B20061902", mtype='Ring', be='HL-27-032-C', geom='Ring-H4H5.yaml', status=MStatus.operation, magnets=[Helices], material=R4)
-            create_mpart(session=session, name="B20061902", mtype='Ring', be='HL-27-033-C', geom='Ring-H5H6.yaml', status=MStatus.operation, magnets=[Helices], material=R5)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-034-C', geom='Ring-H6H7.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-035-C', geom='Ring-H7H8.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-036-C', geom='Ring-H8H9.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-037-C', geom='Ring-H9H10.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-038-C', geom='Ring-H10H11.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-039-C', geom='Ring-H11H12.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-040-C', geom='Ring-H12H13.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
-            create_mpart(session=session, name="B21040901", mtype='Ring', be='HL-27-041-C', geom='Ring-H13H14.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B20061903", mtype=MType.Ring, be='HL-27-029-G', geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[Helices], material=R1)
+            create_mpart(session=session, name="B20061904", mtype=MType.Ring, be='HL-27-030-D', geom='Ring-H2H3.yaml', status=MStatus.operation, magnets=[Helices], material=R2)
+            create_mpart(session=session, name="B20061901", mtype=MType.Ring, be='HL-27-031-C', geom='Ring-H3H4.yaml', status=MStatus.operation, magnets=[Helices], material=R3)
+            create_mpart(session=session, name="B20061902", mtype=MType.Ring, be='HL-27-032-C', geom='Ring-H4H5.yaml', status=MStatus.operation, magnets=[Helices], material=R4)
+            create_mpart(session=session, name="B20061902", mtype=MType.Ring, be='HL-27-033-C', geom='Ring-H5H6.yaml', status=MStatus.operation, magnets=[Helices], material=R5)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-034-C', geom='Ring-H6H7.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-035-C', geom='Ring-H7H8.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-036-C', geom='Ring-H8H9.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-037-C', geom='Ring-H9H10.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-038-C', geom='Ring-H10H11.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-039-C', geom='Ring-H11H12.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-040-C', geom='Ring-H12H13.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
+            create_mpart(session=session, name="B21040901", mtype=MType.Ring, be='HL-27-041-C', geom='Ring-H13H14.yaml', status=MStatus.operation, magnets=[Helices], material=R6)
 
             # Rings: HL-27-xx
             # 029 030 031  032 033 034 035 036 037 038 039 040 041
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
             # create new mpart
             H14 = create_material(session=session, name="MA19022701", nuance="CuAg5.5", Rpe=500e+6, ElectricalConductivity=52.e+6)
-            create_mpart(session=session, name="H20020501", mtype='Helix', be='HR-21-127-A', geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[], material=H4)
+            create_mpart(session=session, name="H20020501", mtype=MType.Helix, be='HR-21-127-A', geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[], material=H4)
             magnet_replace_mpart(session=session, name="HM20022001", impart="H10061703", ompart='H20020501')
             magnet_add_msite(session=session, magnet=Helices, msite=m2)
             # add Bitters to m2
@@ -152,14 +152,14 @@ if __name__ == "__main__":
                                     ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
                                     Rpe=481000000.0)
 
-            create_mpart(session=session, name='HL-34_H1', mtype='Helix', be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
-            create_mpart(session=session, name='HL-34_H2', mtype='Helix', be='HL-34-001-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
+            create_mpart(session=session, name='HL-34_H1', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
+            create_mpart(session=session, name='HL-34_H2', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
             
             MAT_TEST2 = create_material(session=session, name="MAT_TEST2", nuance="Cu5Ag5,08",
                                     Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=50.1e+6,
                                     ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
                                     Rpe=481000000.0)
-            create_mpart(session=session, name="Ring-H1H2", mtype='Ring', be="HL-34-001-A", geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST2)
+            create_mpart(session=session, name="Ring-H1H2", mtype=MType.Ring, be="HL-34-001-A", geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST2)
             ####################
 
             ####################
@@ -176,8 +176,8 @@ if __name__ == "__main__":
                                     Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=50.1e+6,
                                     ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
                                     Rpe=481000000.0)
-            create_mpart(session=session, name='M9Bi', mtype='Bitter', be='BI-03-002-A', geom='M9Bitters_Bi.yaml', status=MStatus.operation, magnets=[Bitters], material=CuAg01)
-            create_mpart(session=session, name='M9Be', mtype='Bitter', be='BE-03-002-A', geom='M9Bitters_Be.yaml', status=MStatus.operation, magnets=[Bitters], material=CuAg01)
+            create_mpart(session=session, name='M9Bi', mtype=MType.Bitter, be='BI-03-002-A', geom='M9Bitters_Bi.yaml', status=MStatus.operation, magnets=[Bitters], material=CuAg01)
+            create_mpart(session=session, name='M9Be', mtype=MType.Bitter, be='BE-03-002-A', geom='M9Bitters_Be.yaml', status=MStatus.operation, magnets=[Bitters], material=CuAg01)
 
             m1 = create_msite(session=session, name="MTest2", conffile="MAGFILE2019.06.20.35T.conf", status=MStatus.defunct)
             msite_add_magnet(session=session, msite=m1, magnet=Helices)
@@ -263,39 +263,39 @@ if __name__ == "__main__":
             # Definition of mparts
 
             # Helices
-            create_mpart(session=session, name='H15101601', mtype='Helix', be='HL-34-002-A',  geom='HL-31_H1.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15101601)
-            create_mpart(session=session, name='H15061703', mtype='Helix', be='HL-34-004-A',  geom='HL-31_H2.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15061703)
-            create_mpart(session=session, name='H15061801', mtype='Helix', be='HL-34-006-A',  geom='HL-31_H3.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15061801)
-            create_mpart(session=session, name='H15100501', mtype='Helix', be='HL-34-008-A',  geom='HL-31_H4.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15100501)
-            create_mpart(session=session, name='H15101501', mtype='Helix', be='HL-34-0010-A', geom='HL-31_H5.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15101501)
-            create_mpart(session=session, name='H18060101', mtype='Helix', be='HL-34-0012-A', geom='HL-31_H6.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18060101)
-            create_mpart(session=session, name='H18012501', mtype='Helix', be='HL-34-0014-A', geom='HL-31_H7.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18012501)
-            create_mpart(session=session, name='H18051801', mtype='Helix', be='HL-34-0016-A', geom='HL-31_H8.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18051801)
-            create_mpart(session=session, name='H19060601', mtype='Helix', be='HL-34-0018',   geom='HL-31_H9.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18101201)
-            create_mpart(session=session, name='H19060602', mtype='Helix', be='HL-34-0020',   geom='HL-31_H10.yaml', status=MStatus.operation, magnets=[M19061901], material=MA18110501)
-            create_mpart(session=session, name='H19061201', mtype='Helix', be='HL-34-0022',   geom='HL-31_H11.yaml', status=MStatus.operation, magnets=[M19061901], material=MA19012101)
-            create_mpart(session=session, name='H19060603', mtype='Helix', be='HL-34-0024',   geom='HL-31_H12.yaml', status=MStatus.operation, magnets=[M19061901], material=MA19011601)
-            create_mpart(session=session, name='H10061702', mtype='Helix', be='HR-21-126-A',  geom='HL-31_H13.yaml', status=MStatus.operation, magnets=[M19061901], material=MA10061702)
-            create_mpart(session=session, name='H10061703', mtype='Helix', be='HR-21-128-A',  geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MA10061703)
+            create_mpart(session=session, name='H15101601', mtype=MType.Helix, be='HL-34-002-A',  geom='HL-31_H1.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15101601)
+            create_mpart(session=session, name='H15061703', mtype=MType.Helix, be='HL-34-004-A',  geom='HL-31_H2.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15061703)
+            create_mpart(session=session, name='H15061801', mtype=MType.Helix, be='HL-34-006-A',  geom='HL-31_H3.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15061801)
+            create_mpart(session=session, name='H15100501', mtype=MType.Helix, be='HL-34-008-A',  geom='HL-31_H4.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15100501)
+            create_mpart(session=session, name='H15101501', mtype=MType.Helix, be='HL-34-0010-A', geom='HL-31_H5.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA15101501)
+            create_mpart(session=session, name='H18060101', mtype=MType.Helix, be='HL-34-0012-A', geom='HL-31_H6.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18060101)
+            create_mpart(session=session, name='H18012501', mtype=MType.Helix, be='HL-34-0014-A', geom='HL-31_H7.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18012501)
+            create_mpart(session=session, name='H18051801', mtype=MType.Helix, be='HL-34-0016-A', geom='HL-31_H8.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18051801)
+            create_mpart(session=session, name='H19060601', mtype=MType.Helix, be='HL-34-0018',   geom='HL-31_H9.yaml',  status=MStatus.operation, magnets=[M19061901], material=MA18101201)
+            create_mpart(session=session, name='H19060602', mtype=MType.Helix, be='HL-34-0020',   geom='HL-31_H10.yaml', status=MStatus.operation, magnets=[M19061901], material=MA18110501)
+            create_mpart(session=session, name='H19061201', mtype=MType.Helix, be='HL-34-0022',   geom='HL-31_H11.yaml', status=MStatus.operation, magnets=[M19061901], material=MA19012101)
+            create_mpart(session=session, name='H19060603', mtype=MType.Helix, be='HL-34-0024',   geom='HL-31_H12.yaml', status=MStatus.operation, magnets=[M19061901], material=MA19011601)
+            create_mpart(session=session, name='H10061702', mtype=MType.Helix, be='HR-21-126-A',  geom='HL-31_H13.yaml', status=MStatus.operation, magnets=[M19061901], material=MA10061702)
+            create_mpart(session=session, name='H10061703', mtype=MType.Helix, be='HR-21-128-A',  geom='HL-31_H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MA10061703)
 
             # Rings
-            create_mpart(session=session, name='M19061901_R1',  mtype='Ring', be='unknow', geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT1_RING)
-            create_mpart(session=session, name='M19061901_R2',  mtype='Ring', be='unknow', geom='Ring-H2H3.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT1_RING)
-            create_mpart(session=session, name='M19061901_R3',  mtype='Ring', be='unknow', geom='Ring-H3H4.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R4',  mtype='Ring', be='unknow', geom='Ring-H4H5.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R5',  mtype='Ring', be='unknow', geom='Ring-H5H6.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R6',  mtype='Ring', be='unknow', geom='Ring-H6H7.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R7',  mtype='Ring', be='unknow', geom='Ring-H7H8.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R8',  mtype='Ring', be='unknow', geom='Ring-H8H9.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R9',  mtype='Ring', be='unknow', geom='Ring-H9H10.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R10', mtype='Ring', be='unknow', geom='Ring-H10H11.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R11', mtype='Ring', be='unknow', geom='Ring-H11H12.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R12', mtype='Ring', be='unknow', geom='Ring-H12H13.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
-            create_mpart(session=session, name='M19061901_R13', mtype='Ring', be='unknow', geom='Ring-H13H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R1',  mtype=MType.Ring, be='unknow', geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT1_RING)
+            create_mpart(session=session, name='M19061901_R2',  mtype=MType.Ring, be='unknow', geom='Ring-H2H3.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT1_RING)
+            create_mpart(session=session, name='M19061901_R3',  mtype=MType.Ring, be='unknow', geom='Ring-H3H4.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R4',  mtype=MType.Ring, be='unknow', geom='Ring-H4H5.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R5',  mtype=MType.Ring, be='unknow', geom='Ring-H5H6.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R6',  mtype=MType.Ring, be='unknow', geom='Ring-H6H7.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R7',  mtype=MType.Ring, be='unknow', geom='Ring-H7H8.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R8',  mtype=MType.Ring, be='unknow', geom='Ring-H8H9.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R9',  mtype=MType.Ring, be='unknow', geom='Ring-H9H10.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R10', mtype=MType.Ring, be='unknow', geom='Ring-H10H11.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R11', mtype=MType.Ring, be='unknow', geom='Ring-H11H12.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R12', mtype=MType.Ring, be='unknow', geom='Ring-H12H13.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
+            create_mpart(session=session, name='M19061901_R13', mtype=MType.Ring, be='unknow', geom='Ring-H13H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT2_RING)
 
             # Leads
-            create_mpart(session=session, name='M19061901_iL1', mtype='Lead', be='unknow', geom='inner.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
-            create_mpart(session=session, name='M19061901_oL2', mtype='Lead', be='unknow', geom='outer-H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
+            create_mpart(session=session, name='M19061901_iL1', mtype=MType.Lead, be='unknow', geom='inner.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
+            create_mpart(session=session, name='M19061901_oL2', mtype=MType.Lead, be='unknow', geom='outer-H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
 
     if args.displaymagnet:
         with Session(engine) as session:

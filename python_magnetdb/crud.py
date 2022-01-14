@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from .models import MPart, MSimulation, Magnet, MSite, MRecord
 from .models import MaterialBase, Material, MaterialCreate, MaterialRead
 from .models import MPartMagnetLink, MagnetMSiteLink
-from .models import MStatus
+from .status import MStatus, MType
 
 from .queries import query_mpart, query_magnet, query_msite, query_material
 
@@ -37,7 +37,7 @@ def create_magnet(session: Session, name: str, be: str, geom: str, status: MStat
     return magnet
 
 
-def create_mpart(session: Session, name: str, mtype: str, be: str, geom: str, status: MStatus, magnets: List[Magnet], material: Optional[Material]):
+def create_mpart(session: Session, name: str, mtype: MType, be: str, geom: str, status: MStatus, magnets: List[Magnet], material: Optional[Material]):
     # TODO get material_id from material name
     part = MPart(name=name, mtype=mtype, be=be, geom=geom, status=status, material_id=material.id, magnets=magnets)
     session.add(part)
@@ -87,7 +87,7 @@ def get_mparts(session: Session, magnet_id: int):
         selected.append(part)
     return selected
 
-def get_mparts_mtype(session: Session, magnet_id: int, mtype: str):   
+def get_mparts_mtype(session: Session, magnet_id: int, mtype: MType):   
     """
     get all parts from a magnet
     """
@@ -124,13 +124,13 @@ def get_magnet_type(session: Session, magnet_id: int ):
     """
     Returns magnet type and the list of mparts attached to this magnet  
     """
-    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype="Helix")
+    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype=MType.Helix)
     if len(objects):
         return ("Insert", objects)
-    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype="Bitter")
+    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype=MType.Bitter)
     if len(objects):
         return ("Bitter", objects)
-    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype="Supra")
+    objects = get_mparts_mtype(session=session, magnet_id=magnet_id, mtype=MType.Supra)
     if len(objects):
         return ("Supra", objects)
 
@@ -153,8 +153,8 @@ def get_magnet_data(session: Session, magnet_name: str ):
     mdata = magnet.dict()
     for key in ['be', 'name', 'status', 'id']:
         mdata.pop(key, None)
-    for mtype in ["Helix", "Ring", "Lead", "Bitter", "Supra"]:
-        if mtype == "Helix":
+    for mtype in MType: #["Helix", "Ring", "Lead", "Bitter", "Supra"]:
+        if mtype == MType.Helix:
             # TODO: check Helix type before getting insulator name and data
             results = query_material(session, name="MAT_ISOLANT")
             for material in results:
@@ -198,7 +198,7 @@ def get_msite_data(session: Session, name: str ):
     mdata['magnets'] = {}
     for magnet in msite.magnets:
         (mtype, objects) = get_magnet_type(session, magnet.id)
-        if mtype == "Bitter" or mtype == "Supra":
+        if mtype == MType.Bitter or mtype == MType.Supra:
             mdata['magnets'][magnet.name] = []
             for mpart in objects:
                 # TODO remove extension from mpart.geom

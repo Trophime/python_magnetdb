@@ -9,6 +9,8 @@ from wtforms.validators import DataRequired, Length
 
 from .units import units
 from .status import MStatus, status_choices
+from .status import MType, mtype_choices
+
 from .choices import material_choices
 from .choices import objchoices
 
@@ -58,13 +60,10 @@ class MPartForm(StarletteForm):
     """
     name =  StringField('Name', validators=[DataRequired()])
 
-    mtype = StringField('Type', validators=[DataRequired()])
+    mtype = StringField('Type', choices=mtype_choices, validators=[DataRequired()])
     be = StringField('Be Ref', validators=[DataRequired()])
     geom = StringField('Geom', validators=[DataRequired()])
     status = SelectField('Status', choices=status_choices, validators=[DataRequired()])
-
-    # TODO mtype part shall not be a choice, it shall be infered by loading geom
-    mtype = StringField('Type', validators=[DataRequired()]) # SelectField('Type', choices=mtype_choices)
 
     # TODO create liste of materials choice
     material_id = SelectField('Material', choices=material_choices(), validators=[DataRequired()])
@@ -103,7 +102,6 @@ class GeomForm(StarletteForm):
 method_choices = [ ('cfpdes','cfpdes'), ('CG','CG'), ('HDG','HDG'), ('CRB','CRB') ]
 model_choices = [('thelec','thelec'), ('mag','mag'), ('thmag','thmag'), ('thmagel', 'thmagel')]
 geom_choices = [ ('Axi','Axi'), ('3D','3D')]
-mtype_choices = [ ('Magnet', 'Magnet'), ('Site','Site') ]
 
 class SimulationForm(StarletteForm):
     """

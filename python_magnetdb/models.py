@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .status import MStatus
+from .status import MStatus, MType
 
 from sqlmodel import Field, Enum, Relationship, Session, SQLModel, create_engine
 from sqlmodel import Column, String
@@ -173,7 +173,7 @@ class MPartBase(SQLModel):
     """
     name: str = Field(sa_column=Column("name", String, unique=True))
 
-    mtype: str # make it an enum??
+    mtype: MType = Field(sa_column=Column(Enum(MType))) # str # make it an enum??
     be: str
     geom: str
     status: MStatus = Field(sa_column=Column(Enum(MStatus)))
