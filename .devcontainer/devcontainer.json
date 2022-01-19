@@ -7,7 +7,7 @@
             "--net", "host", 
             "-e", "DISPLAY=${env:DISPLAY}",
             "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
-	    "-v", "/home/LNCMI-G/trophime/github/magnetdb/data:/data"
+	    "-v", "${env:PWD}/../python_magnetdb/data:/data"
 	],
 
 	// Use 'settings' to set *default* container specific settings.json values on container create. 
