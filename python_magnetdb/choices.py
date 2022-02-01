@@ -72,14 +72,9 @@ def magnet_choices(status: Optional[MStatus]):
             # TODO load obj.geom to get basic geom infos (aka inner/outer diameter)
             # geom = yaml.load(open(obj.name, 'r'))
 
-            choices.append( (obj, desc))
+            choices.append( (obj.id, desc))
     
-    if status:
-        print("magnet_choices(%s):" % (status), [tobj[0].name for tobj in choices ])
-    else:
-        print("magnet_choices():", [tobj[0].name for tobj in choices ])
-        
-    return choices
+        return choices
 
 def msite_choices(status: Optional[MStatus]):
     with Session(engine) as session:
@@ -104,7 +99,7 @@ def msite_choices(status: Optional[MStatus]):
             desc = desc[:last_char_index] + "," + desc[last_char_index+1:]
             desc += ")"
         
-            choices.append( (obj, desc))
+            choices.append( (obj.id, desc))
     
     return choices
 
