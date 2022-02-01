@@ -51,6 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("--displaymagnet", help="display magnet", type=str, default=None)
     parser.add_argument("--displaymsite", help="display msite", type=str, default=None)
     parser.add_argument("--checkmaterial", help="check material data", action='store_true')
+    parser.add_argument("--debug", help="activate debug mode", action='store_true')
     args = parser.parse_args()
 
     if args.createdb:
@@ -306,18 +307,20 @@ if __name__ == "__main__":
             # MRecords
             # list files from /data/mrecords attached them to msite=M19061901
             from .crud import create_mrecord
-            from pathlib import Path
-            p = Path(MyEnv.mrecord_repo)
-            filelist = [x for x in p.iterdir() if x.is_file()]
-            print("mrecords list:", filelist)
-            for item in filelist:
+            # from pathlib import Path
+            # p = Path(MyEnv.mrecord_repo)
+            # filelist = [str(x) for x in p.iterdir() if x.is_file()]
+            from os import walk
+            filenames = next(walk(MyEnv.mrecord_repo), (None, None, []))[2]  # [] if no file
+            print("mrecords list:", filenames)
+            for item in filenames:
                 data = item.split('_')
                 tformat="%Y.%m.%d---%H:%M:%S"
-                rtimestamp = datetime.datetime.strptime(data[1].replace('.txt',''), tformat)
+                rtimestamp = datetime.strptime(data[1].replace('.txt',''), tformat)
                 msite_name = M19061901.name
                 msite_id = M19061901.id
-                print("housing:", data[0], "timestamp:", rtimestamp, "msite:", msite_name, msite_id) 
-                # create_mrecord(session=session, msite_id=msite_id, rtimestamp=rtimestamp)
+                print("item:", item, "housing:", data[0], "timestamp:", rtimestamp, "msite:", msite_name, msite_id) 
+                create_mrecord(session=session, rname=item, msite_id=msite_id, rtimestamp=rtimestamp)
             
     if args.displaymagnet:
         with Session(engine) as session:
