@@ -1,12 +1,26 @@
 {% extends "layout/default.html" %}
 
 {% block content %}
-  <h1>MRecords from magnetdb</h1>
-  <p>
-  <ul id="mrecord_list">
-    {% for item in mrecords %}
-      <li><a href="records/{{ item.id }}">{{ item.name }}</a></li>
+<h1>MRecords from magnetdb</h1>
+<p>
+<ul id="magnet_props">
+  <table>
+    <!-- 
+    <tr>
+      <th></th>
+      <td><b>Type</b></td>
+      <td><b>Status</b></td>
+    </tr>
+    -->
+    {% for item in magnets %}
+    <tr>
+      <th><a href="records/{{ item.id }}">{{ item.name }}</a></th>
+      {% for key, value in descriptions[item.id].items() %}
+      <td>{{value}}</td>
+      {% endfor %}
+    </tr>
     {% endfor %}
-  </ul>
-  </p>
+  </table>
+</ul>
+</p>
 {% endblock %}

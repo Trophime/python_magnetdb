@@ -20,7 +20,8 @@ def index(request: Request):
     with Session(engine) as session:
         statement = select(MRecord)
         mrecords = session.exec(statement).all()
-    return templates.TemplateResponse('records/index.html', {"request": request, "mrecords": mrecords})
+        desc = {}
+    return templates.TemplateResponse('records/index.html', {"request": request, "mrecords": mrecords, "descriptions": desc})
 
 
 @router.get("/records/{id}", response_class=HTMLResponse)

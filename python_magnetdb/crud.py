@@ -17,6 +17,28 @@ from .queries import query_mpart, query_magnet, query_msite, query_material
 # TODO:
 # material: use pint for setting properties with units
 
+from datetime import datetime
+
+# timestamp = 1545730073
+# dt_object = datetime.fromtimestamp(timestamp)
+# # current date and time
+# now = datetime.now()
+
+# timestamp = datetime.timestamp(now)
+# create a string representing date and time from a datetime object using strftime() method.
+
+def create_mrecord(session: Session, msite_id: int, rname: str, rtimestamp: datetime):
+    rec = MRecord(name=rname, msite_id=msite_id, rtimestamp=rtimestamp)
+    session.add(rec)
+    session.commit()
+    session.refresh(rec)
+    return rec
+
+def get_mrecords(session: Session, site_id: int):   
+    statement = select(MRecord).where(MRecord.msite_id == site_id)
+    results = session.exec(statement)
+    return results
+
 def create_msite(session: Session, name: str, conffile: str , status: MStatus):
     m1 = MSite(name=name, conffile=conffile, status=status)
     session.add(m1)

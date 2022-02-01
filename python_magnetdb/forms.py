@@ -118,3 +118,12 @@ class SimulationForm(StarletteForm):
 
     mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
 
+class AnalyticForm(StarletteForm):
+    """
+    Ana SetUp configuration
+    """
+    print("AnalyticForm")
+    # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
+
+    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+

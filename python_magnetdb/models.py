@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 
 from .status import MStatus, MType
 
@@ -229,14 +230,16 @@ class MSiteReadWithMagnets(MSiteRead):
 ##################
 
 # from datetime import datetime
-# see magnetrun/MREcord to merge
-
+# see magnetrun/MRecord to merge
+#            tformat="%Y.%m.%d - %H:%M:%S"
+#            timestamp = datetime.datetime.strptime(data[1].replace('.txt',''), tformat)
+            
 class MRecordBase(SQLModel):
     """
     Magnet Record
     """
     id: Optional[int] = Field(default=None, primary_key=True)
-    timestamp: str # datetime = Field(default=datetime.utcnow)
+    rtimestamp: datetime = Field(default=datetime.utcnow)
     name: str
     msite_id: Optional[int] = Field(default=None, foreign_key="msite.id")
 
@@ -253,7 +256,7 @@ class MRecordUpdate(SQLModel):
     """
     Magnet Record
     """
-    timestamp: str
+    rtimestamp: datetime
     name: str
     msite_id: Optional[int] = None #Field(default=None, foreign_key="msite.id")
 

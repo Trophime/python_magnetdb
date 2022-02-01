@@ -297,6 +297,28 @@ if __name__ == "__main__":
             create_mpart(session=session, name='M19061901_iL1', mtype=MType.Lead, be='unknow', geom='inner.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
             create_mpart(session=session, name='M19061901_oL2', mtype=MType.Lead, be='unknow', geom='outer-H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
 
+            
+            # load appenv
+            from python_magnetsetup.config import appenv
+            MyEnv = appenv()
+            if args.debug: print(MyEnv.template_path())
+
+            # MRecords
+            # list files from /data/mrecords attached them to msite=M19061901
+            from .crud import create_mrecord
+            from pathlib import Path
+            p = Path(MyEnv.mrecord_repo)
+            filelist = [x for x in p.iterdir() if x.is_file()]
+            print("mrecords list:", filelist)
+            for item in filelist:
+                data = item.split('_')
+                tformat="%Y.%m.%d---%H:%M:%S"
+                rtimestamp = datetime.datetime.strptime(data[1].replace('.txt',''), tformat)
+                msite_name = M19061901.name
+                msite_id = M19061901.id
+                print("housing:", data[0], "timestamp:", rtimestamp, "msite:", msite_name, msite_id) 
+                # create_mrecord(session=session, msite_id=msite_id, rtimestamp=rtimestamp)
+            
     if args.displaymagnet:
         with Session(engine) as session:
             mdata = get_magnet_data(session, args.displaymagnet)
