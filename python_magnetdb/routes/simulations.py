@@ -5,12 +5,13 @@ from sqlmodel import Session, select
 
 from ..config import templates
 from ..database import engine
-from ..models import MSimulation 
+from ..models import Magnet, MSite, MRecord, MSimulation 
 from ..models import MStatus
-from ..forms import SimulationForm
+from ..forms import SimulationForm, BmapForm
 from ..choices import objchoices
 
 from ..crud import create_simulation
+from ..crud import get_magnetid_data, get_msiteid_data 
 
 router = APIRouter()
 
@@ -60,23 +61,56 @@ async def edit(request: Request, mtype: str):
     })
 
 @router.post("/sim_setup/{mtype}", response_class=HTMLResponse, name='do_setup')
-async def do_setup(request: Request, mtype: str):
+async def dosetup(request: Request, mtype: str):
     form = await SimulationForm.from_formdata(request)
-    print("simulations/do_setup:", form.name.data)
+    print("simulations/do_setup:", form.mobject.data, type(form.mobject.data))
+    print("simulations/do_setup: method", form.method.data)
+
+    stime="transient"
+    if form.static.data:
+        stime="static"
+    # get object from: id=form.mobject.data
     if form.errors:
         print("errors:", form.errors)
 
     if form.validate_on_submit():
         # TODO call magnetsetup
-        # from python_magnetsetup import setup
-        # from python_magnetsetup.config import appenv
-        # from .queries import query_db
-        # debug = True
-        # MyEnv = appenv()
-        # confdata = query_db(appenv, mtype, name, debug)
-        # jsonfile = form.name.data
-        # cmds = setup(MyEnv, args, confdata, jsonfile)  
-        cmds = { "mesh":"tut", "sim": "titi"}
+        print("trying to create cfg and json")
+        from python_magnetsetup.config import appenv
+        MyEnv = appenv()
+        
+        from argparse import Namespace
+        args = Namespace(wd="", 
+                magnet="",
+                msite="",
+                method=form.method.data, 
+                time=stime, 
+                geom=form.geom.data, 
+                model=form.model.data, 
+                nonlinear=form.linear.data, 
+                cooling=form.cooling.data, 
+                scale=1.e-3,
+                debug=True,verbose=False, 
+                )
+        print("args:", args)
+
+        if mtype == "Magnet":
+            with Session(engine) as session:
+                obj = session.get(Magnet, form.mobject.data)
+                confdata = get_magnetid_data(session, form.mobject.data)
+            args.magnet = obj.name
+            jsonfile = args.magnet
+        if mtype == "MSite":
+            with Session(engine) as session:
+                obj = session.get(MSite, form.mobject.data)
+                confdata = get_msiteid_data(session, form.mobject.data)
+            args.msite = obj.name
+            jsonfile = args.msite
+
+        from python_magnetsetup.setup import setup
+        print("shall enter magnetsetup:", jsonfile)
+        (cfgfile, jsonfile, cmds) = setup(MyEnv, args, confdata, jsonfile)  
+        print("magnetsetup cmds:", cmds)
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,
@@ -86,6 +120,48 @@ async def do_setup(request: Request, mtype: str):
         # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
     else:
         return templates.TemplateResponse('sim_setup', {
+            "request": request,
+            "form": form,
+            "mtype": mtype
+        })
+        
+@router.get("/bmap_setup/{mtype}", response_class=HTMLResponse, name='bmapsetup')
+async def edit(request: Request, mtype: str):
+    print("simulations/bmap: mtype=", mtype)
+    """
+    with Session(engine) as session:
+        simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
+    """
+    form = BmapForm(request=request)
+    form.mobject.choices = objchoices(mtype, None)
+    print("type:", mtype)
+    print("objchoices:", objchoices(mtype, None) )
+
+    return templates.TemplateResponse('bmap_setup.html', {
+        "request": request,
+        "form": form,
+        "mtype": mtype
+    })
+
+@router.post("/bmap_setup/{mtype}", response_class=HTMLResponse, name='do_bmap')
+async def dobmap(request: Request, mtype: str):
+    form = await BmapForm.from_formdata(request)
+    print("bmap/do_bmap:", form.mobject.data, type(form.mobject.data))
+    if form.errors:
+        print("errors:", form.errors)
+
+    if form.validate_on_submit():
+        # TODO call magnettools.jupyter  
+        cmds = { "mesh":"tut", "sim": "titi"}
+        return templates.TemplateResponse('bmap_run.html', {
+            "request": request,
+            "form": form,
+            "mtype": mtype,
+            "cmds": cmds
+        })
+        # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
+    else:
+        return templates.TemplateResponse('bmap_setup', {
             "request": request,
             "form": form,
             "mtype": mtype

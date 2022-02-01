@@ -172,40 +172,13 @@ def get_magnet_data(session: Session, magnet_name: str ):
             # for h in objects:
             #    print(session.get(MPart, h.id).dict())
 
-    mdata = magnet.dict()
-    for key in ['be', 'name', 'status', 'id']:
-        mdata.pop(key, None)
-    for mtype in MType: #["Helix", "Ring", "Lead", "Bitter", "Supra"]:
-        if mtype == MType.Helix:
-            # TODO: check Helix type before getting insulator name and data
-            results = query_material(session, name="MAT_ISOLANT")
-            for material in results:
-                insulator_data = material.dict()
-                print("insulator_data:", insulator_data)
-                # remove uneeded stuff
-                for key in ['furnisher', 'ref', 'name', 'id']:
-                    insulator_data.pop(key, None)
-
-        objects = get_mparts_mtype(session=session, magnet_id=magnet.id, mtype=mtype)
-        for h in objects:
-            # get material from material_id
-            material = session.get(Material, h.material_id)
-            material_data = material.dict()
-            # remove uneeded stuff
-            for key in ['furnisher', 'ref', 'name', 'id']:
-                material_data.pop(key, None)
-            
-            if not mtype in mdata:
-                mdata[mtype]=[]
-
-            mdata[mtype].append({"geom": h.geom, "material": material_data, "insulator": insulator_data})
-
-    return mdata
+    return magnet_data(session, magnet)
 
 def get_msite_data(session: Session, name: str ):
     """
     Generate data for MSite
     """
+    print("get_msite_data:", name)
     results = query_msite(session, name)
     if not results:
         print("cannot find msite %s" % name)
@@ -213,7 +186,10 @@ def get_msite_data(session: Session, name: str ):
     else:
         for msite in results:
             print("msite:", msite)
+    
+    return msite_data(session, msite)
 
+def msite_data(session: Session, msite: MSite):
     mdata = msite.dict()
 
     # hack to export magnets to dict
@@ -238,4 +214,54 @@ def get_msite_data(session: Session, name: str ):
 
     return mdata
 
+def get_magnetid_data(session: Session, id: int ):
+    """
+    Get magnet data  
+    """
+    magnet = session.get(Magnet, id)
+    if not magnet:
+        print(f"cannot find magnet id=={id}")
+        exit(1)
+    return magnet_data(session, magnet)
 
+def magnet_data(session: Session, magnet: Magnet):
+    mdata = magnet.dict()
+    for key in ['be', 'name', 'status', 'id']:
+        mdata.pop(key, None)
+    for mtype in MType: #["Helix", "Ring", "Lead", "Bitter", "Supra"]:
+        if mtype == MType.Helix:
+            # TODO: check Helix type before getting insulator name and data
+            results = query_material(session, name="MAT_ISOLANT")
+            for material in results:
+                insulator_data = material.dict()
+                # print("insulator_data:", insulator_data)
+                # remove uneeded stuff
+                for key in ['furnisher', 'ref', 'name', 'id']:
+                    insulator_data.pop(key, None)
+
+        objects = get_mparts_mtype(session=session, magnet_id=magnet.id, mtype=mtype)
+        for h in objects:
+            # get material from material_id
+            material = session.get(Material, h.material_id)
+            material_data = material.dict()
+            # remove uneeded stuff
+            for key in ['furnisher', 'ref', 'name', 'id']:
+                material_data.pop(key, None)
+            
+            if not mtype in mdata:
+                mdata[mtype]=[]
+
+            mdata[mtype].append({"geom": h.geom, "material": material_data, "insulator": insulator_data})
+
+    return mdata
+
+def get_msiteid_data(session: Session, id: int ):
+    """
+    Generate data for MSite
+    """
+    msite = session.get(MSite, id)
+    if not msite:
+        print(f"cannot get msite id=={id}")
+        exit(1)
+    
+    return msite_data(session, msite)

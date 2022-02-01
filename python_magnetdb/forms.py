@@ -3,7 +3,7 @@ from typing import List, Optional
 
 # from flask_wtf import FlaskForm
 from starlette_wtf import StarletteForm
-from wtforms import StringField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField
+from wtforms import StringField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField, ValidationError
 from wtforms.validators import DataRequired, Length
 
 
@@ -102,6 +102,7 @@ class GeomForm(StarletteForm):
 method_choices = [ ('cfpdes','cfpdes'), ('CG','CG'), ('HDG','HDG'), ('CRB','CRB') ]
 model_choices = [('thelec','thelec'), ('mag','mag'), ('thmag','thmag'), ('thmagel', 'thmagel')]
 geom_choices = [ ('Axi','Axi'), ('3D','3D')]
+cooling_choices = [ ('mean','mean'), ('grad','grad'), ('meanH','meanH'), ('gradH','gradH')]
 
 class SimulationForm(StarletteForm):
     """
@@ -111,12 +112,13 @@ class SimulationForm(StarletteForm):
     method = SelectField('Method', choices=method_choices)
     model = SelectField('Model', choices=model_choices) # shall depend on method choice
     geom = SelectField('Geom', choices=geom_choices)
+    cooling = SelectField('Geom', choices=cooling_choices)
     static = BooleanField('Static') # bool
     linear = BooleanField('Linear') # bool
 
     # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
 
-    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+    mobject = SelectField('Name')    
 
 class AnalyticForm(StarletteForm):
     """
@@ -127,3 +129,12 @@ class AnalyticForm(StarletteForm):
 
     mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
 
+class BmapForm(StarletteForm):
+    """
+    Bmap SetUp configuration
+    """
+    print("BmapForm")
+    
+    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+    
+>>>>>>> c96c3cf7ddae4b22c1ce1684bbe350239f3805b7

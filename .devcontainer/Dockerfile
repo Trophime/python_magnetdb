@@ -34,7 +34,7 @@ RUN apt-get update \
     #\
     # Install C++ tools\
     && apt-get -y install build-essential python3-minimal libpython3.8 \
-    && apt-get -y install python3-pip python-is-python3 \
+    && apt-get -y install python3-pip python-is-python3 python3-jinja2 \
     && apt-get -y install python3-nptdms python3-freesteam python3-nlopt python3-tabulate \
     && apt-get -y install python3-statsmodels \
     && apt-get -y install python3-matplotlib texlive-latex-base texlive-latex-extra dvipng \
@@ -43,14 +43,13 @@ RUN apt-get update \
     && apt-get -y install python3-ht python3-pyclaw \
     && apt-get -y install python3-pint \
     && apt-get -y install python3-requests python3-chevron \
-    && apt-get -y install python3-python-magnetsetup python3-python-magnetgeo python3-gmsh \
+    && apt-get -y install python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
+    && apt-get -y install curl sqlitebrowser \
     #\
     # Install web stuff for database+api+website \
     && python -m pip install sqlmodel \
     && python -m pip install fastapi "uvicorn[standard]" \
-    && python -m pip install fastapi-pagination starlette_wtf \
-    && python -m pip install bokeh \
-    && apt-get -y install curl sqlitebrowser \
+    && python -m pip install starlette_wtf asyncio \
     && export PATH=$PATH:$HOME/.local/bin \
     #\
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.\

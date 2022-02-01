@@ -14,14 +14,15 @@
         <li>Run the following commands</li>
     </p>
     
-    <form method="POST" action="{{ url_for('do_setup') }}">
-        {% for field in cmds %}
-        <fieldset class="form-field">
-            <b>{{ field }}:</b>
-            <input type="text" value={{ cmds[field] }} readonly="readonly" id="myInput">
-            <button onclick="myCopy()">Copy text</button>
-        </fieldset>
+    <table>
+        {% for key,value in cmds.items() %}
+        <tr>
+            <th>{{ key }} </th>
+            <td><input type="text" value="{{ value|safe }}"  required size="120" readonly="readonly" id="myInput">
+            <button onclick="myCopy()">Copy text</button></td>
+        </tr>
         {% endfor %}
-    </form>
+    </table>
+
   </div>
 {% endblock %}
