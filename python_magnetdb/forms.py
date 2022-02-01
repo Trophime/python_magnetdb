@@ -137,4 +137,3 @@ class BmapForm(StarletteForm):
     
     mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
     
->>>>>>> c96c3cf7ddae4b22c1ce1684bbe350239f3805b7
