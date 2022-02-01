@@ -73,3 +73,7 @@ flask/*
 
 data
 core
+
+*log
+*orig
+
