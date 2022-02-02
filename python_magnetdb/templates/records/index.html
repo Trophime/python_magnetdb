@@ -5,18 +5,11 @@
 <p>
 <ul id="magnet_props">
   <table>
-    <!-- 
-    <tr>
-      <th></th>
-      <td><b>Type</b></td>
-      <td><b>Status</b></td>
-    </tr>
-    -->
-    {% for item in magnets %}
+    {% for item in mrecords %}
     <tr>
       <th><a href="records/{{ item.id }}">{{ item.name }}</a></th>
       {% for key, value in descriptions[item.id].items() %}
-      <td>{{value}}</td>
+        <td>{{value|safe}}</td>
       {% endfor %}
     </tr>
     {% endfor %}

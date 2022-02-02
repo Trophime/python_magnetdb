@@ -11,6 +11,16 @@
           <td>{{ value }}</td>
         </tr>
       {% endfor %}
+      {% for key, value in desc.items() %}
+      <tr>
+        <th>{{ key }}</th>
+        {% if key == 'Site' %}
+        <td><a href="/sites/{{ mrecord.msite_id }}">{{ value }}</a></td>
+        {% else %}
+        <td>{{ value }}</td>
+        {% endif %}
+      </tr>      
+      {% endfor %}
     </table>
   </ul>
   </p>
