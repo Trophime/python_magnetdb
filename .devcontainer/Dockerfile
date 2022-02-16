@@ -50,6 +50,7 @@ RUN apt-get update \
     && python -m pip install sqlmodel \
     && python -m pip install fastapi "uvicorn[standard]" \
     && python -m pip install starlette_wtf asyncio \
+    && python -m pip install panel hvplot param holoviews \
     && export PATH=$PATH:$HOME/.local/bin \
     #\
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.\

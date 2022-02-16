@@ -44,3 +44,4 @@ def show(request: Request, id: int):
         msite = session.get(MSite, mrecord.msite_id)
         desc = { "Housing": mrecord.name.split('_')[0], "Site" : msite.name} 
         return templates.TemplateResponse('records/show.html', {"request": request, "mrecord": data, "desc": desc})
+
