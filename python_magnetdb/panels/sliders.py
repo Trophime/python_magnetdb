@@ -2,7 +2,7 @@ import numpy as np
 import panel as pn
 import param
 from bokeh.models import ColumnDataSource
-from bokeh.plotting import figure
+from bokeh.plotting import figure, curdoc
 
 
 class SineWave(pn.viewable.Viewer):
@@ -52,6 +52,12 @@ class SineWave(pn.viewable.Viewer):
     def __panel__(self):
         return pn.Row(self.param, self.plot, sizing_mode="stretch_height")
 
+args = pn.state.session_args
+print("__name__", __name__)
+print("pn args=", args)
+if curdoc().session_context:
+    args = curdoc().session_context.request.arguments
+    print("curdoc args=", args)
 
 if __name__ == "__main__":
     app = SineWave()

@@ -312,14 +312,14 @@ if __name__ == "__main__":
             # filelist = [str(x) for x in p.iterdir() if x.is_file()]
             from os import walk
             filenames = next(walk(MyEnv.mrecord_repo), (None, None, []))[2]  # [] if no file
-            print("mrecords list:", filenames)
+            # print("mrecords list:", filenames)
             for item in filenames:
                 data = item.split('_')
                 tformat="%Y.%m.%d---%H:%M:%S"
                 rtimestamp = datetime.strptime(data[1].replace('.txt',''), tformat)
                 msite_name = M19061901.name
                 msite_id = M19061901.id
-                print("item:", item, "housing:", data[0], "timestamp:", rtimestamp, "msite:", msite_name, msite_id) 
+                # print("item:", item, "housing:", data[0], "timestamp:", rtimestamp, "msite:", msite_name, msite_id) 
                 create_mrecord(session=session, rname=item, msite_id=msite_id, rtimestamp=rtimestamp)
             
     if args.displaymagnet:

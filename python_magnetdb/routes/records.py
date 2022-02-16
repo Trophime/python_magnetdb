@@ -17,24 +17,24 @@ def root(request: Request):
 
 @router.get("/records", response_class=HTMLResponse)
 def index(request: Request):
-    print("mrecord index")
+    # print("mrecord index")
     with Session(engine) as session:
         statement = select(MRecord)
         mrecords = session.exec(statement).all()
         desc = {}
 
         for record in mrecords:
-            print("record:", record)
+            # print("record:", record)
             data = record.name.split('_')
             msite = session.get(MSite, record.msite_id)
-            print("msite:", msite)
+            # print("msite:", msite)
             rtimestamp = record.rtimestamp.strftime("%d/%m/%Y, %H:%M:%S")
             desc[record.id] = { "Housing": data[0], "Site" : msite.name, "date" : rtimestamp} 
     return templates.TemplateResponse('records/index.html', {"request": request, "mrecords": mrecords, "descriptions": desc})
 
 
 @router.get("/records/{id}", response_class=HTMLResponse)
-def show(request: Request, id: int):
+def show(request: Request, id: int=0):
     with Session(engine) as session:
         mrecord = session.get(MRecord, id)
         data = mrecord.dict()
@@ -43,5 +43,5 @@ def show(request: Request, id: int):
 
         msite = session.get(MSite, mrecord.msite_id)
         desc = { "Housing": mrecord.name.split('_')[0], "Site" : msite.name} 
-        return templates.TemplateResponse('records/show.html', {"request": request, "mrecord": data, "desc": desc})
+        return templates.TemplateResponse('records/show.html', {"request": request, "mrecord": data, "mrecord_id": id, "desc": desc})
 

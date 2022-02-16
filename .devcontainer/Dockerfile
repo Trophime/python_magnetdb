@@ -43,7 +43,7 @@ RUN apt-get update \
     && apt-get -y install python3-ht python3-pyclaw \
     && apt-get -y install python3-pint \
     && apt-get -y install python3-requests python3-chevron \
-    && apt-get -y install python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
+    && apt-get -y install python3-magnetrun python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
     && apt-get -y install curl sqlitebrowser \
     #\
     # Install web stuff for database+api+website \

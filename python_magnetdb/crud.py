@@ -165,27 +165,27 @@ def get_magnet_data(session: Session, magnet_name: str ):
     if not results:
         print("cannot find magnet %s" % magnet_name)
         exit(1)
-    else:
+    """ else:
         for magnet in results:
             print("magnet:", magnet)
             # objects = get_mparts(session=session, magnet_id=magnet.id)
             # for h in objects:
             #    print(session.get(MPart, h.id).dict())
-
+ """
     return magnet_data(session, magnet)
 
 def get_msite_data(session: Session, name: str ):
     """
     Generate data for MSite
     """
-    print("get_msite_data:", name)
+    #print("get_msite_data:", name)
     results = query_msite(session, name)
     if not results:
         print("cannot find msite %s" % name)
         exit(1)
-    else:
+    """ else:
         for msite in results:
-            print("msite:", msite)
+            print("msite:", msite) """
     
     return msite_data(session, msite)
 
