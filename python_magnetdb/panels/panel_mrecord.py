@@ -15,9 +15,13 @@ from bokeh.plotting import figure, curdoc
 
 from python_magnetrun.python_magnetrun import MagnetRun
 
-# data = pd.read_csv('./datatest.txt')
+args = pn.state.session_args
+print("__name__", __name__)
+print("args=", args)
+
 def load(site: str, filename: str):
     """
+    Load dataset
     """
     
     mrun = MagnetRun.fromtxt(site, filename)
@@ -77,9 +81,6 @@ class MRecordPanel(pn.viewable.Viewer):
     def __panel__(self):
         return pn.Row(pn.Column(f"## {self.single_file}", self.param), self.plot, sizing_mode="stretch_height")
 
-args = pn.state.session_args
-print("__name__", __name__)
-print("args=", args)
 if __name__ == "__main__":
     print("call main")
     app = MRecordPanel()

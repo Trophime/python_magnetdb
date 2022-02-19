@@ -1,3 +1,4 @@
+from distutils.debug import DEBUG
 from typing import List, Optional
 
 import os
@@ -18,16 +19,22 @@ from bokeh.util.token import generate_session_id
 from ..panels import titles, serving
 router = APIRouter()
    
+# cannot add an extra id argument for unknown reason   (see also show.html in templates/mrecords)  
 @router.get("/{model}/", response_class=HTMLResponse, name='run_panel')
-def panel(request: Request, model: str):
+def panel(request: Request, model: str, id: Optional[int]=None):
     if model not in titles:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    arguments = {"ID": id}
+    bokeh_session_id = generate_session_id(SECRET_KEY, signed=True)
     url = f"http://0.0.0.0:5006/panel/{model}"
-    # script = server_document(url=url, arguments=arguments)
-
-    script = server_session(session_id=generate_session_id(SECRET_KEY, signed=True), url=url)
+    
+    # if id: 
+    #     print("optional id:", id)
+    #     arguments = {"ID": id}
+    #     with pull_session(session_id=bokeh_session_id, url=url) as session:
+    #         script = server_document(url=url, arguments=arguments)
+    # else:
+    script = server_session(session_id=bokeh_session_id, url=url)
     
     return templates.TemplateResponse('records/panel.html', {
         "request": request,
@@ -46,4 +53,5 @@ pn.serve(
     secret_key=SECRET_KEY,
     generate_session_ids=False,
     num_process=1 if os.name == "nt" else 2,
+    log_level=DEBUG,
 )

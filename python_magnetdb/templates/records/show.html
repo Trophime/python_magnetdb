@@ -1,7 +1,11 @@
 {% extends "layout/default.html" %}
 
 {% block content %}
-  <h1>MRecord Definition: {{ mrecord['name'] }}.</h1>
+  {% if mrecord_id %}
+  <h1>MRecord Definition: {{ mrecord['name'] }} id={{mrecord_id}}</h1>
+  {% else %}
+  <h1>MRecord Definition: {{ mrecord['name'] }}</h1>
+  {% endif %}
   <p>
   <ul id="magnet_props">
     <table>
@@ -24,7 +28,7 @@
     </table>
   </ul>
   </p>
-  <button type="button" onclick="window.location.href='{{ url_for('run_panel', model='mrecordpanel') }}';">
+  <button type="button" onclick="window.location.href='{{ url_for('run_panel', model='mrecordpanel') }}?id={{mrecord_id}}'">
     View DataSet
   </button>
   

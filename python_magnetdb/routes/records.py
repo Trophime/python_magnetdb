@@ -39,9 +39,10 @@ def show(request: Request, id: int=0):
         mrecord = session.get(MRecord, id)
         data = mrecord.dict()
         data.pop('id', None)
-        data.pop('msite_id', None)
+        # data.pop('msite_id', None)
 
         msite = session.get(MSite, mrecord.msite_id)
         desc = { "Housing": mrecord.name.split('_')[0], "Site" : msite.name} 
         return templates.TemplateResponse('records/show.html', {"request": request, "mrecord": data, "mrecord_id": id, "desc": desc})
+        # return templates.TemplateResponse('records/show.html', {"request": request, "mrecord": data, "desc": desc})
 
