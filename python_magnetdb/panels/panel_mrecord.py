@@ -35,15 +35,25 @@ def load(site: str, filename: str):
     return data
 
 class MRecordPanel(pn.viewable.Viewer):
-    single_file = '/data/mrecords/M9_2019.09.12---22:20:28.txt'
+    sname = "None"
+    fname = "M9_2019.09.12---22:20:28.txt"    
+    single_file = '/data/mrecords/' + fname
     site = single_file.split('_')[0]
     data = load(site, single_file)
     
-    xvariable  = param.Selector(objects=list(data.columns))
-    yvariable  = param.Selector(objects=list(data.columns))
+    xvariable  = param.Selector(objects=list(data.columns), default='t')
+    yvariable  = param.Selector(objects=list(data.columns), default='Field')
     
     def __init__(self, **params):
         super().__init__(**params)
+        print("params:", params)
+        print("pn.state.session_args:", pn.state.session_args)
+        self.fname = pn.state.session_args['name'][0].decode("utf-8")
+        self.sname = pn.state.session_args['site_name'][0].decode("utf-8")
+        self.single_file = '/data/mrecords/' + self.fname
+        self.site = self.single_file.split('_')[0].replace('/data/mrecords/','')
+        self.data = load(self.site, self.single_file)
+        
         x, y = self.sine()
         self.cds = ColumnDataSource(data=dict(x=x, y=y))
         self.plot = figure(
@@ -53,8 +63,8 @@ class MRecordPanel(pn.viewable.Viewer):
             sizing_mode="stretch_both",
         )
         
-        self.plot.xaxis.axis_label = 'X'
-        self.plot.yaxis.axis_label = 'Y'
+        self.plot.xaxis.axis_label = 'X' # use symbol + units
+        self.plot.yaxis.axis_label = 'Y' # use symbol + units
         
         hover = HoverTool()
         # hover.mode = 'vline'
@@ -79,7 +89,8 @@ class MRecordPanel(pn.viewable.Viewer):
         return x, y
 
     def __panel__(self):
-        return pn.Row(pn.Column(f"## {self.single_file} {pn.state.session_args['id']}", self.param), self.plot, sizing_mode="stretch_height")
+        datefield = self.single_file.split('_')[1].replace('.txt','')
+        return pn.Row(pn.Column(f"## {self.site} site:{self.sname} date:{datefield}", self.param), self.plot, sizing_mode="stretch_height")
 
 if __name__ == "__main__":
     print("call main")
