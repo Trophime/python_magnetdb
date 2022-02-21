@@ -12,6 +12,9 @@ import yaml
 
 from python_magnetgeo import Insert, MSite, Bitter, Supra
 
+from python_magnetsetup.config import appenv
+from python_magnetsetup.file_utils import MyOpen, search_paths
+
 router = APIRouter()
 
 @router.get("/geoms.html", response_class=HTMLResponse)
@@ -31,7 +34,7 @@ def index(request: Request):
         })
 
 
-@router.get("/geoms/{gname}", response_class=HTMLResponse)
+@router.get("/geoms/{gname}", response_class=HTMLResponse, name='geom')
 def show(request: Request, gname: str):
     print("geom/show:", gname)
     # TODO where to get name filename
@@ -39,9 +42,13 @@ def show(request: Request, gname: str):
     import os
     print("geom/show:", os.getcwd())
 
+    MyEnv = appenv()
+    
     import json
     # from python_magnetgeo import Helix
-    geom = yaml.load(open("data/" + gname + ".yaml", 'r'), Loader = yaml.FullLoader)
+    geom = gname + ".yaml"
+    with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
+        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
     print("geom:", geom)
     data = json.loads(geom.to_json())
     print("data:", data, type(data))
@@ -61,7 +68,13 @@ def show(request: Request, gname: str):
 async def edit(request: Request, gname: str):
     print("geom/edit:", gname)
     # TODO load geom from filename==name
-    geom = yaml.load(open("data/" + gname + ".yaml", 'r'))
+    MyEnv = appenv()
+    
+    import json
+    # from python_magnetgeo import Helix
+    geom = gname + ".yaml"
+    with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
+        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
     form = GeomForm(obj=geom, request=request)
     return templates.TemplateResponse('geoms/edit.html', {
         "id": id,
@@ -74,7 +87,7 @@ async def update(request: Request, gname: str):
     print("geom/update:", gname)
     form = await GeomForm.from_formdata(request)
     if form.validate_on_submit():
-        return RedirectResponse(router.url_path_for('geom', id=id), status_code=303)
+        return RedirectResponse(router.url_path_for('geom', gname=gname), status_code=303)
     else:
         return templates.TemplateResponse('geom/edit.html', {
             "id": id,

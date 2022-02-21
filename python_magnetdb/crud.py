@@ -156,29 +156,30 @@ def get_magnet_type(session: Session, magnet_id: int ):
     if len(objects):
         return ("Supra", objects)
 
-def get_magnet_data(session: Session, magnet_name: str ):
+def get_magnet_data(session: Session, name: str ):
     """
     Get magnet data  
     """
+    print("get_magnet_data:", name)
     magnet = None
-    results = query_magnet(session, magnet_name)
+    results = query_magnet(session, name)
     if not results:
-        print("cannot find magnet %s" % magnet_name)
+        print("cannot find magnet %s" % name)
         exit(1)
-    """ else:
+    else:
         for magnet in results:
             print("magnet:", magnet)
             # objects = get_mparts(session=session, magnet_id=magnet.id)
             # for h in objects:
             #    print(session.get(MPart, h.id).dict())
- """
+
     return magnet_data(session, magnet)
 
 def get_msite_data(session: Session, name: str ):
     """
     Generate data for MSite
     """
-    #print("get_msite_data:", name)
+    print("get_msite_data:", name)
     results = query_msite(session, name)
     if not results:
         print("cannot find msite %s" % name)

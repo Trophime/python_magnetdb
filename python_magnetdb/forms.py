@@ -98,6 +98,15 @@ class GeomForm(StarletteForm):
     """
 
     name =  StringField('Name', validators=[DataRequired()])
+    # TODO complete form
+
+class ModelJsonForm(StarletteForm):
+    """
+    Json model file configuration
+    """
+
+    name =  StringField('Name', validators=[DataRequired()])
+    # TODO complete form
 
 method_choices = [ ('cfpdes','cfpdes'), ('CG','CG'), ('HDG','HDG'), ('CRB','CRB') ]
 model_choices = [('thelec','thelec'), ('mag','mag'), ('thmag','thmag'), ('thmagel', 'thmagel')]
@@ -112,7 +121,7 @@ class SimulationForm(StarletteForm):
     method = SelectField('Method', choices=method_choices)
     model = SelectField('Model', choices=model_choices) # shall depend on method choice
     geom = SelectField('Geom', choices=geom_choices)
-    cooling = SelectField('Geom', choices=cooling_choices)
+    cooling = SelectField('Cooling', choices=cooling_choices)
     static = BooleanField('Static') # bool
     linear = BooleanField('Linear') # bool
 
@@ -127,7 +136,7 @@ class AnalyticForm(StarletteForm):
     print("AnalyticForm")
     # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
 
-    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    # TODO complete form
 
 class BmapForm(StarletteForm):
     """

@@ -1,0 +1,76 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <h1>Model Json file Definition: {{geom['name']}}.</h1>
+  <p>
+    <ul id="material_props">
+      <table>
+        {% for key, value in geom.items() %}
+        {% if key != "name" %}
+        {% if key == "axi" %}
+        <tr>
+            <th>{{ key }}</th>
+            <td><table>
+                {% for skey, svalue in geom['axi'].items() %}
+                  <tr>
+                    <th>{{ skey }}</th>
+                    <td>{{ svalue }}</td>
+                  </tr>
+                {% endfor %}
+            </table></td>
+        </tr>
+        {% elif key == "shape" %}
+        <tr>
+            <th>{{ key }}</th>
+            <td><table>
+                {% for skey, svalue in geom['shape'].items() %}
+                  <tr>
+                    <th>{{ skey }}</th>
+                    <td>{{ svalue }}</td>
+                  </tr>
+                {% endfor %}
+            </table></td>
+        </tr>
+        {% elif key == "m3d" %}
+        <tr>
+          <th>{{ key }}</th>
+          <td><table>
+            {% for skey, svalue in geom['m3d'].items() %}
+              <tr>
+                <th>{{ skey }}</th>
+                <td>{{ svalue }}</td>
+              </tr>
+              {% endfor %}
+          </table></td>
+        </tr>
+        {% elif key == "cutwidth" %}
+        <tr>
+          <th>{{ key }} [mm] </th>
+          <td>{{ value }}</td>
+        </tr>
+        {% elif key == "r" %}
+        <tr>
+          <th>{{ key }} [mm] </th>
+          <td>{{ value }}</td>
+        </tr>
+        {% elif key == "z" %}
+        <tr>
+          <th>{{ key }} [mm] </th>
+          <td>{{ value }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <th>{{ key }} </th>
+          <td>{{ value }}</td>
+        </tr>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+      </table>
+    </ul>
+    
+  <button type="button" onclick="window.location.href='{{ url_for('edit_model_json', gname=gname) }}';">
+    Update
+  </button>
+  </p>
+{% endblock %}

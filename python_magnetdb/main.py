@@ -15,6 +15,8 @@ from .routes.sites import router as sites_router
 from .routes.geom import router as geoms_router
 from .routes.panels import router as panels_router
 from .routes.simulations import router as simulations_router
+from .routes.cfgs import router as cfgs_router
+from .routes.model_jsons import router as jsons_router
 
 app = FastAPI()
 
@@ -29,6 +31,8 @@ app.include_router(records_router)
 app.include_router(geoms_router)
 app.include_router(simulations_router)
 app.include_router(panels_router)
+app.include_router(cfgs_router)
+app.include_router(jsons_router)
 
 app.include_router(api_materials_router)
 app.include_router(api_parts_router)

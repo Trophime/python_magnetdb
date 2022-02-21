@@ -1,0 +1,17 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <h1>List of Geometries</h1>
+  <p>
+  <ul id="magnet_props">
+    <table>
+      {% for item in geometries %}
+      <tr>
+        <th>{{ item.name }}</th>
+       <td>{{value}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </ul>
+  </p>
+{% endblock %}

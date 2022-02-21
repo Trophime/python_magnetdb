@@ -109,12 +109,17 @@ async def dosetup(request: Request, mtype: str):
 
         from python_magnetsetup.setup import setup
         print("shall enter magnetsetup:", jsonfile)
-        (cfgfile, jsonfile, cmds) = setup(MyEnv, args, confdata, jsonfile)  
+        with Session(engine) as session:
+            (cfgfile, jsonfile, cmds) = setup(MyEnv, args, confdata, jsonfile, session)  
         print("magnetsetup cmds:", cmds)
+        print("cfgfile:", cfgfile)
+        print("jsonfile:", jsonfile)
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,
             "mtype": mtype,
+            "cfgfile": cfgfile,
+            "jsonfile": jsonfile,
             "cmds": cmds
         })
         # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)

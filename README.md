@@ -66,3 +66,19 @@ export PATH=$PATH:$HOME/.local/bin
 ## References
 
 (sqlmodel)[https://sqlmodel.tiangolo.com/tutorial]
+
+## TODO
+
+* add bokeh panel for Bmap
+* in bokeh panel how to create a button with a href to localhost
+* mrecords: add statistics, fits, smoothers, outliers...
+
+* In simulations:
+** get msite working
+** edit cfg/json files
+** download cfg/json files
+
+* In parts/magnets/sites:
+** add view of CAD
+** try to generate CAD (or at least cmds to generate CADS)
+** same for meshes
