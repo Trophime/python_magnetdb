@@ -28,13 +28,14 @@ def panel(request: Request, model: str, id: Optional[int]=None):
     bokeh_session_id = generate_session_id(SECRET_KEY, signed=True)
     url = f"http://0.0.0.0:5006/panel/{model}"
     
-    # if id: 
-    #     print("optional id:", id)
-    #     arguments = {"ID": id}
-    #     with pull_session(session_id=bokeh_session_id, url=url) as session:
-    #         script = server_document(url=url, arguments=arguments)
-    # else:
-    script = server_session(session_id=bokeh_session_id, url=url)
+    if id: 
+        print("optional id:", id)
+        print("request.query_params._dict=", request.query_params._dict)
+        arguments = {"ID": id}
+        headers = {"Bokeh-Session-Id": generate_session_id(SECRET_KEY, signed=True)}
+        script = server_document(url=url, arguments=request.query_params._dict, headers=headers)
+    else:
+        script = server_session(session_id=bokeh_session_id, url=url)
     
     return templates.TemplateResponse('records/panel.html', {
         "request": request,

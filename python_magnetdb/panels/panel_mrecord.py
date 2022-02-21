@@ -79,7 +79,7 @@ class MRecordPanel(pn.viewable.Viewer):
         return x, y
 
     def __panel__(self):
-        return pn.Row(pn.Column(f"## {self.single_file}", self.param), self.plot, sizing_mode="stretch_height")
+        return pn.Row(pn.Column(f"## {self.single_file} {pn.state.session_args['id']}", self.param), self.plot, sizing_mode="stretch_height")
 
 if __name__ == "__main__":
     print("call main")
