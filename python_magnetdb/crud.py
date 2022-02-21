@@ -183,9 +183,9 @@ def get_msite_data(session: Session, name: str ):
     if not results:
         print("cannot find msite %s" % name)
         exit(1)
-    """ else:
+    else:
         for msite in results:
-            print("msite:", msite) """
+            print("msite:", msite)
     
     return msite_data(session, msite)
 
