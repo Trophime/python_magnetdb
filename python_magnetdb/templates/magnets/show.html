@@ -22,8 +22,11 @@
       {% endfor %}
     </table>
   </ul>
-  <button type="button" onclick="window.location.href='{{ url_for('edit_magnet', id=magnet_id) }}';">
+  <button type="button" onclick="window.location.href='{{ url_for('edit_magnet', id=magnet_id) }}'">
     Update
+  </button>
+  <button type="button" onclick="window.location.href='{{ url_for('run_panel', model='bmappanel') }}?name={{magnet['name']}}&mtype=magnet&id={{magnet_id}}'"> 
+    View Bmap
   </button>
   </p>
 {% endblock %}

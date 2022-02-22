@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, List, Optional
+
 from fastapi import Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.routing import APIRouter
@@ -13,6 +15,8 @@ from ..choices import objchoices
 from ..crud import create_simulation
 from ..crud import get_magnetid_data, get_msiteid_data 
 
+from python_magnetsetup.config import appenv
+    
 router = APIRouter()
 
 
@@ -131,7 +135,7 @@ async def dosetup(request: Request, mtype: str):
         })
         
 @router.get("/bmap_setup/{mtype}", response_class=HTMLResponse, name='bmapsetup')
-async def edit(request: Request, mtype: str):
+async def edit(request: Request, mtype: str, id: Optional[int]=None):
     print("simulations/bmap: mtype=", mtype)
     """
     with Session(engine) as session:
@@ -150,21 +154,40 @@ async def edit(request: Request, mtype: str):
 
 @router.post("/bmap_setup/{mtype}", response_class=HTMLResponse, name='do_bmap')
 async def dobmap(request: Request, mtype: str):
+    
     form = await BmapForm.from_formdata(request)
     print("bmap/do_bmap:", form.mobject.data, type(form.mobject.data))
     if form.errors:
         print("errors:", form.errors)
 
     if form.validate_on_submit():
-        # TODO call magnettools.jupyter  
-        cmds = { "mesh":"tut", "sim": "titi"}
-        return templates.TemplateResponse('bmap_run.html', {
-            "request": request,
-            "form": form,
-            "mtype": mtype,
-            "cmds": cmds
-        })
-        # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
+        id = form.mobject.data
+        if mtype == 'Magnet':
+            print("Magnet id=", id)
+            with Session(engine) as session:
+                magnet = session.get(Magnet, id)
+                jsonfile = magnet.name
+                confdata = get_magnetid_data(session, id)
+        else:
+            print("Site id=", id)
+            with Session(engine) as session:
+                msite = session.get(MSite, id)
+                jsonfile = msite.name
+                mtype = "site"
+                confdata = get_msiteid_data(session, id)
+
+        MyEnv = appenv()
+        from python_magnetsetup.ana import setup
+        from argparse import Namespace
+        args = Namespace(wd="", magnet="",msite="",debug=True,verbose=False)
+        with Session(engine) as session:
+            Mdata = setup(MyEnv, args, confdata, jsonfile, session)
+        print(f"{jsonfile} data loaded", Mdata)
+
+        # TODO call panel_bmap
+        from .panels import panel
+        print(f"call panels(bmappannel, name={jsonfile} mtype={mtype.lower()}, id={id})")
+        return panel(request, 'bmappanel', name=jsonfile, mtype=mtype.lower(), id=id) #, mdata=Mdata)
     else:
         return templates.TemplateResponse('bmap_setup', {
             "request": request,

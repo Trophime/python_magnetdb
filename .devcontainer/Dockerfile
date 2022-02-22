@@ -37,7 +37,8 @@ RUN apt-get update \
     && apt-get -y install python3-pip python-is-python3 python3-jinja2 \
     && apt-get -y install python3-nptdms python3-freesteam python3-nlopt python3-tabulate \
     && apt-get -y install python3-statsmodels \
-    && apt-get -y install python3-matplotlib texlive-latex-base texlive-latex-extra dvipng \
+    && apt-get -y install python3-matplotlib python3-mplcursors \
+    && apt-get -y install texlive-latex-base texlive-latex-extra dvipng \
     && apt-get -y install python3-pandas python3-seaborn \
     && apt-get -y install python3-numpy python3-scipy \
     && apt-get -y install python3-ht python3-pyclaw \

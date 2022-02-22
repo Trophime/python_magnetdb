@@ -28,7 +28,7 @@
     </table>
   </ul>
   </p>
-  <button type="button" onclick="window.location.href='{{ url_for('run_panel', model='mrecordpanel') }}?name={{mrecord['name']}}&site_id={{ mrecord.msite_id }}'">
+  <button type="button" onclick="window.location.href='{{ url_for('run_panel', model='mrecordpanel') }}?name={{mrecord['name']}}&mtype=site&id={{ mrecord.msite_id }}'">
     View DataSet
   </button>
   

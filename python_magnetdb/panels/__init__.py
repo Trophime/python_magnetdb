@@ -1,13 +1,11 @@
-from .button_click import ButtonClick
-from .sliders import SineWave
 from .panel_mrecord import MRecordPanel
+from .panel_bmap import BMapPanel
 
 # Fill out with new models
 _models = [
     #  [url, title, model]
-    ["buttonclick", "Button Click", ButtonClick],
-    ["sinewave", "Sine Wave", SineWave],
-    ["mrecordpanel", "MRecord Panel", MRecordPanel]
+    ["mrecordpanel", "MRecord Panel", MRecordPanel],
+    ["bmappanel", "Bmap Panel", BMapPanel]
 ]
 
 titles = {m[0]: m[1] for m in _models}

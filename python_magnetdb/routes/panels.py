@@ -23,27 +23,69 @@ router = APIRouter()
    
 # cannot add an extra id argument for unknown reason   (see also show.html in templates/mrecords)  
 @router.get("/{model}/", response_class=HTMLResponse, name='run_panel')
-def panel(request: Request, model: str, name: Optional[str]=None, site_id: Optional[int]=None):
+def panel(request: Request, model: str, name: Optional[str]=None, mtype: Optional[str]=None, id: Optional[int]=None, mdata: Optional[tuple]=None ):
+    print("panels:", request.query_params)
     if model not in titles:
         raise HTTPException(status_code=404, detail="Item not found")
 
     bokeh_session_id = generate_session_id(SECRET_KEY, signed=True)
     url = f"http://0.0.0.0:5006/panel/{model}"
     
-    if request.query_params: 
+    if not bool(request.query_params):
+        if name and mtype and id: 
+            if id :
+                print('id:', id)
+                with Session(engine) as session:
+                    if mtype == 'magnet':
+                        magnet = session.get(Magnet, id)
+                        objs = get_magnetid_data(session, id)
+                        request.query_params._dict['id'] = id
+                        request.query_params._dict['name'] = magnet.name
+                    elif mtype == 'site':
+                        msite = session.get(Magnet, id)
+                        objs = get_msiteid_data(session, id)
+                        request.query_params._dict['id'] = id
+                        request.query_params._dict['site_name'] = msite.name
+                    else:
+                        raise HTTPException(status_code=404, detail=f"/{model}/: unsupported mtype {mtype}")
+            if mdata :
+                print('mdata:', mdata)
+                request.query_params._dict['mdata'] = mdata
+            if mtype :
+                request.query_params._dict['mtype'] = mtype
+            if name :
+                request.query_params._dict['name'] = name
+    
+            print(f"{model}: request.query_params._dict=", request.query_params._dict)
+            headers = {"Bokeh-Session-Id": generate_session_id(SECRET_KEY, signed=True)}
+            script = server_document(url=url, arguments=request.query_params._dict, headers=headers)
+    
+        else:
+            script = server_session(session_id=bokeh_session_id, url=url)
+    else:
         arguments = request.query_params
-        if 'site_id' in arguments:
-            print('site_id:', site_id)
+        print("panels: arguments", arguments)
+        if 'id' in arguments :
+            print('id:', id)
             with Session(engine) as session:
-                objs = get_msiteid_data(session, site_id)
-                site_name = objs['name']
-                print('site_id:', site_id, site_name)
-                request.query_params._dict['site_name'] = site_name
-        print("request.query_params._dict=", request.query_params._dict)
+                if mtype == 'magnet':
+                    magnet = session.get(Magnet, id)
+                    objs = get_magnetid_data(session, id)
+                    request.query_params._dict['id'] = id
+                    request.query_params._dict['name'] = magnet.name
+                elif mtype == 'site':
+                    msite = session.get(Magnet, id)
+                    objs = get_msiteid_data(session, id)
+                    request.query_params._dict['site_id'] = id
+                    request.query_params._dict['site_name'] = msite.name
+                else:
+                    raise HTTPException(status_code=404, detail=f"/{model}/: unsupported mtype {mtype}")
+        if 'mdata' in arguments :
+            request.query_params._dict['mdata'] = mdata
+
+        print(f"{model}: request.query_params._dict=", request.query_params._dict)
         headers = {"Bokeh-Session-Id": generate_session_id(SECRET_KEY, signed=True)}
         script = server_document(url=url, arguments=request.query_params._dict, headers=headers)
-    else:
-        script = server_session(session_id=bokeh_session_id, url=url)
     
     return templates.TemplateResponse('records/panel.html', {
         "request": request,

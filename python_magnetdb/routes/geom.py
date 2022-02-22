@@ -76,6 +76,7 @@ async def edit(request: Request, gname: str):
     with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
         geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
     form = GeomForm(obj=geom, request=request)
+    
     return templates.TemplateResponse('geoms/edit.html', {
         "id": id,
         "request": request,

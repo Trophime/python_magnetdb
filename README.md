@@ -74,9 +74,8 @@ export PATH=$PATH:$HOME/.local/bin
 * mrecords: add statistics, fits, smoothers, outliers...
 
 * In simulations:
-** get msite working
-** edit cfg/json files
-** download cfg/json files
+** create forms for cfg/json 
+** fix update cfg/json files
 
 * In parts/magnets/sites:
 ** add view of CAD

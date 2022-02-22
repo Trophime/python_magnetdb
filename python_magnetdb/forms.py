@@ -74,7 +74,7 @@ class MagnetForm(StarletteForm):
     """
     Magnet 
     """
-    print("MagnetForm")
+    # print("MagnetForm")
     name =  StringField('Name', validators=[DataRequired()])
 
     be = StringField('Be Ref', validators=[DataRequired()])
@@ -97,7 +97,7 @@ class GeomForm(StarletteForm):
     Yaml geom configuration
     """
 
-    print("GeomForm")
+    # print("GeomForm")
     name =  StringField('Name', validators=[DataRequired()])
     # TODO complete form
 
@@ -105,7 +105,7 @@ class CFGForm(StarletteForm):
     """
     CFG configuration
     """
-    print("CFGForm")
+    # print("CFGForm")
     directory = StringField('directory', validators=[DataRequired()]) 
     dimension = IntegerField('dimension', validators=[DataRequired()])
     filename = StringField('filename', validators=[DataRequired()])
@@ -123,7 +123,7 @@ class ModelJsonForm(StarletteForm):
     """
     Json model file configuration
     """
-    print("ModelJsonForm")
+    # print("ModelJsonForm")
     name =  StringField('Name', validators=[DataRequired()])
     # TODO complete form
 
@@ -136,7 +136,7 @@ class SimulationForm(StarletteForm):
     """
     Simulation SetUp configuration
     """
-    print("SimulationForm")
+    # print("SimulationForm")
     method = SelectField('Method', choices=method_choices)
     model = SelectField('Model', choices=model_choices) # shall depend on method choice
     geom = SelectField('Geom', choices=geom_choices)
@@ -152,16 +152,15 @@ class AnalyticForm(StarletteForm):
     """
     Ana SetUp configuration
     """
-    print("AnalyticForm")
-    # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
-
+    # print("AnalyticForm")
+    
     mobject = SelectField('Name') # choices=objchoices('Magnet', None))    # TODO complete form
 
 class BmapForm(StarletteForm):
     """
     Bmap SetUp configuration
     """
-    print("BmapForm")
+    # print("BmapForm")
     
     mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
     
