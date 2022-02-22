@@ -1,15 +1,17 @@
 from fastapi import Request
 from fastapi.routing import APIRouter
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from starlette.background import BackgroundTasks
 
 from ..config import templates
 from ..database import engine
 from ..models import Material
-from ..forms import GeomForm
+from ..forms import CFGForm
 from ..units import units
 
 import yaml
 import json
+import os
 
 from python_magnetgeo import Insert, MSite, Bitter, Supra
 
@@ -43,26 +45,48 @@ def show(request: Request, gname: str):
     import os
     print("cfg/show:", os.getcwd())
     geom = gname
+
+    import configparser
+    ini_config = configparser.ConfigParser()
     with open(geom, 'r') as cfgdata:
-        ini_data = yaml.load(cfgdata, Loader = yaml.FullLoader)
-    print("cfg:", ini_data)
-    data = json.loads(ini_data.to_json())
+        ini_config.read_string('[DEFAULT]\n[main]\n' + cfgdata.read())
+
+    print("cfg sections:", ini_config.sections())
+    print("cfg[DEFAULT]:", ini_config['DEFAULT'])
+    print("cfg[main]:", ini_config['main'])
+    
+    data = dict()
+    for section in ini_config.sections():
+        print("section:", section)
+        data[section] = {}
+        for key, val in ini_config.items(section):
+            data[section][key] = val
     print("data:", data, type(data))
     
-    return templates.TemplateResponse('cfgs/show.html', {"request": request, "geom": data, "gname": gname})
+    return templates.TemplateResponse('cfgs/show.html', {"request": request, "cfg": data, "gname": gname})
 
 @router.get("/cfgs/{gname}/edit", response_class=HTMLResponse, name='edit_cfg')
 async def edit(request: Request, gname: str):
     print("cfg/edit:", gname)
-    # TODO load cfg from filename==name
-    MyEnv = appenv()
+
+    import configparser
+    ini_config = configparser.ConfigParser()
+    with open(gname, 'r') as cfgdata:
+        ini_config.read_string('[DEFAULT]\n[main]\n' + cfgdata.read())
+
+    print("cfg sections:", ini_config.sections())
+    print("cfg[DEFAULT]:", ini_config['DEFAULT'])
+    print("cfg[main]:", ini_config['main'])
     
-    import json
-    # from python_magnetgeo import Helix
-    geom = gname + ".yaml"
-    with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
-        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
-    form = GeomForm(obj=geom, request=request)
+    data = dict()
+    for section in ini_config.sections():
+        print("section:", section)
+        data[section] = {}
+        for key, val in ini_config.items(section):
+            data[section][key] = val
+    print("data:", data, type(data))
+
+    form = CFGForm(obj=data, request=request)
     return templates.TemplateResponse('cfgs/edit.html', {
         "id": id,
         "request": request,
@@ -72,7 +96,7 @@ async def edit(request: Request, gname: str):
 @router.post("/cfgs/{gname}/edit", response_class=HTMLResponse, name='update_cfg')
 async def update(request: Request, gname: str):
     print("cfg/update:", gname)
-    form = await GeomForm.from_formdata(request)
+    form = await CFGForm.from_formdata(request)
     if form.validate_on_submit():
         return RedirectResponse(router.url_path_for('cfg', gname=gname), status_code=303)
     else:
@@ -81,3 +105,15 @@ async def update(request: Request, gname: str):
             "request": request,
             "form": form,
         })
+
+def remove_file(path: str) -> None:
+    os.unlink(path)
+
+@router.get("/cfgs/{gname}/download", response_class=HTMLResponse, name='download_cfg')
+async def download(request: Request, gname: str):
+    print("cfg/download:", gname)
+    
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(remove_file, gname)
+    return FileResponse(path=gname, filename=gname, background=background_tasks)
+

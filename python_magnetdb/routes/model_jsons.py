@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi.routing import APIRouter
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from starlette.background import BackgroundTasks
 
 from ..config import templates
 from ..database import engine
@@ -9,6 +10,7 @@ from ..forms import ModelJsonForm
 from ..units import units
 
 import yaml
+import os
 
 from python_magnetgeo import Insert, MSite, Bitter, Supra
 
@@ -48,7 +50,7 @@ def show(request: Request, gname: str):
         data = json.load(jfile)
     print("data:", data, type(data))
     
-    return templates.TemplateResponse('model_jsons/show.html', {"request": request, "geom": data, "gname": gname})
+    return templates.TemplateResponse('model_jsons/show.html', {"request": request, "model": data, "gname": gname})
 
 @router.get("/model_jsons/{gname}/edit", response_class=HTMLResponse, name='edit_model_json')
 async def edit(request: Request, gname: str):
@@ -75,3 +77,15 @@ async def update(request: Request, gname: str):
             "request": request,
             "form": form,
         })
+
+def remove_file(path: str) -> None:
+    os.unlink(path)
+
+@router.get("/model_jsons/{gname}/download", response_class=HTMLResponse, name='download_json')
+async def download(request: Request, gname: str):
+    print("model_jsons/download:", gname)
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(remove_file, gname)
+    return FileResponse(path=gname, filename=gname, background=background_tasks)
+
+

@@ -1,76 +1,79 @@
 {% extends "layout/default.html" %}
 
 {% block content %}
-  <h1>Model Json file Definition: {{geom['name']}}.</h1>
+  <h1>Model Json file Definition: {{gname}}.</h1>
   <p>
     <ul id="material_props">
       <table>
-        {% for key, value in geom.items() %}
-        {% if key != "name" %}
-        {% if key == "axi" %}
+        {% for key, value in model.items() %}
         <tr>
             <th>{{ key }}</th>
+            {% if value is mapping %}
             <td><table>
-                {% for skey, svalue in geom['axi'].items() %}
-                  <tr>
+                {% for skey, svalue in value.items() %}                
+                <tr>
                     <th>{{ skey }}</th>
+                    {% if svalue is mapping %}
+                    <td><table>
+                        {% for sskey, ssvalue in svalue.items() %}
+                        <tr>
+                            <th>{{ sskey }}</th>
+                            {% if ssvalue is mapping %}
+                            <td><table>
+                                {% for ssskey, sssvalue in ssvalue.items() %}
+                                  <tr>
+                                    <th>{{ ssskey }}</th>
+                                    {% if sssvalue is mapping %}
+                                    <td><table>
+                                      {% for sssskey, ssssvalue in sssvalue.items() %}
+                                      <tr>
+                                        <th>{{ sssskey }}</th>
+                                        {% if ssssvalue is mapping %}
+                                        <td><table>
+                                          {% for ssssskey, sssssvalue in ssssvalue.items() %}
+                                          <tr>
+                                            <th>{{ ssssskey }}</th>
+                                            <td>{{ sssssvalue }}</td>
+                                          </tr>
+                                          {% endfor %}
+                                        </table></td>
+                                        {% else %}
+                                        <td>{{ ssssvalue }}</td>
+                                        {% endif %}
+                                      </tr>
+                                      {% endfor %}
+                                    </table></td>
+                                    {% else %}
+                                    <td>{{ sssvalue }}</td>
+                                    {% endif %}
+                                  </tr>
+                                {% endfor %}
+                            </table></td>
+                            {% else %}
+                            <td>{{ ssvalue }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table></th>
+                    {% else %}
                     <td>{{ svalue }}</td>
-                  </tr>
+                    {% endif %}
+                </tr>                
                 {% endfor %}
             </table></td>
+            {% else %}
+            <td>{{ value }}</td>
+            {% endif %}
         </tr>
-        {% elif key == "shape" %}
-        <tr>
-            <th>{{ key }}</th>
-            <td><table>
-                {% for skey, svalue in geom['shape'].items() %}
-                  <tr>
-                    <th>{{ skey }}</th>
-                    <td>{{ svalue }}</td>
-                  </tr>
-                {% endfor %}
-            </table></td>
-        </tr>
-        {% elif key == "m3d" %}
-        <tr>
-          <th>{{ key }}</th>
-          <td><table>
-            {% for skey, svalue in geom['m3d'].items() %}
-              <tr>
-                <th>{{ skey }}</th>
-                <td>{{ svalue }}</td>
-              </tr>
-              {% endfor %}
-          </table></td>
-        </tr>
-        {% elif key == "cutwidth" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% elif key == "r" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% elif key == "z" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <th>{{ key }} </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% endif %}
-        {% endif %}
         {% endfor %}
       </table>
     </ul>
     
   <button type="button" onclick="window.location.href='{{ url_for('edit_model_json', gname=gname) }}';">
     Update
+  </button>
+  <button type="button" onclick="window.location.href='{{ url_for('download_json', gname=gname) }}';">
+    Download
   </button>
   </p>
 {% endblock %}

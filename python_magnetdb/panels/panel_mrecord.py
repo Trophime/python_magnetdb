@@ -40,7 +40,12 @@ class MRecordPanel(pn.viewable.Viewer):
     single_file = '/data/mrecords/' + fname
     site = single_file.split('_')[0]
     data = load(site, single_file)
-    
+    site_id = 2
+
+    url = f"http://localhost:8000/sites/{site_id}"
+    button = pn.widgets.Button(name=sname, button_type = 'primary')
+    # button.js_on_click(args={'target': url}, code='window.open(target.value)')
+        
     xvariable  = param.Selector(objects=list(data.columns), default='t')
     yvariable  = param.Selector(objects=list(data.columns), default='Field')
     
@@ -53,6 +58,13 @@ class MRecordPanel(pn.viewable.Viewer):
         self.single_file = '/data/mrecords/' + self.fname
         self.site = self.single_file.split('_')[0].replace('/data/mrecords/','')
         self.data = load(self.site, self.single_file)
+
+        #self.button.name = self.sname
+        #site_id = pn.state.session_args['site_id'][0].decode("utf-8")
+        #self.url = f"http://localhost:8000/sites/{site_id}"
+
+        # can we remove uneeded columns from site info ??
+        # eg keep Icoil1 for instance and drop Icoili from i=2 to Nhelices for an insert??
         
         x, y = self.sine()
         self.cds = ColumnDataSource(data=dict(x=x, y=y))
@@ -90,7 +102,10 @@ class MRecordPanel(pn.viewable.Viewer):
 
     def __panel__(self):
         datefield = self.single_file.split('_')[1].replace('.txt','')
-        return pn.Row(pn.Column(f"## {self.site} site:{self.sname} date:{datefield}", self.param), self.plot, sizing_mode="stretch_height")
+        site_id = pn.state.session_args['site_id'][0].decode("utf-8")
+        return pn.Row(pn.Column(f"## {self.site}", f"### site:{self.sname}", f"### date:{datefield}", self.param), self.plot, sizing_mode="stretch_height")
+        # self.button.js_on_click(args={'target': self.url}, code='window.open(target.value)')
+        # return pn.Row(pn.Column(f"## {self.site}", self.button, f"### date:{datefield}", self.param), self.plot, sizing_mode="stretch_height")
 
 if __name__ == "__main__":
     print("call main")

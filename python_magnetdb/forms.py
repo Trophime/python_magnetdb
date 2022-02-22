@@ -3,7 +3,7 @@ from typing import List, Optional
 
 # from flask_wtf import FlaskForm
 from starlette_wtf import StarletteForm
-from wtforms import StringField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField, ValidationError
+from wtforms import StringField, IntegerField, FloatField, SelectField, BooleanField, SubmitField, FieldList, FormField, ValidationError
 from wtforms.validators import DataRequired, Length
 
 
@@ -97,14 +97,33 @@ class GeomForm(StarletteForm):
     Yaml geom configuration
     """
 
+    print("GeomForm")
     name =  StringField('Name', validators=[DataRequired()])
+    # TODO complete form
+
+class CFGForm(StarletteForm):
+    """
+    CFG configuration
+    """
+    print("CFGForm")
+    directory = StringField('directory', validators=[DataRequired()]) 
+    dimension = IntegerField('dimension', validators=[DataRequired()])
+    filename = StringField('filename', validators=[DataRequired()])
+    mesh_filename = StringField('mesh.filename', validators=[DataRequired()]) 
+    gmsh_partition = BooleanField('gmsh.partition')
+    solver = StringField('solver', validators=[DataRequired()]) 
+    verbose_solvertimer = BooleanField('verbose_solvertimer')
+    ksp_monitor = BooleanField('ksp-monitor')
+    snes_monitor = BooleanField('snes-monitor')
+    snes_maxit = IntegerField('snes-maxit', validators=[DataRequired()])
+    pc_type = StringField('pc-type', validators=[DataRequired()]) 
     # TODO complete form
 
 class ModelJsonForm(StarletteForm):
     """
     Json model file configuration
     """
-
+    print("ModelJsonForm")
     name =  StringField('Name', validators=[DataRequired()])
     # TODO complete form
 

@@ -1,76 +1,35 @@
 {% extends "layout/default.html" %}
 
 {% block content %}
-  <h1>Geometry Definition: {{geom['name']}}.</h1>
+  <h1>Cfg Definition: {{gname}}</h1>
   <p>
     <ul id="material_props">
       <table>
-        {% for key, value in geom.items() %}
-        {% if key != "name" %}
-        {% if key == "axi" %}
+        {% for key, value in cfg.items() %}
         <tr>
             <th>{{ key }}</th>
+            {% if value is mapping %}
             <td><table>
-                {% for skey, svalue in geom['axi'].items() %}
-                  <tr>
-                    <th>{{ skey }}</th>
-                    <td>{{ svalue }}</td>
-                  </tr>
-                {% endfor %}
-            </table></td>
-        </tr>
-        {% elif key == "shape" %}
-        <tr>
-            <th>{{ key }}</th>
-            <td><table>
-                {% for skey, svalue in geom['shape'].items() %}
-                  <tr>
-                    <th>{{ skey }}</th>
-                    <td>{{ svalue }}</td>
-                  </tr>
-                {% endfor %}
-            </table></td>
-        </tr>
-        {% elif key == "m3d" %}
-        <tr>
-          <th>{{ key }}</th>
-          <td><table>
-            {% for skey, svalue in geom['m3d'].items() %}
+              {% for skey, svalue in value.items() %}
               <tr>
-                <th>{{ skey }}</th>
-                <td>{{ svalue }}</td>
+                <th>{{skey}}</th>
+                <td>{{svalue}}</td>
               </tr>
-              {% endfor %}
+            {% endfor %}
           </table></td>
+          {% else %}
+            <td>{{ value }}</td>
+            {% endif %}
         </tr>
-        {% elif key == "cutwidth" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% elif key == "r" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% elif key == "z" %}
-        <tr>
-          <th>{{ key }} [mm] </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <th>{{ key }} </th>
-          <td>{{ value }}</td>
-        </tr>
-        {% endif %}
-        {% endif %}
         {% endfor %}
       </table>
     </ul>
     
-  <button type="button" onclick="window.location.href='{{ url_for('edit_geom', gname=gname) }}';">
+  <button type="button" onclick="window.location.href='{{ url_for('edit_cfg', gname=gname) }}';">
     Update
+  </button>
+  <button type="button" onclick="window.location.href='{{ url_for('download_cfg', gname=gname) }}';">
+    Download
   </button>
   </p>
 {% endblock %}
