@@ -34,7 +34,9 @@ plotmethod={
 }
 
 class BMapPanel(pn.viewable.Viewer):
-    # get Mdata
+    ymax = None
+
+    # get Mdata from HL-31.d
     fname = "HL-31.d"    
     single_file = '/data/optims/' + fname
     Mdata = bmap.loadMagnet(single_file)
@@ -44,7 +46,6 @@ class BMapPanel(pn.viewable.Viewer):
     icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
     n_magnets = len(icurrents)
     
-
     i_h = param.Number(default=icurrents[0], bounds=(0, 35.e+3))
     i_b = param.Number(default=icurrents[1], bounds=(0, 35.e+3))
     i_s = param.Number(default=0, bounds=(0, icurrents[1]))
@@ -69,9 +70,10 @@ class BMapPanel(pn.viewable.Viewer):
     
         self.update_data()  
         self.update_current()
+
         x, y = self.sine()
-        self.cds = ColumnDataSource(data=dict(x=x, y=y))
-        self.cds_max = self.cds
+        self.ymax = y
+        self.cds = ColumnDataSource(data=dict(x=x, y=y, ymax=y))
         self.plot = figure(
             plot_height=400,
             plot_width=400,
@@ -87,7 +89,7 @@ class BMapPanel(pn.viewable.Viewer):
         
         self.plot.add_tools(hover)
         self.plot.line("x", "y", source=self.cds, line_width=3, line_alpha=0.6)
-        self.plot.line("x", "y", source=self.cds_max, line_width=3, line_alpha=0.6)
+        self.plot.line("x", "ymax", source=self.cds, line_color='orange', line_width=3, line_alpha=0.6)
 
     def update_data(self):
         print("pn.state.session_args:", pn.state.session_args)
@@ -141,7 +143,33 @@ class BMapPanel(pn.viewable.Viewer):
         if len(UMagnets) != 0:
             Ustacks = mt.create_Ustack(UMagnets)
             print("UStacks:", len(Ustacks))
+
+    @param.depends(
+        'nr', 'nz',
+        'r', 'z',
+        'r0', 'z0',
+        'pkey', 
+        'command',
+        watch=True,
+    )
+    def compute_max(self):
+        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = self.Mdata
         
+        # get current for max
+        icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
+        vcurrents = list(icurrents)
+        num = 0
+        if len(Tubes) != 0: vcurrents[num] = 31.e+3; num += 1
+        if len(BMagnets) != 0: vcurrents[num] = 31.e+3; num += 1
+        if len(UMagnets) != 0: vcurrents[num] = 0; num += 1
+        
+        Bz0 = mt.MagneticField(Tubes, Helices, BMagnets, UMagnets, 0, 0)[1]
+        print("Bz0=", Bz0)
+        
+        currents = mt.DoubleVector(vcurrents)
+        x, y = self.sine()
+        self.ymax = y
+
     def update_current(self):
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = self.Mdata
         
@@ -150,6 +178,10 @@ class BMapPanel(pn.viewable.Viewer):
         mcurrents = icurrents
         print("n_magnets", n_magnets)
         print("icurrents", icurrents)
+        for j,Tube in enumerate(Tubes):
+            print(f"Tube[{j}]", Tube.get_n_elem(), Tube.get_index())
+            for i in range(Tube.get_n_elem()):
+                print(f"H[{i}]: j={Helices[i + Tube.get_index()].get_CurrentDensity()}")
         Bz0 = mt.MagneticField(Tubes, Helices, BMagnets, UMagnets, 0, 0)[1]
         print("Bz0=", Bz0)
 
@@ -195,11 +227,11 @@ class BMapPanel(pn.viewable.Viewer):
         'command',
         watch=True,
     )
-    def update_plot(self):    
+    def update_plot(self):
         self.update_data()
         self.update_current()
         x, y = self.sine()
-        self.cds.data = dict(x=x, y=y)
+        self.cds.data = dict(x=x, y=y, ymax=self.ymax)
 
     def __panel__(self):
         name = pn.state.session_args['name'][0].decode("utf-8")
