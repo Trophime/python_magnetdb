@@ -69,7 +69,14 @@ export PATH=$PATH:$HOME/.local/bin
 
 ## TODO
 
-* add bokeh panel for Bmap
+* display relevant error message using (HTTPException)[https://fastapi.tiangolo.com/tutorial/handling-errors/]
+or [starlette exception](https://www.starlette.io/exceptions/)
+
+* debug bmap panel: does not account for Mdata
+* stuck in update currents???
+
+* bokeh add several plots on the same panel (see panel_bmap)
+* in panel how to show/hide param 
 * in bokeh panel how to create a button with a href to localhost
 * mrecords: add statistics, fits, smoothers, outliers...
 

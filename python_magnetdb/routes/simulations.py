@@ -118,6 +118,7 @@ async def dosetup(request: Request, mtype: str):
         print("magnetsetup cmds:", cmds)
         print("cfgfile:", cfgfile)
         print("jsonfile:", jsonfile)
+
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,

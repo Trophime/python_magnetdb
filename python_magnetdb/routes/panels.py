@@ -23,7 +23,7 @@ router = APIRouter()
    
 # cannot add an extra id argument for unknown reason   (see also show.html in templates/mrecords)  
 @router.get("/{model}/", response_class=HTMLResponse, name='run_panel')
-def panel(request: Request, model: str, name: Optional[str]=None, mtype: Optional[str]=None, id: Optional[int]=None, mdata: Optional[tuple]=None ):
+async def panel(request: Request, model: str, name: Optional[str]=None, mtype: Optional[str]=None, id: Optional[int]=None, mdata: Optional[tuple]=None ):
     print("panels:", request.query_params)
     if model not in titles:
         raise HTTPException(status_code=404, detail="Item not found")
