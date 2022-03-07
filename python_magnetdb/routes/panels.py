@@ -1,4 +1,3 @@
-from distutils.debug import DEBUG
 from typing import List, Optional
 
 import os
@@ -23,7 +22,7 @@ router = APIRouter()
    
 # cannot add an extra id argument for unknown reason   (see also show.html in templates/mrecords)  
 @router.get("/{model}/", response_class=HTMLResponse, name='run_panel')
-async def panel(request: Request, model: str, name: Optional[str]=None, mtype: Optional[str]=None, id: Optional[int]=None, mdata: Optional[tuple]=None ):
+async def rpanel(request: Request, model: str, name: Optional[str]=None, mtype: Optional[str]=None, id: Optional[int]=None):
     print("panels:", request.query_params)
     if model not in titles:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -48,9 +47,6 @@ async def panel(request: Request, model: str, name: Optional[str]=None, mtype: O
                         request.query_params._dict['site_name'] = msite.name
                     else:
                         raise HTTPException(status_code=404, detail=f"/{model}/: unsupported mtype {mtype}")
-            if mdata :
-                print('mdata:', mdata)
-                request.query_params._dict['mdata'] = mdata
             if mtype :
                 request.query_params._dict['mtype'] = mtype
             if name :
@@ -80,8 +76,6 @@ async def panel(request: Request, model: str, name: Optional[str]=None, mtype: O
                     request.query_params._dict['site_name'] = msite.name
                 else:
                     raise HTTPException(status_code=404, detail=f"/{model}/: unsupported mtype {mtype}")
-        if 'mdata' in arguments :
-            request.query_params._dict['mdata'] = mdata
 
         print(f"{model}: request.query_params._dict=", request.query_params._dict)
         headers = {"Bokeh-Session-Id": generate_session_id(SECRET_KEY, signed=True)}
@@ -104,5 +98,4 @@ pn.serve(
     secret_key=SECRET_KEY,
     generate_session_ids=False,
     num_process=1 if os.name == "nt" else 2,
-    log_level=DEBUG,
 )
