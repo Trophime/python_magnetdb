@@ -1,4 +1,3 @@
-from pickletools import read_uint2
 import pandas as pd
 import numpy as np
 
@@ -18,9 +17,7 @@ from python_magnetrun.python_magnetrun import MagnetRun
 
 import MagnetTools.MagnetTools as mt
 import MagnetTools.Bmap as bmap
-# , getBr, getBz, getB, getA, loadMagnet
 
-from .panel_mrecord import load
 
 # args = pn.state.session_args
 print("bmap: __name__", __name__)
@@ -65,7 +62,7 @@ class BMapPanel(pn.viewable.Viewer):
     
     
     def __init__(self, **params):
-        # print("params:", params)
+        print("panel_bmap.__init__ params:", params)
         super().__init__(**params)
     
         self.update_data()  
@@ -92,9 +89,14 @@ class BMapPanel(pn.viewable.Viewer):
         self.plot.line("x", "ymax", source=self.cds, line_color='orange', line_width=3, line_alpha=0.6)
 
     def update_data(self):
-        print("pn.state.session_args:", pn.state.session_args)
+        print("panel_bmap: update_data")
 
         # load Mdata
+        if pn.state.session_args:
+            print("pn.state.session_args:", pn.state.session_args)
+        else:
+            return
+
         name = pn.state.session_args['name'][0].decode("utf-8")
         mtype = pn.state.session_args['mtype'][0].decode("utf-8")
         id = pn.state.session_args['id'][0].decode("utf-8")
@@ -153,6 +155,7 @@ class BMapPanel(pn.viewable.Viewer):
         watch=True,
     )
     def compute_max(self):
+        print("panel_bmap: compute_max")
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = self.Mdata
         
         # get current for max
@@ -171,6 +174,7 @@ class BMapPanel(pn.viewable.Viewer):
         self.ymax = y
 
     def update_current(self):
+        print("panel_bmap: update_current")
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = self.Mdata
         
         icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
@@ -205,6 +209,7 @@ class BMapPanel(pn.viewable.Viewer):
         print("Bz0=", Bz0)
 
     def sine(self):
+        print("panel_bmap: compute b")
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = self.Mdata
         if self.command == '1D_z':
             x = np.linspace(self.z[0], self.z[1], self.nz)
@@ -234,14 +239,17 @@ class BMapPanel(pn.viewable.Viewer):
         self.cds.data = dict(x=x, y=y, ymax=self.ymax)
 
     def __panel__(self):
-        name = pn.state.session_args['name'][0].decode("utf-8")
+        print("panel_bmap.__panel__")
+        name = "HL-31"
+        if 'name' in pn.state.session_args:
+            name = pn.state.session_args['name'][0].decode("utf-8")
         return pn.Row(pn.Column(f"## BMap", f"### site:{name}", self.param), self.plot, sizing_mode="stretch_height")
 
 if __name__ == "__main__":
-    # print("bmap: call main")
+    print("bmap: call main")
     app = BMapPanel()
     app.show(port=5007)
 elif __name__.startswith("bokeh"):
-    # print("bmap: call bokeh")
+    print("bmap: call bokeh")
     app = BMapPanel()
     app.servable()
