@@ -16,7 +16,7 @@ from ..crud import create_simulation
 from ..crud import get_magnetid_data, get_msiteid_data 
 
 from python_magnetsetup.config import appenv
-    
+
 router = APIRouter()
 
 
@@ -80,7 +80,6 @@ async def dosetup(request: Request, mtype: str):
     if form.validate_on_submit():
         # TODO call magnetsetup
         print("trying to create cfg and json")
-        from python_magnetsetup.config import appenv
         MyEnv = appenv()
         
         from argparse import Namespace
@@ -111,13 +110,17 @@ async def dosetup(request: Request, mtype: str):
             args.msite = obj.name
             jsonfile = args.msite
 
-        from python_magnetsetup.setup import setup
+        from python_magnetsetup.setup import setup, setup_cmds
         print("shall enter magnetsetup:", jsonfile)
         with Session(engine) as session:
-            (cfgfile, jsonfile, cmds) = setup(MyEnv, args, confdata, jsonfile, session)  
+            (cfgfile, jsonfile, xaofile, meshfile, sim_files) = setup(MyEnv, args, confdata, jsonfile, session)
+            cmds = setup_cmds(MyEnv, args, cfgfile, jsonfile, xaofile, meshfile)
         print("magnetsetup cmds:", cmds)
         print("cfgfile:", cfgfile)
         print("jsonfile:", jsonfile)
+
+        # add list of files to be archived
+
 
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
@@ -129,7 +132,7 @@ async def dosetup(request: Request, mtype: str):
         })
         # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
     else:
-        return templates.TemplateResponse('sim_setup', {
+        return templates.TemplateResponse('sim_setup.html', {
             "request": request,
             "form": form,
             "mtype": mtype
@@ -163,6 +166,9 @@ async def dobmap(request: Request, mtype: str):
 
     if form.validate_on_submit():
         id = form.mobject.data
+        jsonfile = ""
+        magnet=""
+        msite=""
         if mtype == 'Magnet':
             print("Magnet id=", id)
             with Session(engine) as session:
@@ -180,19 +186,17 @@ async def dobmap(request: Request, mtype: str):
         MyEnv = appenv()
         from python_magnetsetup.ana import setup
         from argparse import Namespace
-        args = Namespace(wd="", magnet="",msite="",debug=True,verbose=False)
+        args = Namespace(wd="", magnet=magnet,msite=msite,debug=True,verbose=False)
         with Session(engine) as session:
             Mdata = setup(MyEnv, args, confdata, jsonfile, session)
         print(f"{jsonfile} data loaded", Mdata)
 
-        # TODO call panel_bmap
-        from .panels import panel
+        from .panels import rpanel
         print(f"call panels(bmappannel, name={jsonfile} mtype={mtype.lower()}, id={id})")
-        return panel(request, 'bmappanel', name=jsonfile, mtype=mtype.lower(), id=id) #, mdata=Mdata)
+        return await rpanel(request, 'bmappanel', name=jsonfile, mtype=mtype.lower(), id=id) #, mdata=Mdata)
     else:
         return templates.TemplateResponse('bmap_setup', {
             "request": request,
             "form": form,
             "mtype": mtype
         })
-        

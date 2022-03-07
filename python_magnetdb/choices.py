@@ -16,6 +16,17 @@ from .crud import get_magnet_type
 
 import yaml
 
+from python_magnetsetup.machines import load_machines, MachineType
+
+def machine_choices(stype: MachineType=MachineType.compute):
+    choices = []
+
+    machines = load_machines()
+    for machine in machines:
+        if machine['otype'] == stype:
+            desc = machine['dns']
+            choices.append( (machine['name'], desc))
+    return choices
 
 def material_choices():
     with Session(engine) as session:

@@ -13,6 +13,8 @@ from .status import MType, mtype_choices
 
 from .choices import material_choices
 from .choices import objchoices
+from .choices import machine_choices
+
 
 def coerce_for_enum(enum):
     def coerce(name):
@@ -137,16 +139,19 @@ class SimulationForm(StarletteForm):
     Simulation SetUp configuration
     """
     # print("SimulationForm")
+    machine = SelectField('Server', choices=machine_choices)
+    # jobmanager  = BooleanField('JobManager') # bool
     method = SelectField('Method', choices=method_choices)
     model = SelectField('Model', choices=model_choices) # shall depend on method choice
     geom = SelectField('Geom', choices=geom_choices)
+    # coolingmodel = SelectField('CoolingModel', choices=coolingmodel_choices)
     cooling = SelectField('Cooling', choices=cooling_choices)
     static = BooleanField('Static') # bool
     linear = BooleanField('Linear') # bool
 
     # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
 
-    mobject = SelectField('Name')    
+    mobject = SelectField('Name', validators=[DataRequired()])    
 
 class AnalyticForm(StarletteForm):
     """
@@ -154,7 +159,7 @@ class AnalyticForm(StarletteForm):
     """
     # print("AnalyticForm")
     
-    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    # TODO complete form
+    mobject = SelectField('Name', validators=[DataRequired()]) # choices=objchoices('Magnet', None))    # TODO complete form
 
 class BmapForm(StarletteForm):
     """
@@ -162,5 +167,5 @@ class BmapForm(StarletteForm):
     """
     # print("BmapForm")
     
-    mobject = SelectField('Name') # choices=objchoices('Magnet', None))    
+    mobject = SelectField('Name', validators=[DataRequired()]) # choices=objchoices('Magnet', None))    
     
