@@ -46,6 +46,7 @@ RUN apt-get update \
     && apt-get -y install python3-requests python3-chevron \
     && apt-get -y install python3-magnetrun python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
     && apt-get -y install curl sqlitebrowser \
+    && apt-get -y install python3-fabric python3-pythonocc-core \
     #\
     # Install web stuff for database+api+website \
     && python -m pip install sqlmodel \

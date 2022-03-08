@@ -129,18 +129,27 @@ class ModelJsonForm(StarletteForm):
     name =  StringField('Name', validators=[DataRequired()])
     # TODO complete form
 
+# TODO fetch value from supported methods in magnetsetup
 method_choices = [ ('cfpdes','cfpdes'), ('CG','CG'), ('HDG','HDG'), ('CRB','CRB') ]
 model_choices = [('thelec','thelec'), ('mag','mag'), ('thmag','thmag'), ('thmagel', 'thmagel')]
 geom_choices = [ ('Axi','Axi'), ('3D','3D')]
 cooling_choices = [ ('mean','mean'), ('grad','grad'), ('meanH','meanH'), ('gradH','gradH')]
+#coolingmodel_choices = [ ('Montgomery','Montgomery') ]
 
+class ServerForm(StarletteForm):
+    """
+    Server SetUp configuration
+    """
+    # print("ServerForm")
+    machine = SelectField('Server', choices=machine_choices)
+    jobmanager  = BooleanField('JobManager') # bool
+    # cores =  = IntegerField('cores', validators=[DataRequired()]) # integer in between 1 and server.cores or server/cores/2 if server.multithread
+    
 class SimulationForm(StarletteForm):
     """
     Simulation SetUp configuration
     """
     # print("SimulationForm")
-    machine = SelectField('Server', choices=machine_choices)
-    # jobmanager  = BooleanField('JobManager') # bool
     method = SelectField('Method', choices=method_choices)
     model = SelectField('Model', choices=model_choices) # shall depend on method choice
     geom = SelectField('Geom', choices=geom_choices)

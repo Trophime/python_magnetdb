@@ -64,6 +64,10 @@ async def edit(request: Request, mtype: str):
         "mtype": mtype
     })
 
+# comment passer args??
+# get: selectmachine(request: Request, server: str, cfgfile: str, jsonfile):
+# post: domachine(request: Request, server: str, cfgfile: str, jsonfile):
+
 @router.post("/sim_setup/{mtype}", response_class=HTMLResponse, name='do_setup')
 async def dosetup(request: Request, mtype: str):
     form = await SimulationForm.from_formdata(request)
@@ -113,24 +117,26 @@ async def dosetup(request: Request, mtype: str):
         from python_magnetsetup.setup import setup, setup_cmds
         print("shall enter magnetsetup:", jsonfile)
         with Session(engine) as session:
-            (cfgfile, jsonfile, xaofile, meshfile, sim_files) = setup(MyEnv, args, confdata, jsonfile, session)
-            cmds = setup_cmds(MyEnv, args, cfgfile, jsonfile, xaofile, meshfile)
+            (name, cfgfile, jsonfile, xaofile, meshfile, tarfile) = setup(MyEnv, args, confdata, jsonfile, session)
+            print("name (yaml):", name)
+            print("cfgfile:", cfgfile)
+            print("jsonfile:", jsonfile)
+            # create cmds
+            cmds = setup_cmds(MyEnv, args, name, cfgfile, jsonfile, xaofile, meshfile)
         print("magnetsetup cmds:", cmds)
-        print("cfgfile:", cfgfile)
-        print("jsonfile:", jsonfile)
-
-        # add list of files to be archived
-
-
+        
+        machine = MyEnv.compute_server
+        print(f"machine={machine}")
         return templates.TemplateResponse('sim_run.html', {
             "request": request,
             "form": form,
-            "mtype": mtype,
+            "machine": machine,
             "cfgfile": cfgfile,
             "jsonfile": jsonfile,
+            "tarfile": tarfile,
+            "name": name,
             "cmds": cmds
         })
-        # return RedirectResponse(router.url_path_for('sim_run.html'), status_code=303)
     else:
         return templates.TemplateResponse('sim_setup.html', {
             "request": request,

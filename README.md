@@ -72,8 +72,8 @@ export PATH=$PATH:$HOME/.local/bin
 * display relevant error message using (HTTPException)[https://fastapi.tiangolo.com/tutorial/handling-errors/]
 or [starlette exception](https://www.starlette.io/exceptions/)
 
-* debug bmap panel: does not account for Mdata
-* stuck in update currents???
+* add machine selection htm with:
+** create file for jobmanager if any
 
 * bokeh add several plots on the same panel (see panel_bmap)
 * in panel how to show/hide param 
@@ -85,6 +85,4 @@ or [starlette exception](https://www.starlette.io/exceptions/)
 ** fix update cfg/json files
 
 * In parts/magnets/sites:
-** add view of CAD
-** try to generate CAD (or at least cmds to generate CADS)
-** same for meshes
+** add view/create CAD geoms (connection with pythonocc-core)

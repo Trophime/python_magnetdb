@@ -117,3 +117,11 @@ async def download(request: Request, gname: str):
     background_tasks.add_task(remove_file, gname)
     return FileResponse(path=gname, filename=gname, background=background_tasks)
 
+@router.get("/cfgs/{gname}/remove", response_class=HTMLResponse, name='remove_cfg')
+async def remove(request: Request, gname: str):
+    print("cfg/remove:", gname)
+    
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(remove_file, gname)
+    return FileResponse(background=background_tasks)
+

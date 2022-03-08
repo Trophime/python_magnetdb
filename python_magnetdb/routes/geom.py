@@ -95,3 +95,52 @@ async def update(request: Request, gname: str):
             "request": request,
             "form": form,
         })
+
+@router.get("/geoms/{gname}/view", response_class=HTMLResponse, name='view_geom')
+async def edit(request: Request, gname: str):
+    print("geom/view:", gname)
+    # TODO load geom from filename==name
+    MyEnv = appenv()
+    
+    import json
+    # from python_magnetgeo import Helix
+    geom = gname + ".geom"
+    with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
+        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
+    
+    # get cad name
+    cad = None
+    with MyOpen(cad, 'r', paths=search_paths(MyEnv, "cad")) as caddata:
+        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
+    
+
+    # run pythonocc-core
+    return templates.TemplateResponse('cads/show.html', {
+        "id": id,
+        "request": request,
+        "cad": cad,
+    })
+
+
+@router.get("/geoms/{gname}/create", response_class=HTMLResponse, name='create_geom')
+async def edit(request: Request, gname: str):
+    print("geom/create:", gname)
+    # TODO load geom from filename==name
+    MyEnv = appenv()
+    
+    import json
+    # from python_magnetgeo import Helix
+    geom = gname + ".yaml"
+    with MyOpen(geom, 'r', paths=search_paths(MyEnv, "geom")) as cfgdata:
+        geom = yaml.load(cfgdata, Loader = yaml.FullLoader)
+    
+    # run salome or gmsh
+    cad = None
+    
+    # display cad with python-occ
+    return templates.TemplateResponse('cads/show.html', {
+        "id": id,
+        "request": request,
+        "cad": cad,
+    })
+

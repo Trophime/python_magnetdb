@@ -1,28 +1,135 @@
 {% extends "layout/default.html" %}
 
 {% block content %}
-<script type="text/javascript" src="{{ url_for('static', path='js/copyclipboard.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script> new Clipboard('.btn'); </script>
   <div class="form-wrapper">
-    <h2 class="title">To run Simulation</h2>
+    <h2 class="title">To run Simulation on {{machine}}</h2>
 
-    <!-- "Edit cfgfile to fix the meshfile, scale, partition and solver props" -->
     <p>
         <li>Review the <a href="/cfgs/{{cfgfile}}">cfg</a> and <a href="/model_jsons/{{jsonfile}}"> files</a> created</li>
-        <li>Select the server for actually running the simulation</li>
-        <li>Transfer your data to this server</li>
-        <li>Connect to the server</li>
-        <li>Run the following commands</li>
-    </p>
-    
-    <table>
+        <li>Transfer {{tarfile}} to  {{machine}}</li>
+        <!-- add command here -->
+        <table>
+        <tr>
+          <th><b>Download</b></th>
+          <td><button type="button" onclick="window.location.href='{{ url_for('download_cfg', gname=tarfile) }}';"> Download</button></td>
+        </tr>
+        <tr>
+          <th><b>Transfer</b></th>
+          <td>
+            <div class="input-group">
+            <span class="input-group-button">
+              <input type="text" value="scp ~/Downloads/{{tarfile}} {{machine}}:."  required size="120" readonly="readonly" id="myInput">
+              <!-- -->
+                <button class="btn" data-clipboard-target="#myInput">
+                <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                </button>
+              <!-- -->
+            </span>
+            </div>
+          </td>
+        </tr>  
+          <th><b>Remove</b></th>
+          <td>
+            <button type="button" onclick="window.location.href='{{ url_for('remove_cfg', gname=cfgfile) }}';"> Cfg</button>
+            <button type="button" onclick="window.location.href='{{ url_for('remove_cfg', gname=jsonfile) }}';"> Json</button>
+            <!-- <button type="button" onclick="window.location.href='{{ url_for('remove_cfg', gname=tarfile) }}';"> Tar</button> -->
+          </td>          
+        </tr>  
+        </table>
+        <li>Connect to  {{machine}}</li>
+        <!-- add command here -->
+        <table>
+          <tr>
+            <th><b>Connect</b></th>
+            <td>
+              <div class="input-group">
+                <span class="input-group-button">
+                  <input type="text" value="ssh -Y {{machine}}"  required size="120" readonly="readonly" id="myConnect">
+                  <!-- -->
+                    <button class="btn" data-clipboard-target="#myConnect">
+                    <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                    </button>
+                  <!-- -->
+                </span>
+              </div>
+            </td>
+          </tr>  
+        </table>
+        <li>Create a working dir in  {{machine}}</li>
+        <!-- add command here -->
+        <table>
+          <tr>
+            <th><b>WorkingDir</b></th>
+            <td>
+              <div class="input-group">
+                <span class="input-group-button">
+                  <input type="text" value="mkdir -p {{name}}"  required size="120" readonly="readonly" id="myWorkingDir">
+                  <!-- -->
+                    <button class="btn" data-clipboard-target="#myWorkingDir">
+                    <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                    </button>
+                  <!-- -->
+                </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><b>WorkingDir</b></th>
+            <td>
+              <div class="input-group">
+                <span class="input-group-button">
+                  <input type="text" value="cd {{name}}"  required size="120" readonly="readonly" id="myCdWorkingDir">
+                  <!-- -->
+                    <button class="btn" data-clipboard-target="#myCdWorkingDir">
+                    <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                    </button>
+                  <!-- -->
+                </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th><b>WorkingDir</b></th>
+            <td>
+              <div class="input-group">
+                <span class="input-group-button">
+                  <input type="text" value="mv ~/{{tarfile}} ."  required size="120" readonly="readonly" id="myMv">
+                  <!-- -->
+                    <button class="btn" data-clipboard-target="#myMv">
+                    <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                    </button>
+                  <!-- -->
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <li>Run the following commands on {{machine}}</li>
+
+        <table>
         {% for key,value in cmds.items() %}
         <tr>
             <th>{{ key }} </th>
-            <td><input type="text" value="{{ value|safe }}"  required size="120" readonly="readonly" id="myInput">
-            <button onclick="myCopy()">Copy text</button></td>
+            <td>
+              <div class="input-group">
+                <span class="input-group-button">
+                  <input type="text" value="{{ value|safe }}"  required size="120" readonly="readonly" id="{{key}}">
+                  <!-- -->
+                    <button class="btn" data-clipboard-target="#{{key}}">
+                    <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                    </button>
+                  <!-- -->
+                </span>
+                </div>
+            </td>
         </tr>
         {% endfor %}
-    </table>
+        </table>
 
+        <!-- "Select on other server or custom the commands "-->
+    </p>
+    
   </div>
 {% endblock %}
