@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List, Optional
 
-from fastapi import Request
+from fastapi import Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.routing import APIRouter
 from sqlmodel import Session, select
@@ -117,12 +117,24 @@ async def dosetup(request: Request, mtype: str):
         from python_magnetsetup.setup import setup, setup_cmds
         print("shall enter magnetsetup:", jsonfile)
         with Session(engine) as session:
-            (name, cfgfile, jsonfile, xaofile, meshfile, tarfile) = setup(MyEnv, args, confdata, jsonfile, session)
-            print("name (yaml):", name)
-            print("cfgfile:", cfgfile)
-            print("jsonfile:", jsonfile)
-            # create cmds
-            cmds = setup_cmds(MyEnv, args, name, cfgfile, jsonfile, xaofile, meshfile)
+            try:
+                (name, cfgfile, jsonfile, xaofile, meshfile, tarfile) = setup(MyEnv, args, confdata, jsonfile, session)
+                print("name (yaml):", name)
+                print("cfgfile:", cfgfile)
+                print("jsonfile:", jsonfile)
+                # create cmds
+                cmds = setup_cmds(MyEnv, args, name, cfgfile, jsonfile, xaofile, meshfile)
+            except ValueError as err:
+                raise HTTPException(status_code=404, detail=f"setup of {obj.name} {mtype} failed: {err}")
+            except FileExistsError as err:
+                raise HTTPException(status_code=404, detail=f"setup of {obj.name} {mtype} failed: {err}")
+            except RuntimeError as err:
+                raise HTTPException(status_code=404, detail=f"setup of {obj.name} {mtype} failed: {err}")
+            except RuntimeError as err:
+                raise HTTPException(status_code=404, detail=f"setup of {obj.name} {mtype} failed: {err}")
+            except Exception as err:
+                raise HTTPException(status_code=404, detail=f"setup of {obj.name} {mtype} failed: {err}")
+
         print("magnetsetup cmds:", cmds)
         
         machine = MyEnv.compute_server
@@ -201,8 +213,258 @@ async def dobmap(request: Request, mtype: str):
         print(f"call panels(bmappannel, name={jsonfile} mtype={mtype.lower()}, id={id})")
         return await rpanel(request, 'bmappanel', name=jsonfile, mtype=mtype.lower(), id=id) #, mdata=Mdata)
     else:
-        return templates.TemplateResponse('bmap_setup', {
+        return templates.TemplateResponse('bmap_setup.html', {
             "request": request,
             "form": form,
             "mtype": mtype
         })
+
+@router.get("/stressmap_setup/{mtype}", response_class=HTMLResponse, name='stressmapsetup')
+async def stressedit(request: Request, mtype: str, id: Optional[int]=None):
+    print("simulations/stressmap: mtype=", mtype)
+    """
+    with Session(engine) as session:
+        simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
+    """
+    form = BmapForm(request=request)
+    form.mobject.choices = objchoices(mtype, None)
+    print("type:", mtype)
+    print("objchoices:", objchoices(mtype, None) )
+
+    return templates.TemplateResponse('stressmap_setup.html', {
+        "request": request,
+        "form": form,
+        "mtype": mtype
+    })
+
+@router.post("/stressmap_setup/{mtype}", response_class=HTMLResponse, name='do_stressmap')
+async def dostressmap(request: Request, mtype: str):
+    
+    form = await BmapForm.from_formdata(request)
+    print("stressmap/do_stressmap:", form.mobject.data, type(form.mobject.data))
+    if form.errors:
+        print("errors:", form.errors)
+
+    if form.validate_on_submit():
+        id = form.mobject.data
+        jsonfile = ""
+        magnet=""
+        msite=""
+        if mtype == 'Magnet':
+            print("Magnet id=", id)
+            with Session(engine) as session:
+                magnet = session.get(Magnet, id)
+                jsonfile = magnet.name
+                confdata = get_magnetid_data(session, id)
+        else:
+            print("Site id=", id)
+            with Session(engine) as session:
+                msite = session.get(MSite, id)
+                jsonfile = msite.name
+                mtype = "site"
+                confdata = get_msiteid_data(session, id)
+
+        MyEnv = appenv()
+        from python_magnetsetup.ana import setup
+        from argparse import Namespace
+        args = Namespace(wd="", magnet=magnet,msite=msite,debug=True,verbose=False)
+        with Session(engine) as session:
+            Mdata = setup(MyEnv, args, confdata, jsonfile, session)
+        print(f"{jsonfile} data loaded", Mdata)
+
+        from .panels import rpanel
+        print(f"call panels(stresspannel, name={jsonfile} mtype={mtype.lower()}, id={id})")
+        return await rpanel(request, 'stressmappanel', name=jsonfile, mtype=mtype.lower(), id=id) #, mdata=Mdata)
+    else:
+        return templates.TemplateResponse('stressmap_setup.html', {
+            "request": request,
+            "form": form,
+            "mtype": mtype
+        })
+
+@router.get("/self_setup/{mtype}", response_class=HTMLResponse, name='selfsetup')
+async def selfedit(request: Request, mtype: str, id: Optional[int]=None):
+    print("simulations/self: mtype=", mtype)
+    """
+    with Session(engine) as session:
+        simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
+    """
+    form = BmapForm(request=request)
+    form.mobject.choices = objchoices(mtype, None)
+    print("type:", mtype)
+    print("objchoices:", objchoices(mtype, None) )
+
+    return templates.TemplateResponse('self_setup.html', {
+        "request": request,
+        "form": form,
+        "mtype": mtype
+    })
+
+@router.post("/self_setup/{mtype}", response_class=HTMLResponse, name='do_self')
+async def dostressmap(request: Request, mtype: str):
+    
+    form = await BmapForm.from_formdata(request)
+    print("self/do_self:", form.mobject.data, type(form.mobject.data))
+    if form.errors:
+        print("errors:", form.errors)
+
+    if form.validate_on_submit():
+        id = form.mobject.data
+        jsonfile = ""
+        magnet=""
+        msite=""
+        if mtype == 'Magnet':
+            print("Magnet id=", id)
+            with Session(engine) as session:
+                magnet = session.get(Magnet, id)
+                jsonfile = magnet.name
+                confdata = get_magnetid_data(session, id)
+        else:
+            print("Site id=", id)
+            with Session(engine) as session:
+                msite = session.get(MSite, id)
+                jsonfile = msite.name
+                mtype = "site"
+                confdata = get_msiteid_data(session, id)
+
+        MyEnv = appenv()
+        from python_magnetsetup.ana import setup
+        from argparse import Namespace
+        args = Namespace(wd="", magnet=magnet,msite=msite,debug=True,verbose=False)
+        with Session(engine) as session:
+            Mdata = setup(MyEnv, args, confdata, jsonfile, session)
+        print(f"{jsonfile} data loaded", Mdata)
+
+        raise HTTPException(status_code=404, detail="do_self not implemented")
+    else:
+        return templates.TemplateResponse('self_setup.html', {
+            "request": request,
+            "form": form,
+            "mtype": mtype
+        })
+
+
+@router.get("/forces_setup/{mtype}", response_class=HTMLResponse, name='forcessetup')
+async def forces(request: Request, mtype: str, id: Optional[int]=None):
+    print("simulations/self: mtype=", mtype)
+    """
+    with Session(engine) as session:
+        simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
+    """
+    form = BmapForm(request=request)
+    form.mobject.choices = objchoices(mtype, None)
+    print("type:", mtype)
+    print("objchoices:", objchoices(mtype, None) )
+
+    return templates.TemplateResponse('forces_setup.html', {
+        "request": request,
+        "form": form,
+        "mtype": mtype
+    })
+
+@router.post("/forces_setup/{mtype}", response_class=HTMLResponse, name='do_forces')
+async def dostressmap(request: Request, mtype: str):
+    
+    form = await BmapForm.from_formdata(request)
+    print("forces/do_forces:", form.mobject.data, type(form.mobject.data))
+    if form.errors:
+        print("errors:", form.errors)
+
+    if form.validate_on_submit():
+        id = form.mobject.data
+        jsonfile = ""
+        magnet=""
+        msite=""
+        if mtype == 'Magnet':
+            print("Magnet id=", id)
+            with Session(engine) as session:
+                magnet = session.get(Magnet, id)
+                jsonfile = magnet.name
+                confdata = get_magnetid_data(session, id)
+        else:
+            print("Site id=", id)
+            with Session(engine) as session:
+                msite = session.get(MSite, id)
+                jsonfile = msite.name
+                mtype = "site"
+                confdata = get_msiteid_data(session, id)
+
+        MyEnv = appenv()
+        from python_magnetsetup.ana import setup
+        from argparse import Namespace
+        args = Namespace(wd="", magnet=magnet,msite=msite,debug=True,verbose=False)
+        with Session(engine) as session:
+            Mdata = setup(MyEnv, args, confdata, jsonfile, session)
+        print(f"{jsonfile} data loaded", Mdata)
+
+        raise HTTPException(status_code=404, detail="do_forces not implemented")
+
+    else:
+        return templates.TemplateResponse('forces_setup.html', {
+            "request": request,
+            "form": form,
+            "mtype": mtype
+        })
+
+
+@router.get("/failures_setup/{mtype}", response_class=HTMLResponse, name='failuressetup')
+async def failureedit(request: Request, mtype: str, id: Optional[int]=None):
+    print("simulations/failures: mtype=", mtype)
+    """
+    with Session(engine) as session:
+        simu = create_simulation(session, name='tutu', method='cfpdes', model='thelec', geom='Axi', static=True, linear= True)
+    """
+    form = BmapForm(request=request)
+    form.mobject.choices = objchoices(mtype, None)
+    print("type:", mtype)
+    print("objchoices:", objchoices(mtype, None) )
+
+    return templates.TemplateResponse('failures_setup.html', {
+        "request": request,
+        "form": form,
+        "mtype": mtype
+    })
+
+@router.post("/failures_setup/{mtype}", response_class=HTMLResponse, name='do_failures')
+async def dostressmap(request: Request, mtype: str):
+    
+    form = await BmapForm.from_formdata(request)
+    print("failures/do_failures:", form.mobject.data, type(form.mobject.data))
+    if form.errors:
+        print("errors:", form.errors)
+
+    if form.validate_on_submit():
+        id = form.mobject.data
+        jsonfile = ""
+        magnet=""
+        msite=""
+        if mtype == 'Magnet':
+            print("Magnet id=", id)
+            with Session(engine) as session:
+                magnet = session.get(Magnet, id)
+                jsonfile = magnet.name
+                confdata = get_magnetid_data(session, id)
+        else:
+            print("Site id=", id)
+            with Session(engine) as session:
+                msite = session.get(MSite, id)
+                jsonfile = msite.name
+                mtype = "site"
+                confdata = get_msiteid_data(session, id)
+
+        MyEnv = appenv()
+        from python_magnetsetup.ana import setup
+        from argparse import Namespace
+        args = Namespace(wd="", magnet=magnet,msite=msite,debug=True,verbose=False)
+        with Session(engine) as session:
+            Mdata = setup(MyEnv, args, confdata, jsonfile, session)
+        print(f"{jsonfile} data loaded", Mdata)
+        raise HTTPException(status_code=404, detail="do_failures not implemented")
+
+    else:
+        return templates.TemplateResponse('failures_setup.html', {
+            "request": request,
+            "form": form,
+            "mtype": mtype
+        })
+
