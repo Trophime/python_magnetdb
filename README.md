@@ -69,9 +69,6 @@ export PATH=$PATH:$HOME/.local/bin
 
 ## TODO
 
-* display relevant error message using (HTTPException)[https://fastapi.tiangolo.com/tutorial/handling-errors/]
-or [starlette exception](https://www.starlette.io/exceptions/)
-
 * add machine selection htm with:
 ** create file for jobmanager if any
 
@@ -83,6 +80,17 @@ or [starlette exception](https://www.starlette.io/exceptions/)
 * In simulations:
 ** create forms for cfg/json 
 ** fix update cfg/json files
+** how to create/setup cfg/json for workflows like fixcurrent.py (see github/hifimagnet.cases/cfpdes)
 
 * In parts/magnets/sites:
 ** add view/create CAD geoms (connection with pythonocc-core)
+
+* In mrecords:
+** list add headers for table
+** add duration, plateaux, max B in desc field
+** show.html: add button for HeatBalance, Flow + fit
+** add selections
+*** add view dataset for selections
+** panel mrecord:
+** add filter for smooth data
+** add outliers like in panel tutorials
