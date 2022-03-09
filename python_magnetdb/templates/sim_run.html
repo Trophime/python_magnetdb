@@ -128,6 +128,69 @@
         {% endfor %}
         </table>
 
+        <li>Post-processing</li>
+        <table>
+          <tr>
+            <th>Host</th>
+            <td>
+              <div class="input-group">
+              <span class="input-group-button">
+                <input type="text" value="ssh -Y -L 11111:localhost:11111"  required size="120" readonly="readonly" id="sshpost">
+                <!-- -->
+                  <button class="btn" data-clipboard-target="#sshpost">
+                  <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                  </button>
+                <!-- -->
+              </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>{{machine}}</th>
+            <td>
+              <div class="input-group">
+              <span class="input-group-button">
+                <input type="text" value="pvdataserver"  required size="120" readonly="readonly" id="pvserver">
+                <!-- -->
+                  <button class="btn" data-clipboard-target="#pvserver">
+                  <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                  </button>
+                <!-- -->
+              </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>Host</th>
+            <td>
+              <div class="input-group">
+              <span class="input-group-button">
+                <input type="text" value="pvrenderserver"  required size="120" readonly="readonly" id="pvrenderserver">
+                <!-- -->
+                  <button class="btn" data-clipboard-target="#pvrenderserver">
+                  <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                  </button>
+                <!-- -->
+              </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+          <th>Host</th>
+          <td>
+            <div class="input-group">
+            <span class="input-group-button">
+              <input type="text" value="paraview"  required size="120" readonly="readonly" id="paraview">
+              <!-- -->
+                <button class="btn" data-clipboard-target="#paraview">
+                <img class="clippy" src="{{ url_for('static', path='assets/clippy.svg') }}" alt="Copy to clipboard" width="13">
+                </button>
+              <!-- -->
+            </span>
+            </div>
+          </td>
+         </tr>
+        </table>
         <!-- "Select on other server or custom the commands "-->
     </p>
     
