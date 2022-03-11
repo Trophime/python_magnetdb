@@ -238,7 +238,6 @@ class MRecordBase(SQLModel):
     """
     Magnet Record
     """
-    id: Optional[int] = Field(default=None, primary_key=True)
     rtimestamp: datetime = Field(default=datetime.utcnow)
     name: str
     msite_id: Optional[int] = Field(default=None, foreign_key="msite.id")
@@ -279,7 +278,7 @@ class MSimulation(SQLModel, table=True):
     static: bool = True
     linear: bool = True
 
-    mtype: str =  'Site'
+    mtype: str =  'Site' # or Magnet make it an enum
     
     # shall be an id to magnet or msite
-    msite_id: Optional[int] = None # Field(default=None, foreign_key="msite.id")
+    mid: Optional[int] = None # Field(default=None, foreign_key="msite.id")

@@ -1,0 +1,18 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <div class="form-wrapper">
+    <h2 class="title">Records by Site</h2>
+
+    <form method="POST" action="{{ url_for('record_query', mtype=mtype) }}">
+      {{ form.csrf_token }}
+      {% for field in form %}
+        <fieldset class="form-field">
+        {{ field.label }}
+        {{ field }}
+        </fieldset>
+      {% endfor %}
+      <input type="submit" value="SetUp">
+    </form>
+  </div>
+{% endblock %}
