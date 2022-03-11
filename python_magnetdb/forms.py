@@ -155,8 +155,8 @@ class SimulationForm(StarletteForm):
     geom = SelectField('Geom', choices=geom_choices)
     # coolingmodel = SelectField('CoolingModel', choices=coolingmodel_choices)
     cooling = SelectField('Cooling', choices=cooling_choices)
-    static = BooleanField('Static') # bool
-    linear = BooleanField('Linear') # bool
+    static = BooleanField('Static', default="checked") # bool
+    nonlinear = BooleanField('Non-Linear') # bool
 
     # mstatus = SelectField('Status', choices=status_choices) # actually a choice "Magnet/Site"
 
@@ -168,7 +168,7 @@ class AnalyticForm(StarletteForm):
     """
     # print("AnalyticForm")
     
-    mobject = SelectField('Name', validators=[DataRequired()]) # choices=objchoices('Magnet', None))    # TODO complete form
+    mobject = SelectField('Name', validators=[DataRequired()])
 
 class BmapForm(StarletteForm):
     """
@@ -176,5 +176,13 @@ class BmapForm(StarletteForm):
     """
     # print("BmapForm")
     
-    mobject = SelectField('Name', validators=[DataRequired()]) # choices=objchoices('Magnet', None))    
+    mobject = SelectField('Name', validators=[DataRequired()])
+
+class RecordForm(StarletteForm):
+    """
+    Record SetUp configuration
+    """
+    # print("RecordForm")
+    
+    mobject = SelectField('Name', validators=[DataRequired()])    
     
