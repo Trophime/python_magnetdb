@@ -41,8 +41,10 @@ python3 -m python_magnetdb.app --help
 Running the FastAPI Application:
 
 ```
-uvicorn python_magnetdb.main:app --reload
+uvicorn python_magnetdb.main:app [--host 0.0.0.0] --reload
 ``` 
+
+use `--host` option to make the server available for other machines in the same vlan as the host running the container.
 
 To view the API interface
 
@@ -66,6 +68,8 @@ export PATH=$PATH:$HOME/.local/bin
 ## References
 
 (sqlmodel)[https://sqlmodel.tiangolo.com/tutorial]
+(fastapi)[https://fastapi.tiangolo.com/]
+(panel)[https://panel.holoviz.org/getting_started/index.html]
 
 ## TODO
 
@@ -83,6 +87,8 @@ export PATH=$PATH:$HOME/.local/bin
 ** how to create/setup cfg/json for workflows like fixcurrent.py (see github/hifimagnet.cases/cfpdes)
 
 * In parts/magnets/sites:
+** more info in desc for magnets index.html (see routes/magnets.py),
+** more info in desc for  site index.html (see routes/sites.py),
 ** add view/create CAD geoms (connection with pythonocc-core)
 
 * In mrecords:
