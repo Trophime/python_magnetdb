@@ -77,6 +77,9 @@ async def dosetup(request: Request, mtype: str):
     stime="transient"
     if form.static.data:
         stime="static"
+
+    print("static={form.static.data}")
+    print("nonlinear={form.nonlinear.data}")
     # get object from: id=form.mobject.data
     if form.errors:
         print("errors:", form.errors)
@@ -94,10 +97,11 @@ async def dosetup(request: Request, mtype: str):
                 time=stime, 
                 geom=form.geom.data, 
                 model=form.model.data, 
-                nonlinear=form.linear.data, 
+                nonlinear=form.nonlinear.data, 
                 cooling=form.cooling.data, 
                 scale=1.e-3,
-                debug=True,verbose=False, 
+                debug=True,
+                verbose=False, 
                 )
         print("args:", args)
 
