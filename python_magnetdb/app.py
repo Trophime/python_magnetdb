@@ -298,7 +298,54 @@ if __name__ == "__main__":
             create_mpart(session=session, name='M19061901_iL1', mtype=MType.Lead, be='unknow', geom='inner.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
             create_mpart(session=session, name='M19061901_oL2', mtype=MType.Lead, be='unknow', geom='outer-H14.yaml', status=MStatus.operation, magnets=[M19061901], material=MAT_LEAD)
 
+            # M10Bitters
+            M10Bitters = create_magnet(session=session, name="M10Bitters", be="B_XYZ", geom="M10Bitters.yaml", status=MStatus.operation, msites=[])
+            create_mpart(session=session, name='M10Bi', mtype=MType.Bitter, be='BI-03-002-A', geom='M10Bitters_Bi.yaml', status=MStatus.operation, magnets=[M10Bitters], material=CuAg01)
+            create_mpart(session=session, name='M10Be', mtype=MType.Bitter, be='BE-03-002-A', geom='M10Bitters_Be.yaml', status=MStatus.operation, magnets=[M10Bitters], material=CuAg01)
             
+            # Add Supra examples
+            # create m8 site for hybride            
+            m8 = create_msite(session=session, name="M8Hybrid", conffile="unknow", status=MStatus.study)
+            # create CeaSupra Magnet
+            M8Bitters = create_magnet(session=session, name="M8Bitters", be="B_XYZ", geom="M8Bitters.yaml", status=MStatus.operation, msites=[m8])
+            CuAg008 = create_material(session=session, name="B_CuAg008", nuance="CuAg008",
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=50.1e+6,
+                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
+                                    Rpe=481000000.0)
+            create_mpart(session=session, name='M8Bi', mtype=MType.Bitter, be='BI-04-001-B', geom='M8Bitters_Bi.yaml', status=MStatus.operation, magnets=[M8Bitters], material=CuAg008)
+            create_mpart(session=session, name='M8Be', mtype=MType.Bitter, be='BE-02-002-B', geom='M8Bitters_Be.yaml', status=MStatus.operation, magnets=[M8Bitters], material=CuAg008)
+            MHybrid = create_magnet(session=session, name="Hybrid", be="unknow", geom="MHybrid.yaml", status=MStatus.study, msites=[m8])
+            LTS = create_material(session=session, name="LTS", nuance="LTS",
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=1.e+10,
+                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
+                                    Rpe=481000000.0)
+            create_mpart(session=session, name='Hybrid', mtype=MType.Supra, be='unknow', geom='Hybrid.yaml', status=MStatus.study, magnets=[MHybrid], material=LTS)
+
+            # create Oxford Supra
+            MOxford = create_magnet(session=session, name="Oxford", be="unknow", geom="MOxford.yaml", status=MStatus.study, msites=[])
+            create_mpart(session=session, name='Oxford1', mtype=MType.Supra, be='unknow', geom='Oxford1.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford2', mtype=MType.Supra, be='unknow', geom='Oxford2.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford3', mtype=MType.Supra, be='unknow', geom='Oxford3.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford4', mtype=MType.Supra, be='unknow', geom='Oxford4.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford5', mtype=MType.Supra, be='unknow', geom='Oxford5.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford6', mtype=MType.Supra, be='unknow', geom='Oxford6.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford7', mtype=MType.Supra, be='unknow', geom='Oxford7.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford8', mtype=MType.Supra, be='unknow', geom='Oxford8.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            create_mpart(session=session, name='Oxford9', mtype=MType.Supra, be='unknow', geom='Oxford9.yaml', status=MStatus.study, magnets=[MOxford], material=LTS)
+            
+            # for nougat:
+            # create a site
+            # crete Nougat Magnet
+            # create actual Nougat
+            # nougat_site = create_msite(session=session, name="MNougat", conffile="unknow", status=MStatus.study)
+            HTS = create_material(session=session, name="HTS", nuance="HTS",
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=1.e+10,
+                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
+                                    Rpe=481000000.0)
+            MNougat = create_magnet(session=session, name="NougatHTS", be="unknow", geom="unkwon.yaml", status=MStatus.operation, msites=[])            
+            create_mpart(session=session, name='Nougat', mtype=MType.Supra, be='unknow', geom='Nougat.yaml', status=MStatus.operation, magnets=[MNougat], material=HTS)
+
+
             # load appenv
             from python_magnetsetup.config import appenv
             MyEnv = appenv()
