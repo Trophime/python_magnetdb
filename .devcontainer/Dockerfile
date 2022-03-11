@@ -1,6 +1,7 @@
 FROM ubuntu:focal
 
 USER root
+EXPOSE 8000
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
