@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50;
+}
+
+.container-center {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.display-1,
+.display-2 {
+  @apply font-bold leading-tight text-gray-900;
+}
+
+.display-1 {
+  @apply text-3xl font-medium;
+}
+
+.display-2 {
+  @apply text-2xl font-medium;
+}
+
+.table-border {
+  @apply border border-gray-200 rounded-lg;
+}
+
+.table-shadow {
+  @apply table-border shadow border-b border-gray-200 rounded-lg;
+}
+
+.table-responsive {
+  @apply overflow-x-auto;
+}
+
+table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+thead {
+  @apply bg-gray-50;
+}
+
+th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+tbody {
+  @apply bg-white divide-y divide-gray-200;
+}
+
+td {
+  @apply px-6 py-4;
+}
+
+.btn {
+  @apply flex justify-center items-center h-10 px-5 transition-colors duration-150 rounded-md border shadow-sm
+  font-semibold focus:outline-none;
+  width: fit-content;
+}
+
+.btn-block {
+  @apply w-full;
+}
+
+.btn-small {
+  @apply text-sm h-8 px-4;
+}
+
+.btn-primary {
+  @apply text-white border-green-500 bg-green-500 hover:bg-green-600 hover:border-green-600;
+}
+
+.btn-default {
+  @apply text-gray-900 border-gray-300 bg-white hover:bg-gray-50;
+}
+
+.btn-outline-default {
+  @apply text-gray-900 border-transparent bg-transparent hover:text-gray-600 shadow-none;
+}
+
+.btn-danger {
+  @apply text-white border-red-600 bg-red-600 hover:bg-red-700 hover:border-red-700;
+}
+
+.btn-success {
+  @apply text-white border-green-600 bg-green-600 hover:bg-green-700 hover:border-green-700;
+}
+
+.link {
+  @apply text-green-500 hover:underline;
+}
+
+.badge {
+  @apply px-2 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-primary {
+  @apply bg-blue-200 text-gray-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+  @apply bg-red-100 text-red-800;
+}
+
+.badge-default {
+  @apply bg-gray-100 text-gray-800;
+}
+
