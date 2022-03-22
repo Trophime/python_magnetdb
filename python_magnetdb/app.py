@@ -149,17 +149,17 @@ if __name__ == "__main__":
             Helices = create_magnet(session=session, name="HL-test", be="HL-34-001-A", geom="test.yaml", status=MStatus.operation, msites=[m1])
 
             MAT_TEST1 = create_material(session=session, name="MAT_TEST1", nuance="Cu5Ag5,08",
-                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=50.1e+6,
-                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
-                                    Rpe=481000000.0)
-
-            create_mpart(session=session, name='HL-34_H1', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
-            create_mpart(session=session, name='HL-34_H2', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
-            
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=0, alpha=3.6e-3, ElectricalConductivity=52.4e+6,
+                                    ThermalConductivity=380, MagnetPermeability=1, Young=117e+9, Poisson=0.33, CoefDilatation=18e-6,
+                                    Rpe=481)
             MAT_TEST2 = create_material(session=session, name="MAT_TEST2", nuance="Cu5Ag5,08",
-                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=50.1e+6,
-                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
-                                    Rpe=481000000.0)
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=0, alpha=3.6e-3, ElectricalConductivity=53.3e+6,
+                                    ThermalConductivity=380, MagnetPermeability=1, Young=117e+9, Poisson=0.33, CoefDilatation=18e-6,
+                                    Rpe=482)
+            
+            create_mpart(session=session, name='HL-34_H1', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H1.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST1)
+            create_mpart(session=session, name='HL-34_H2', mtype=MType.Helix, be='HL-34-001-A', geom='HL-31_H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST2)
+            
             create_mpart(session=session, name="Ring-H1H2", mtype=MType.Ring, be="HL-34-001-A", geom='Ring-H1H2.yaml', status=MStatus.operation, magnets=[Helices], material=MAT_TEST2)
             ####################
 
@@ -345,6 +345,15 @@ if __name__ == "__main__":
             MNougat = create_magnet(session=session, name="NougatHTS", be="unknow", geom="unkwon.yaml", status=MStatus.operation, msites=[])            
             create_mpart(session=session, name='Nougat', mtype=MType.Supra, be='unknow', geom='Nougat.yaml', status=MStatus.operation, magnets=[MNougat], material=HTS)
 
+            # Add tore for test
+            mattore = create_material(session=session, name="mtore", nuance="test",
+                                    Tref=293, VolumicMass=9e+3, SpecificHeat=380, alpha=3.6e-3, ElectricalConductivity=1.e+10,
+                                    ThermalConductivity=360, MagnetPermeability=1, Young=127e+9, Poisson=0.335,  CoefDilatation=18e-6,
+                                    Rpe=481000000.0)
+            
+            m1 = create_msite(session=session, name="MTore", conffile="", status=MStatus.defunct)
+            MTore = create_magnet(session=session, name="Tore-test", be="unknow", geom="MTore.yaml", status=MStatus.operation, msites=[m1])            
+            Tore = create_mpart(session=session, name='tore', mtype=MType.Bitter, be='unknow', geom='tore.yaml', status=MStatus.operation, magnets=[MTore], material=mattore)
 
             # load appenv
             from python_magnetsetup.config import appenv

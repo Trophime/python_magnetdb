@@ -29,6 +29,7 @@ def index(request: Request):
         for part in magnets:
             result = get_magnet_type(session, part.id)
             desc[part.id] = {"Type": result[0], "Status:": part.status}
+            # TODO add to desc: nbr Helices, inner diameter
     return templates.TemplateResponse('magnets/index.html', {
         "request": request, 
         "magnets": magnets,

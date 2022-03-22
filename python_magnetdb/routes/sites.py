@@ -25,7 +25,8 @@ def index(request: Request):
         msites = session.exec(statement).all()
         desc = {}
         for site in msites:
-           desc[site.id] = {"Status:": site.status} 
+           desc[site.id] = {"Status:": site.status}
+           # TODO add to desc: (Insert, xx Bitters, yy Supras)
     return templates.TemplateResponse('sites/index.html', {
         "request": request, 
         "msites": msites,
@@ -43,6 +44,7 @@ def show(request: Request, id: int):
         data["Magnets"] = []
         for magnet in msite.magnets:
             data["Magnets"].append({"name": magnet.name, "id": magnet.id})
+        # TODO add link to request mrecords for msite_id in sites/show.html
         return templates.TemplateResponse('sites/show.html', {"request": request, "msite": data, "msite_id": id})
 
 @router.get("/sites/{id}/edit", response_class=HTMLResponse, name='edit_site')

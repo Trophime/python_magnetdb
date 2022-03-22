@@ -20,7 +20,6 @@ router = APIRouter()
 def root(request: Request):
     return templates.TemplateResponse('mrecords.html', {"request": request})
 
-
 @router.get("/records", response_class=HTMLResponse)
 def index(request: Request):
     # print("mrecord index")
@@ -55,7 +54,6 @@ async def edit(request: Request, mtype: str, id: Optional[int]=None):
         "form": form,
         "mtype": mtype
     })
-
 
 @router.post("/records/query/{mtype}", response_class=HTMLResponse, name='record_query')
 async def index_by_query(request: Request, mtype: str):
