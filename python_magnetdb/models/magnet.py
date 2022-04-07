@@ -22,7 +22,7 @@ class Magnet(Model):
     def magnet_parts(self):
         return MagnetPart
 
-    @has_many_through(MagnetPart)
+    @has_many_through(MagnetPart, 'magnet_id', 'id')
     def parts(self):
         from .part import Part
         return Part

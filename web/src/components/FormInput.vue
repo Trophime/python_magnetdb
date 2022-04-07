@@ -28,6 +28,11 @@ export default {
   @apply focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md;
 }
 
+.form-input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+}
+
 .form-input:disabled {
   @apply bg-gray-100 cursor-not-allowed;
 }

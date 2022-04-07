@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # will be updated to match your local UID/GID (when using the dockerFile property).
 # See https://aka.ms/vscode-remote/containers/non-root-user for details.
 ARG USERNAME=vscode
-ARG USER_UID=1001
+ARG USER_UID=999
 ARG USER_GID=$USER_UID
 
 # install Feelpp from BinTray Debian repository
@@ -34,28 +34,26 @@ RUN apt-get update \
     && apt-get -y install git iproute2 procps lsb-release \
     #\
     # Install C++ tools\
-    && apt-get -y install build-essential python3-minimal libpython3.8 \
-    && apt-get -y install python3-pip python-is-python3 python3-jinja2 \
-    && apt-get -y install python3-nptdms python3-freesteam python3-nlopt python3-tabulate \
-    && apt-get -y install python3-statsmodels \
-    && apt-get -y install python3-matplotlib python3-mplcursors \
+    && apt-get -y install curl wget libpq-dev \
+    && apt-get -y install build-essential python3-minimal libpython3.8-dev \
+    && apt-get -y install python-is-python3 python3-pip python3-jinja2 \
+    && apt-get -y install python3-autopep8 black yapf3 python3-bandit flake8 pydocstyle pylint python3-pytest mypy \
     && apt-get -y install texlive-latex-base texlive-latex-extra dvipng \
-    && apt-get -y install python3-pandas python3-seaborn \
-    && apt-get -y install python3-numpy python3-scipy \
-    && apt-get -y install python3-ht python3-pyclaw \
-    && apt-get -y install python3-pint \
-    && apt-get -y install python3-requests python3-chevron \
-    && apt-get -y install python3-magnetrun python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
-    && apt-get -y install curl sqlitebrowser \
-    && apt-get -y install python3-fabric python3-pythonocc-core \
+    && apt-get -y install python3-gmsh \
+    && apt-get -y remove pyflakes python-pkg-resources python-pyflakes libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal \
+    && apt-get -y install nmap vim-nox \
     #\
-    # Install web stuff for database+api+website \
-    && python -m pip install sqlmodel \
-    && python -m pip install fastapi "uvicorn[standard]" \
-    && python -m pip install starlette_wtf asyncio \
-    && python -m pip install panel hvplot param holoviews \
-    && export PATH=$PATH:$HOME/.local/bin \
+    # Install frontend stuff \
+    && python -m pip install --upgrade pip \
     #\
+    # Install node \
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install nodejs \
+    && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update \
+    && apt-get install yarn \
+    && rm -f /tmp/nodejs-install.js \
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.\
     && groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
@@ -77,9 +75,16 @@ RUN apt-get update \
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
+USER $USERNAME
+# Install backend stuff for database+api
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - 
+
+USER root
+
 # Setup demo environment variables
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=C.UTF-8 \
-    OMPI_MCA_btl_vader_single_copy_mechanism=none
+    OMPI_MCA_btl_vader_single_copy_mechanism=none \
+    PATH=$PATH:$HOME/.poetry/bin
 

@@ -9,6 +9,12 @@ services:
       POSTGRES_PASSWORD: magnetdb
     volumes:
       - postgres:/var/lib/postgresql/data
+  
+  adminer:
+    image: adminer
+    ports:
+      - 8090:8090
+  
   minio:
     image: minio/minio
     command: server /data --console-address ":9080"

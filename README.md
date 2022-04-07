@@ -6,9 +6,29 @@ See `python_magnetrun` for more details
 
 ## Development setup
 
+5. Configure LemonLDAP (https://github.com/LemonLDAPNG/lemonldap-ng-docker):
+   1. Sign in to http://auth.example.com/ with dwho/dwho
+   2. Enable OpenID Connect in Administration > WebSSO Manager > General Parameters > Issuer modules > OpenID Connect
+   3. Create OpenID relying party in Administration > WebSSO Manager > OpenID Connect Relying Parties > Add OpenID Relying Party
+   4. Go in Administration > WebSSO Manager > OpenID Connect Relying Parties > "Name of the relying party" > Options > Basic
+   5. Set Client ID to `testid`
+   6. Set Client secret to `testsecret`
+   7. Set Allowed redirection addresses for login to `http://localhost:8080/sign_in`
+
+On your host:
+```shell
+echo "127.0.0.1 auth.example.com manager.example.com test1.example.com test2.example.com" | sudo tee -a /etc/hosts
+```
+
+This step has to be done prior with lemonldap base image
+Then copy the conf files in the lemonldap-etc and lemonldap-var/conf directories 
+
 1. Install python dependencies:
     ```shell
-    pip3 install -r requirements.txt
+    poetry install
+    cd python_magnetsetup
+    poetry install
+    cd ..
     ```
 
 2. Start dependencies with docker:
@@ -22,28 +42,17 @@ See `python_magnetrun` for more details
 
 4. Run migrations:
     ```shell
+    poetry shell
     orator migrate -c config.py
     ```
 
-5. Configure LemonLDAP (https://github.com/LemonLDAPNG/lemonldap-ng-docker):
-   1. Sign in to http://auth.example.com/ with dwho/dwho
-   2. Enable OpenID Connect in Administration > WebSSO Manager > General Parameters > Issuer modules > OpenID Connect
-   3. Create OpenID relying party in Administration > WebSSO Manager > OpenID Connect Relying Parties > Add OpenID Relying Party
-   4. Go in Administration > WebSSO Manager > OpenID Connect Relying Parties > "Name of the relying party" > Options > Basic
-   5. Set Client ID to `testid`
-   6. Set Client secret to `testsecret`
-   7. Set Allowed redirection addresses for login to `http://localhost:8080/sign_in`
 
 6. Setup front-end:
    ```shell
     cd web
     yarn install
+    cd ..
     ```
-
-7. Run seeds:
-   ```shell
-   python3 -m python_magnetdb.seeds
-   ```
 
 8. Start front-end:
    ```shell
@@ -57,3 +66,12 @@ See `python_magnetrun` for more details
    export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
    uvicorn python_magnetdb.main:app --reload --log-level=debug
    ```
+
+7. Run seeds:
+
+   need to define `DATA_DIR`
+   
+   ```shell
+   python3 -m python_magnetdb.seeds
+   ```
+
