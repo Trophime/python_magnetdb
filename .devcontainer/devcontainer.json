@@ -1,5 +1,5 @@
 {
-	"name": "MagnetDB Project",
+	"name": "MagnetDB Project canary version",
 	"dockerFile": "Dockerfile",
 	"runArgs": [ 
 	    "--cap-add=SYS_PTRACE", 
@@ -10,28 +10,40 @@
 	],
 	"mounts": [
 		// "source=${localWorkspaceFolder}\\..\\python_magnetsetup\\data,target=/data,type=bind,consistency=cached"
-		"source=${localWorkspaceFolder}/../python_magnetsetup/data,target=/data,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/github/python_magnetsetup/data,target=/data,type=bind,consistency=cached",
 	],
 
-	// Use 'settings' to set *default* container specific settings.json values on container create. 
-	// You can edit these settings after create using File > Preferences > Settings > Remote.
+	// Set *default* container specific settings.json values on container create.
 	"settings": { 
-		"terminal.integrated.defaultProfile.linux": "bash"
+		"terminal.integrated.defaultProfile.linux": "bash",
+		"python.defaultInterpreterPath": "/usr/bin/python",
+		"python.linting.enabled": true,
+		"python.linting.pylintEnabled": true,
+		"python.formatting.autopep8Path": "/usr/bin/autopep8",
+		"python.formatting.blackPath": "/usr/bin/black",
+		"python.formatting.yapfPath": "/usr/bin/yapf3",
+		"python.linting.banditPath": "/usr/bin/bandit",
+		"python.linting.flake8Path": "/usr/bin/flake8",
+		"python.linting.mypyPath": "/usr/bin/mypy",
+		"python.linting.pycodestylePath": "/usr//bin/pycodestyle",
+		"python.linting.pydocstylePath": "/usr/bin/pydocstyle",
+		"python.linting.pylintPath": "/usr/bin/pylint",
+		"python.testing.pytestPath": "/usr/bin/pytest-3"
 	},
 
-	// Use 'appPort' to create a container with published ports. If the port isn't working, be sure
-	// your server accepts connections from all interfaces (0.0.0.0 or '*'), not just localhost.
-	// "appPort": [],
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "gcc -v",
-
-	// Comment out the next line if you want to run as root instead
-	"remoteUser": "vscode",
-
-	// Add the IDs of extensions you want installed when the container is created in the array below.
+	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance"
-	]
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// This can be used to network with other containers or the host.
+	// "forwardPorts": [5000, 5432],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip install --user -r requirements.txt",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
 }

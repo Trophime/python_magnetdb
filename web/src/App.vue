@@ -34,6 +34,9 @@
               <router-link class="topbar-link" active-class="topbar-link-active" :to="{ name: 'records' }">
                 Records
               </router-link>
+              <router-link class="topbar-link" active-class="topbar-link-active" :to="{ name: 'simulations' }">
+                Simulations
+              </router-link>
             </template>
           </div>
         </div>

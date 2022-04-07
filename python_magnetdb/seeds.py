@@ -244,22 +244,6 @@ MA18101201 = create_material({
     'expansion_coefficient': 18e-6,
     'rpe': 500,
 })
-MA18101201 = create_material({
-    'name': 'MA18101201',
-    'description': 'H10',
-    'nuance': 'CuAg5.5',
-    't_ref': 293,
-    'volumic_mass': 9e+3,
-    'specific_heat': 0,
-    'alpha': 3.6e-3,
-    'electrical_conductivity': 53.3e+6,
-    'thermal_conductivity': 380,
-    'magnet_permeability': 1,
-    'young': 117e+9,
-    'poisson': 0.33,
-    'expansion_coefficient': 18e-6,
-    'rpe': 500,
-})
 MA19012101 = create_material({
     'name': 'MA19012101',
     'description': 'H11',
@@ -447,6 +431,63 @@ M19061901_oL2 = create_part({
     'cao': 'HL-31_H7',
 })
 
+MAT_TEST1 = create_material({
+    'name': 'MAT_TEST1',
+    'description': 'R1, R2',
+    'nuance': 'Cu5Ag5,08',
+    't_ref': 293,
+    'volumic_mass': 9e+3,
+    'specific_heat': 0,
+    'alpha': 3.6e-3,
+    'electrical_conductivity': 52.4e+6,
+    'thermal_conductivity': 380,
+    'magnet_permeability': 1,
+    'young': 117e+9,
+    'poisson': 0.33,
+    'expansion_coefficient': 18e-6,
+    'rpe': 481,
+})
+MAT_TEST2 = create_material({
+    'name': 'MAT_TEST2',
+    'description': 'R1, R2',
+    'nuance': 'Cu5Ag5,08',
+    't_ref': 293,
+    'volumic_mass': 9e+3,
+    'specific_heat': 0,
+    'alpha': 3.6e-3,
+    'electrical_conductivity': 53.3e+6,
+    'thermal_conductivity': 380,
+    'magnet_permeability': 1,
+    'young': 117e+9,
+    'poisson': 0.33,
+    'expansion_coefficient': 18e-6,
+    'rpe': 482,
+})
+
+HLtestH1 = create_part({
+    'name': 'HL-34_H1',
+    'type': 'helix',
+    'design_office_reference': 'HL-34-001-A',
+    'status': 'in_operation',
+    'material': MAT_TEST1,
+    'geometry': 'HL-31_H1',
+})
+HLtestH2 = create_part({
+    'name': 'HL-34_H2',
+    'type': 'helix',
+    'design_office_reference': 'HL-34-001-A',
+    'status': 'in_operation',
+    'material': MAT_TEST2,
+    'geometry': 'HL-31_H2',
+})
+HLtestR1 = create_part({
+    'name': 'Ring-H1H2',
+    'type': 'ring',
+    'design_office_reference': 'HL-34-001-A',
+    'status': 'in_operation',
+    'material': MAT_TEST2,
+    'geometry': 'Ring-H1H2',
+})
 
 MTest = create_site({
     'name': 'MTest',
@@ -469,9 +510,10 @@ HLtest = create_magnet({
     'name': 'HL-test',
     'status': 'in_operation',
     'site': MTest,
-    'parts': [H15061801, H15061703, H15101601],
+    'parts': [HLtestH1, HLtestH2, HLtestR1],
     'geometry': 'test',
     'cao': 'HL-31',
+    'design_office_reference': 'HL-34-001-A'
 })
 RINGtest = create_magnet({
     'name': 'RING-test',
