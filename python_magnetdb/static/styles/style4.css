@@ -75,7 +75,7 @@ a:hover {
 @media (max-width: 600px) {
     #sidebar {
        width: auto;
-       margin-bottom:10px;        
+       margin-bottom:10px;
        position: relative;
-    }    
+    }
 }

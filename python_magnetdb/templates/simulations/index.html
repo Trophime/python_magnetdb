@@ -1,0 +1,19 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <h1>List of Simulations</h1>
+  <p>
+  <ul id="magnet_props">
+    <table>
+      {% for item in simulations %}
+      <tr>
+        <th><a href="simulations/{{ item.id }}">{{ item.name }}</a></th>
+        {% for key, value in descriptions[item.id].items() %}
+           <td>{{value}}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </table>
+  </ul>
+  </p>
+{% endblock %}

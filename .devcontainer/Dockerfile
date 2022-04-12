@@ -1,6 +1,7 @@
 FROM ubuntu:focal
 
 USER root
+EXPOSE 8000
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -34,21 +35,25 @@ RUN apt-get update \
     #\
     # Install C++ tools\
     && apt-get -y install build-essential python3-minimal libpython3.8 \
+    && apt-get -y install python3-pip python-is-python3 python3-jinja2 \
     && apt-get -y install python3-nptdms python3-freesteam python3-nlopt python3-tabulate \
     && apt-get -y install python3-statsmodels \
-    && apt-get -y install python3-matplotlib texlive-latex-base texlive-latex-extra dvipng \
+    && apt-get -y install python3-matplotlib python3-mplcursors \
+    && apt-get -y install texlive-latex-base texlive-latex-extra dvipng \
     && apt-get -y install python3-pandas python3-seaborn \
     && apt-get -y install python3-numpy python3-scipy \
     && apt-get -y install python3-ht python3-pyclaw \
-    && apt-get -y install python3-pip python-is-python3 sqlitebrowser \
     && apt-get -y install python3-pint \
-    && apt-get -y install python3-flask python3-flaskext.wtf \
-    && apt-get -y install curl \
     && apt-get -y install python3-requests python3-chevron \
-    #&& apt-get install python3-python-magnetgeo python3-gmsh \
+    && apt-get -y install python3-magnetrun python3-magnetsetup python3-magnetgeo python3-magnettools python3-gmsh \
+    && apt-get -y install curl sqlitebrowser \
+    && apt-get -y install python3-fabric python3-pythonocc-core \
+    #\
+    # Install web stuff for database+api+website \
     && python -m pip install sqlmodel \
     && python -m pip install fastapi "uvicorn[standard]" \
-    && python -m pip install fastapi-pagination \
+    && python -m pip install starlette_wtf asyncio \
+    && python -m pip install panel hvplot param holoviews \
     && export PATH=$PATH:$HOME/.local/bin \
     #\
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.\

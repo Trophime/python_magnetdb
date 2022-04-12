@@ -1,0 +1,22 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <h1>Simulation Definition: {{ simulation['name'] }}.</h1>
+  <p>
+  <ul id="material_props">
+    <table>
+      {% for key, value in simulation.items() %}
+      {% if key != "name" %}
+      <tr>
+          <th>{{ key }}</th>
+          <td>{{ value }}</td>
+        </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+  </ul>
+  <button type="button" onclick="window.location.href='{{ url_for('edit_simulation', id=simulation_id) }}';">
+    Update
+  </button>
+  </p>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "layout/default.html" %}
+
+{% block content %}
+  <h1>Cfg Definition: {{gname}}</h1>
+  <p>
+    <ul id="material_props">
+      <table>
+        {% for key, value in cfg.items() %}
+        <tr>
+            <th>{{ key }}</th>
+            {% if value is mapping %}
+            <td><table>
+              {% for skey, svalue in value.items() %}
+              <tr>
+                <th>{{skey}}</th>
+                <td>{{svalue}}</td>
+              </tr>
+            {% endfor %}
+          </table></td>
+          {% else %}
+            <td>{{ value }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+      </table>
+    </ul>
+    
+  <button type="button" onclick="window.location.href='{{ url_for('edit_cfg', gname=gname) }}';">
+    Update
+  </button>
+  <button type="button" onclick="window.location.href='{{ url_for('download_cfg', gname=gname) }}';">
+    Download
+  </button>
+  </p>
+{% endblock %}

@@ -1,17 +1,15 @@
 from typing import List, Optional
+from datetime import datetime
 
-import enum
-#from sqlalchemy import String
-#from sqlalchemy.sql.schema import Column
+from .status import MStatus, MType
+
 from sqlmodel import Field, Enum, Relationship, Session, SQLModel, create_engine
 from sqlmodel import Column, String
-
-# TODO:
-# make name unique
 
 class MaterialBase(SQLModel):
     """
     Material Physical Properties in SI for isotropic material
+    ?? Make Physical props pint object ??
     """
     
     name: str = Field(sa_column=Column("name", String, unique=True))
@@ -37,7 +35,6 @@ class MaterialRef(MaterialBase):
 
 class Material(MaterialRef, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    # TODO make name unique
 
 class MaterialCreate(MaterialBase):
     pass
@@ -109,7 +106,7 @@ class MSiteBase(SQLModel):
     
     name: str = Field(sa_column=Column("name", String, unique=True))
     conffile: str
-    status: str #Field(sa_column=Column(Enum(MSiteStatus)))
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
 
 class MSite(MSiteBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -128,7 +125,7 @@ class MSiteUpdate(SQLModel):
     
     name: str
     conffile: str
-    status: str #Field(sa_column=Column(Enum(MSiteStatus)))
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
     magnets: List["Magnet"] = [] # Relationship(back_populates="msites", link_model=MagnetMSiteLink)
 
 ##################
@@ -144,7 +141,7 @@ class MagnetBase(SQLModel):
 
     be: str
     geom: str
-    status: str
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
 
 class Magnet(MagnetBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -166,13 +163,15 @@ class MagnetUpdate(SQLModel):
 
     be: str
     geom: str
-    status: str
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
 
     msites: List[MSite] = [] #Relationship(back_populates="magnets", link_model=MagnetMSiteLink)
     mparts: List["MPart"] = [] #Relationship(back_populates="magnets", link_model=MPartMagnetLink)
 
 ##################
-#
+# Just make sure that if you're using Alembic migration autogeneration and you require values
+# to be stored as Enum in the database and not String, you modify the column type in the generated
+# migration script.
 ##################
 
 class MPartBase(SQLModel):
@@ -181,16 +180,15 @@ class MPartBase(SQLModel):
     """
     name: str = Field(sa_column=Column("name", String, unique=True))
 
-    mtype: str
+    mtype: MType = Field(sa_column=Column(Enum(MType))) # str # make it an enum??
     be: str
     geom: str
-    status: str
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
 
     material_id: Optional[int] = Field(default=None, foreign_key="material.id")
 
 class MPart(MPartBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    # material: Optional[Material] = Relationship(back_populates="mparts")
     magnets: List[Magnet] = Relationship(back_populates="mparts", link_model=MPartMagnetLink)
 
 class MPartRead(MPartBase):
@@ -208,7 +206,7 @@ class MPartUpdate(SQLModel):
     mtype: str
     be: str
     geom: str
-    status: str
+    status: MStatus = Field(sa_column=Column(Enum(MStatus)))
 
     material_id: Optional[int] = None
     magnets: List[Magnet] = []
@@ -237,18 +235,21 @@ class MSiteReadWithMagnets(MSiteRead):
 #
 ##################
 
+# from datetime import datetime
+# see magnetrun/MRecord to merge
+#            tformat="%Y.%m.%d - %H:%M:%S"
+#            timestamp = datetime.datetime.strptime(data[1].replace('.txt',''), tformat)
+            
 class MRecordBase(SQLModel):
     """
     Magnet Record
     """
-    id: Optional[int] = Field(default=None, primary_key=True)
-    timestamp: str
+    rtimestamp: datetime = Field(default=datetime.utcnow)
     name: str
     msite_id: Optional[int] = Field(default=None, foreign_key="msite.id")
 
 class MRecord(MRecordBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    # msite: Optional[MSite] = Relationship(back_populates="msites")
 
 class MRecordRead(MRecordBase):
     id: int
@@ -260,7 +261,30 @@ class MRecordUpdate(SQLModel):
     """
     Magnet Record
     """
-    timestamp: str
+    rtimestamp: datetime
     name: str
     msite_id: Optional[int] = None #Field(default=None, foreign_key="msite.id")
 
+##################
+#
+##################
+
+class MSimulation(SQLModel, table=True):
+    """
+    Magnet Simulation
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    timestamp: str # datetime = Field(default=datetime.utcnow)
+    name: str
+
+    method: str = 'cfpdes'
+    model: str = 'thelec'
+    geom: str = "Axi"
+    static: bool = True
+    linear: bool = True
+
+    mtype: str =  'Site' # or Magnet make it an enum
+    
+    # shall be an id to magnet or msite
+    mid: Optional[int] = None # Field(default=None, foreign_key="msite.id")

@@ -59,15 +59,20 @@ body {
     padding: 0;
 }
 
-.menuitem {
+.menuitem:hover {
+    background-color: #04AA6D;
+}
+
+.menuitem > a {
+    display: block;
+    text-decoration: none;
     background-color: #f1f1f1;
     border: 1px solid #d4d4d4;
     list-style-type: none;
     padding: 2px;
-    cursor: pointer;
 }
 
-.menuitem:hover {
+.menuitem > a:hover {
     background-color: #04AA6D;
 }
 
@@ -93,11 +98,11 @@ a:hover {
     #sidebar {
         width: auto;
         position: relative;
-    } 
+    }
     #main {
         margin-right: 0;
-    }    
-       
+    }
+
 }
 
 @media (max-width: 600px) {
@@ -107,5 +112,5 @@ a:hover {
     }
     #main {
         margin: 0;
-    }    
+    }
 }
