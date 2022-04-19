@@ -85,3 +85,11 @@ See `python_magnetrun` for more details
    poetry run python3 -m python_magnetdb.seeds
    ```
 
+8. PgAdmin setup
+
+   Run localhost:5050/
+   add a server for magnetdb
+   
+   Check magnetdb ip server with: docker inspect postgres-app  | grep IPAddress
+
+
