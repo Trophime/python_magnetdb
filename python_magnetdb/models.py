@@ -93,7 +93,7 @@ class MagnetMSiteLink(SQLModel, table=True):
 #
 ##################
 
-class MSiteStatus(str, enum.Enum):
+class MSiteStatus(str, Enum):
     study = "in_study"
     operation = "in_operation"
     stock = "in_stock"
