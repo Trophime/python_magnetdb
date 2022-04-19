@@ -6,17 +6,25 @@ See `python_magnetrun` for more details
 
 ## Development setup
 
-0. 
+0. Pre-requisites
 
    On your host:
    ```shell
    echo "127.0.0.1 handler.sso.grenoble.lncmi.local api.manager.sso.grenoble.lncmi.local manager.sso.grenoble.lncmi.local sso.grenoble.lncmi.local test.sso.grenoble.lncmi" | sudo tee -a /etc/hosts
    ```
 
+   Create a self signed certificate for the magnetdb server:
+   
+   ```shell
+   mkdir -p certs
+   openssl req -new -x509 -days 365 -nodes -out certs/cert.pem -keyout certs/cert.key
+   chmod 600 certs/cert.perm certs.cert.key
+   ```
+
    ```shell
    docker network create nginx-proxy
    docker run -d -p 80:80 -p 443:443 -v $PWD/certs:/etc/nginx/certs -v /var/run/docker.sock:/tmp/docker.sock:ro --name my-nginx-proxy --net nginx-proxy jwilder/nginx-proxy
-    ```
+   ```
 
 1. Install python dependencies:
     ```shell
@@ -87,9 +95,9 @@ See `python_magnetrun` for more details
 
 8. PgAdmin setup
 
-   Run localhost:5050/
+   Load `localhost:5050/` in your web browser
    add a server for magnetdb
    
-   Check magnetdb ip server with: docker inspect postgres-app  | grep IPAddress
+   Check magnetdb ip server with: `docker inspect postgres-app  | grep IPAddress`
 
 
