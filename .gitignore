@@ -73,3 +73,8 @@ flask/*
 .DS_Store
 data
 core
+
+pgadmin-data
+minio-data
+postgres-data
+lemonldap-ng-data

@@ -3,7 +3,7 @@ import jwt
 from datetime import datetime
 from os import getenv
 
-authorization_server = getenv('SECURITY_AUTHORIZATION_SERVER') or "http://auth.example.com"
+authorization_server = getenv('SECURITY_AUTHORIZATION_SERVER') or "http://sso.grenoble.lncmi.local"
 client_id = getenv('SECURITY_CLIENT_ID') or "testid"
 client_secret = getenv('SECURITY_CLIENT_SECRET') or "testsecret"
 secret = getenv("SECRET") or "defaultsecretpleasechangeme"
