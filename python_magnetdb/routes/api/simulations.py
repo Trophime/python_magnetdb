@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Form, Query
 
+from ... import worker
 from ...actions.generate_simulation_config import generate_simulation_config
-from ...actions.run_simulation import run_simulation
 from ...actions.run_simulation_setup import run_simulation_setup
 from ...dependencies import get_user
 from ...models.audit_log import AuditLog
@@ -61,8 +61,8 @@ def run_setup(id: int, user=Depends(get_user('update'))):
     if not simulation:
         raise HTTPException(status_code=404, detail="Simulation not found")
 
-    AuditLog.log(user, "Simulation setup started", resource=simulation)
-    run_simulation_setup(simulation)
+    AuditLog.log(user, "Simulation setup scheduled", resource=simulation)
+    worker.run_simulation_setup.delay(simulation.id)
     return simulation.serialize()
 
 
@@ -72,6 +72,6 @@ def run(id: int, user=Depends(get_user('update'))):
     if not simulation:
         raise HTTPException(status_code=404, detail="Simulation not found")
 
-    AuditLog.log(user, "Simulation started", resource=simulation)
-    run_simulation(simulation)
+    AuditLog.log(user, "Simulation scheduled", resource=simulation)
+    worker.run_simulation.delay(simulation.id)
     return simulation.serialize()

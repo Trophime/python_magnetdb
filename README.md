@@ -54,7 +54,7 @@ See `python_magnetrun` for more details
 
 4. Run migrations:
     ```shell
-    poetry run orator migrate -c config.py
+    poetry run orator migrate -c python_magnetdb/database.py
     ```
 
 
@@ -66,18 +66,14 @@ See `python_magnetrun` for more details
     cd ..
     ```
 
-8. Start front-end:
-   
+7. Start front-end:
    ```shell
    cd web
    export API_ENDPOINT=http://localhost:8000
    yarn serve
    ```
 
-9. Start back-end:
-
-   In an other terminal
-
+8. Start back-end:
    ```shell
    export API_ENDPOINT=http://localhost:8000
    export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
@@ -101,3 +97,15 @@ See `python_magnetrun` for more details
    Check magnetdb ip server with: `docker inspect postgres-app  | grep IPAddress`
 
 
+9. Start worker:
+   ```shell
+   export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
+   poetry run celery -A python_magnetdb.worker worker --loglevel=info
+   ```
+
+10. Run seeds:
+
+    Need to define `DATA_DIR`
+    ```shell
+    poetry run python3 -m python_magnetdb.seeds
+    ```
