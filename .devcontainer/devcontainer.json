@@ -10,7 +10,7 @@
 	],
 	"mounts": [
 		// "source=${localWorkspaceFolder}\\..\\python_magnetsetup\\data,target=/data,type=bind,consistency=cached"
-		"source=${localEnv:HOME}/github/python_magnetsetup/data,target=/data,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/github/python_magnetsetup/data,target=/data,type=bind,consistency=cached"
 	],
 
 	// Set *default* container specific settings.json values on container create.
@@ -28,7 +28,8 @@
 		"python.linting.pycodestylePath": "/usr//bin/pycodestyle",
 		"python.linting.pydocstylePath": "/usr/bin/pydocstyle",
 		"python.linting.pylintPath": "/usr/bin/pylint",
-		"python.testing.pytestPath": "/usr/bin/pytest-3"
+		"python.testing.pytestPath": "/usr/bin/pytest-3",
+		"python.venvFolders": [ "/home/vscode/.cache/pypoetry/virtualenvs" ]
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.

@@ -74,7 +74,14 @@ flask/*
 data
 core
 
+pgadmin-data.orig
+minio-data.orig
+postgres-data.orig
+
 pgadmin-data
 minio-data
 postgres-data
 lemonldap-ng-data
+
+web
+http

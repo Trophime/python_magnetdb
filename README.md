@@ -77,7 +77,7 @@ See `python_magnetrun` for more details
    ```shell
    export API_ENDPOINT=http://localhost:8000
    export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
-   poetry run uvicorn python_magnetdb.main:app --reload --log-level=debug
+   poetry run uvicorn python_magnetdb.web:app --reload --log-level=debug
    ```
 
 7. Run seeds:
@@ -85,6 +85,8 @@ See `python_magnetrun` for more details
    To run this step you must have a '/data' directory. In the dev container this directory is mounted automatically
    
    ```shell
+   export API_ENDPOINT=http://localhost:8000
+   export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
    export DATA_DIR=/data
    poetry run python3 -m python_magnetdb.seeds
    ```
@@ -98,6 +100,7 @@ See `python_magnetrun` for more details
 
 
 9. Start worker:
+
    ```shell
    export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
    poetry run celery -A python_magnetdb.worker worker --loglevel=info
