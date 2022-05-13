@@ -232,7 +232,7 @@ def MSite_Gmsh(MyEnv, cad, gname, is2D, verbose):
                 # print("MSite_Gmsh: cad.magnets[key]=", cad.magnets[key], "solids=%d" % len(solid_names))
             elif isinstance(cad.magnets[key], list):
                 for mpart in cad.magnets[key]:
-                    (_names, NHelices, NChannels, NIsolants) = Magnet_Gmsh(MyEnv, mpart, gname, is2D, verbose)
+                    (_names, _NHelices, _NChannels, _NIsolants) = Magnet_Gmsh(MyEnv, mpart, gname, is2D, verbose)
                     compound.append(mpart)
                     solid_names += _names
                     NHelices += _NHelices

@@ -4,10 +4,11 @@ from argparse import RawTextHelpFormatter
 
 import sys
 import os
+import re
 
 from .setup import setup, setup_cmds
 from .objects import load_object, load_object_from_db
-from .config import appenv, loadconfig, supported_methods, supported_models
+from .config import appenv, loadconfig, loadmachine, load_machines, supported_methods, supported_models
 
 def fabric(machine: str, workingdir: str, args, cfgfile: str, jsonfile: str, meshfile: str, tarfilename: str, cmds: dict):
     """
@@ -65,19 +66,11 @@ def main():
 
     # TODO get available model from magnetsetup.json
 
-    #
-    # epilog = "The choice of model is actually linked with the choosen method following this table\n" \
-    #          f"cfpdes (Axi, Static): {supported_models(MyEnv, 'cfpdes', 'Axi', 'static')}\n" \
-    #          f"cfpdes (Axi, Transient): {supported_models(MyEnv, 'cfpdes', 'Axi', 'transient')}\n" \
-    #          f"cfpdes (3D, Static): {supported_models(MyEnv, 'cfpdes', '3D', 'transient')}\n" \
-    #          f"cfpdes (3D, Transient): {supported_models(MyEnv, 'cfpdes', 'Axi', 'transient')}\n" \
-    #          "CG (3D only): thelec\n" \
-    #          "HDG (3D only): thelec\n" \
-    #          "" \
-    #          "NB: for cfpdes you must use a linear case as a starting point for a nonlinear case"
-
     # load appenv
     AppCfg = loadconfig()
+    
+    # load appenv
+    MyEnv = appenv()
 
     comment = ""
     actual_models = []
@@ -94,6 +87,7 @@ def main():
              "" \
              "NB: for cfpdes you must use a linear case as a starting point for a nonlinear case"
 
+    machines = [ key for key in load_machines()]
 
     # Manage Options
     command_line = None
@@ -125,6 +119,8 @@ def main():
     parser.add_argument("--verbose", help="activate verbose", action='store_true')
     args = parser.parse_args()
 
+    if args.debug: print(MyEnv.template_path())
+
     # if args.debug:
     #    print("Arguments: " + str(args._))
 
@@ -141,10 +137,6 @@ def main():
         if args.magnet is not None or args.msite is not None:
             print("cannot specify both datafile and magnet or msite")
             sys.exit(1)
-
-    # load appenv
-    MyEnv = appenv()
-    if args.debug: print(MyEnv.template_path())
 
     # Get Object
     if args.datafile is not None:
@@ -163,7 +155,20 @@ def main():
     cmds = setup_cmds(MyEnv, args, yamlfile, cfgfile, jsonfile, xaofile, meshfile)
 
     # Print command to run
-    machine = MyEnv.compute_server
+    machine = loadmachine(args.machine) # MyEnv.compute_server
+    # TODO
+    # select a machine
+    # select NP
+    NP = machine.cores
+    if machine.multithreading:
+        NP = int(NP/2)
+    if args.debug:
+        print(f"NP={NP} {type(NP)}")
+    if args.np > 0:
+        if args.np > NP:
+            print(f'requested number of cores {args.np} exceed {machine.name} capability (max: {NP})')
+        else:
+            NP = args.np
 
     workingdir = cfgfile.replace(".cfg", "")
 
@@ -184,8 +189,7 @@ def main():
     # post-processing
     print("\n\n=== Guidelines for postprocessing a simu on your host ===")
     print(f"Start pvdataserver on {machine}")
-    print(f"Connect on {machine}: ssh -Y -L 11111:{machine}:11111")
-    print(f"Start Paraview dataserver in {machine}: pvdataserver")
+    print(f"Connect on {machine}: ssh -Y -L 11111:{machine}:11111 pvdataserver")
     print("In a new terminal on your host, start Paraview render server: pvrenderserver")
     print("In a new terminal on your host, start Paraview: paraview")
     print("==================================================")
@@ -198,6 +202,9 @@ def main():
         # start post-processing
         # what about jobmanager??
         # start a workflow??
+
+
+    # TODO save results back to db?
 
     return status
 

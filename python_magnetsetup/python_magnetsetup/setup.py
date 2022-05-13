@@ -30,11 +30,13 @@ import sys
 import os
 import json
 import yaml
+import re
 
 from python_magnetgeo import Insert, MSite, Bitter, Supra
 from python_magnetgeo import python_magnetgeo
 
-from .config import appenv, loadconfig, loadtemplates
+from .machines import load_machines
+from .config import appenv, loadconfig, loadtemplates, loadmachine
 from .objects import load_object, load_object_from_db
 from .utils import Merge, NMerge
 from .cfg import create_cfg
@@ -520,6 +522,23 @@ def setup_cmds(MyEnv, args, name, cfgfile, jsonfile, xaofile, meshfile):
         pyfeelcmd = f"mpirun -np {NP} python {pyfeel} {cfgfile}"
         cmds["Run"] = f"singularity exec {simage_path}/{feelpp} {feelcmd}"
         cmds["Workflow"] = f"singularity exec {simage_path}/{feelpp} {pyfeelcmd}"
+
+    # compute resultdir:
+    with open(cfgfile, 'r') as f:
+        directory = re.sub('directory=', '', f.readline(),  flags=re.DOTALL)
+    result_dir = f'{directory.rstrip()}/np_{NP}'
+    home_env = 'HOME'
+    print(f'result_dir={os.getenv(home_env)}/feelppdb/{result_dir}')
+
+    paraview = AppCfg["post"]["paraview"]
+
+    # get expr and exprlegend from method/model/...
+    if "post" in AppCfg[args.method][args.time][args.geom][args.model]:
+        postdata = AppCfg[args.method][args.time][args.geom][args.model]["post"]
+        for key in postdata:
+            pyparaview = f'pv-scalarfield.py --cfgfile {cfgfile}  --jsonfile {jsonfile} --expr {key} --exprlegend \"postdata[key]\" --resultdir ${result_dir}'
+            pyparaviewcmd = f"pvpython {pyparaview}"
+            cmds["Postprocessing"] = f"singularity exec {simage_path}/{paraview} {pyparaviewcmd}"
     
     # TODO jobmanager if server.manager != JobManagerType.none
     # Need user email at this point
