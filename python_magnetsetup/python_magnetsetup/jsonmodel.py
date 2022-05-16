@@ -1,14 +1,10 @@
-from typing import List, Union, Optional
-
-import sys
-import os
 import json
-import yaml
-
 import math
+from typing import List, Optional
 
-from .utils import Merge
 from .units import load_units, convert_data
+from .utils import Merge
+
 
 def create_params_supra(gdata: tuple, method_data: List[str], debug: bool=False) -> dict:
     """
@@ -419,12 +415,12 @@ def create_json(jsonfile: str, mdict: dict, mmat: dict, mpost: dict, templates: 
     """
     Create a json model file
     """
-    
-    if debug: 
+    if debug:
         print("create_json jsonfile=", jsonfile)
         print("create_json mdict=", mdict)
-    data = entry(templates["model"], mdict, debug)   
-    if debug: print("create_json/data model:", data)
+    data = entry(templates["model"], mdict, debug)
+    if debug:
+        print("create_json/data model:", data)
     
     # material section
     if "Materials" in data:

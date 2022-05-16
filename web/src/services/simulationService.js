@@ -13,6 +13,21 @@ export function list({ query, page, perPage, sortBy, sortDesc } = {}) {
     .then((res) => res.data)
 }
 
+export function find({ id }) {
+  return client.get(`/api/simulations/${id}`)
+    .then((res) => res.data)
+}
+
+export function runSetup({ id }) {
+  return client.post(`/api/simulations/${id}/run_setup`)
+    .then((res) => res.data)
+}
+
+export function runSimulation({ id }) {
+  return client.post(`/api/simulations/${id}/run`)
+    .then((res) => res.data)
+}
+
 export function create(values) {
   const form = new FormData()
   for (const [key, value] of Object.entries(values)) {

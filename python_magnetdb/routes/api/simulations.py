@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Depends, Form, Query
 
 from ... import worker
 from ...actions.generate_simulation_config import generate_simulation_config
-from ...actions.run_simulation_setup import run_simulation_setup
 from ...dependencies import get_user
 from ...models.audit_log import AuditLog
 from ...models.magnet import Magnet
@@ -47,6 +46,14 @@ def create(resource_type: str = Form(...), resource_id: int = Form(...), method:
     return simulation.serialize()
 
 
+@router.get("/api/simulations/{id}")
+def show(id: int, user=Depends(get_user('read'))):
+    simulation = Simulation.with_('resource', 'setup_output_attachment', 'output_attachment').find(id)
+    if not simulation:
+        raise HTTPException(status_code=404, detail="Simulation not found")
+    return simulation.serialize()
+
+
 @router.get("/api/simulations/{id}/config.json")
 def config(id: int, user=Depends(get_user('read'))):
     simulation = Simulation.find(id)
@@ -61,6 +68,8 @@ def run_setup(id: int, user=Depends(get_user('update'))):
     if not simulation:
         raise HTTPException(status_code=404, detail="Simulation not found")
 
+    simulation.setup_status = "scheduled"
+    simulation.save()
     AuditLog.log(user, "Simulation setup scheduled", resource=simulation)
     worker.run_simulation_setup.delay(simulation.id)
     return simulation.serialize()
@@ -72,6 +81,8 @@ def run(id: int, user=Depends(get_user('update'))):
     if not simulation:
         raise HTTPException(status_code=404, detail="Simulation not found")
 
+    simulation.status = "scheduled"
+    simulation.save()
     AuditLog.log(user, "Simulation scheduled", resource=simulation)
     worker.run_simulation.delay(simulation.id)
     return simulation.serialize()

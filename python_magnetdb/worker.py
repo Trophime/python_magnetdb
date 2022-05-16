@@ -1,9 +1,11 @@
+import os
+
 from celery import Celery
 
 import python_magnetdb.database
 from python_magnetdb.models.simulation import Simulation
 
-app = Celery('tasks', broker='redis://localhost:6379/0')
+app = Celery('tasks', broker=os.getenv('REDIS_ADDR') or 'redis://localhost:6379/0')
 
 
 @app.task

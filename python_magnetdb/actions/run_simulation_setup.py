@@ -2,7 +2,6 @@ import json
 import os
 import shutil
 import subprocess
-import tarfile
 import tempfile
 from argparse import Namespace
 from os.path import basename
@@ -41,6 +40,10 @@ def run_simulation_setup(simulation):
     simulation.save()
 
     with tempfile.TemporaryDirectory() as tempdir:
+        tempdir = "/home/remi/test"
+        subprocess.run([f"rm -rf {tempdir}"], shell=True)
+        subprocess.run([f"mkdir -p {tempdir}"], shell=True)
+
         print(f"generating config in {tempdir}...")
         prepare_directory(simulation, tempdir)
         subprocess.run([f"ls -lR {tempdir}"], shell=True)
@@ -78,6 +81,8 @@ def run_simulation_setup(simulation):
             simulation.setup_status = "done"
         except Exception as e:
             simulation.setup_status = "failed"
+            os.chdir(current_dir)
+            simulation.save()
             raise e
         os.chdir(current_dir)
         simulation.save()

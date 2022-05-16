@@ -1,5 +1,5 @@
 <template>
-  <div class="form-upload" :class="{ 'form-upload-error': hasError }" @click="openUpload">
+  <div class="form-upload" :class="{ 'form-upload-error': hasError, 'form-upload-disabled': disabled }" @click="openUpload">
     <input :key="inputKey" type="file" ref="input" @input="onInput" class="hidden" />
     <div v-if="fileName" class="form-upload-file">
       {{fileName}}
@@ -23,7 +23,7 @@ import { DownloadIcon } from '@vue-hero-icons/outline'
 
 export default {
   name: 'FormUpload',
-  props: ['hasError', 'type', 'defaultValue'],
+  props: ['hasError', 'type', 'defaultValue', 'disabled'],
   components: {
     TrashIcon,
     DownloadIcon,
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     openUpload(event) {
-      if (event.path.some(el => el.classList?.contains('do-not-open-upload'))) {
+      if (this.disabled || event.path.some(el => el.classList?.contains('do-not-open-upload'))) {
         return
       }
       this.$refs.input.click()
@@ -67,7 +67,7 @@ export default {
   flex justify-center h-10 flex-col;
 }
 
-.form-upload:disabled {
+.form-upload-disabled {
   @apply bg-gray-100 cursor-not-allowed;
 }
 

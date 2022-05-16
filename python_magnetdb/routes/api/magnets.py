@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import orator.exceptions.query
-import psycopg2.errors
 from fastapi import APIRouter, Query, HTTPException, Form, UploadFile, File, Depends
 
 from ...dependencies import get_user
@@ -31,18 +30,15 @@ def index(user=Depends(get_user('read')), page: int = 1, per_page: int = Query(d
 
 @router.post("/api/magnets")
 def create(user=Depends(get_user('create')), name: str = Form(...), description: str = Form(None),
-           design_office_reference: str = Form(None), cao: UploadFile = File(None), geometry: UploadFile = File(None)):
+           design_office_reference: str = Form(None)):
     magnet = Magnet(name=name, description=description, design_office_reference=design_office_reference,
                     status='in_study')
-    if cao:
-        magnet.cao().associate(Attachment.upload(cao))
-    if geometry:
-        magnet.geometry().associate(Attachment.upload(geometry))
-
     try:
         magnet.save()
     except orator.exceptions.query.QueryException as e:
-        raise HTTPException(status_code=422, detail="Name already taken.") if e.message.find('magnets_name_unique') != -1 else e
+        if e.message.find('magnets_name_unique') != -1:
+            raise HTTPException(status_code=422, detail="Name already taken.")
+        raise e
 
     AuditLog.log(user, "Magnet created", resource=magnet)
     return magnet.serialize()
@@ -50,7 +46,7 @@ def create(user=Depends(get_user('create')), name: str = Form(...), description:
 
 @router.get("/api/magnets/{id}")
 def show(id: int, user=Depends(get_user('read'))):
-    magnet = Magnet.with_('magnet_parts.part', 'site_magnets.site', 'cao', 'geometry').find(id)
+    magnet = Magnet.with_('magnet_parts.part', 'site_magnets.site', 'cad.attachment', 'geometry').find(id)
     if not magnet:
         raise HTTPException(status_code=404, detail="Magnet not found")
     return magnet.serialize()
@@ -58,16 +54,14 @@ def show(id: int, user=Depends(get_user('read'))):
 
 @router.patch("/api/magnets/{id}")
 def update(id: int, user=Depends(get_user('update')), name: str = Form(...), description: str = Form(None),
-           design_office_reference: str = Form(None), cao: UploadFile = File(None), geometry: UploadFile = File(None)):
-    magnet = Magnet.with_('cao', 'geometry').find(id)
+           design_office_reference: str = Form(None), geometry: UploadFile = File(None)):
+    magnet = Magnet.with_('cad.attachment', 'geometry').find(id)
     if not magnet:
         raise HTTPException(status_code=404, detail="Magnet not found")
 
     magnet.name = name
     magnet.description = description
     magnet.design_office_reference = design_office_reference
-    if cao:
-        magnet.cao().associate(Attachment.upload(cao))
     if geometry:
         magnet.geometry().associate(Attachment.upload(geometry))
     magnet.save()

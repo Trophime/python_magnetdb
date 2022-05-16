@@ -39,12 +39,11 @@
             type="text"
             :component="FormInput"
         />
-        <FormField
-            label="CAO"
-            name="cao"
-            type="file"
-            :component="FormUpload"
-            :default-value="magnet.cao"
+        <CadAttachmentEditor
+          label="CAD"
+          resource-type="magnet"
+          :resource-id="magnet.id"
+          :default-attachments="magnet.cad"
         />
         <FormField
             label="Geometry"
@@ -182,10 +181,12 @@ import Alert from "@/components/Alert";
 import AddPartToMagnetModal from "@/views/magnets/show/AddPartToMagnetModal";
 import AttachMagnetToSiteModal from "@/views/magnets/show/AttachMagnetToSiteModal";
 import StatusBadge from "@/components/StatusBadge";
+import CadAttachmentEditor from "@/components/CadAttachmentEditor";
 
 export default {
   name: 'MagnetShow',
   components: {
+    CadAttachmentEditor,
     StatusBadge,
     AttachMagnetToSiteModal,
     AddPartToMagnetModal,

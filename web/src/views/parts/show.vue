@@ -55,12 +55,11 @@
             :options="materialOptions"
             :default-value="part.material.id"
         />
-        <FormField
-            label="CAO"
-            name="cao"
-            type="file"
-            :component="FormUpload"
-            :default-value="part.cao"
+        <CadAttachmentEditor
+            label="CAD"
+            resource-type="part"
+            :resource-id="part.id"
+            :default-attachments="part.cad"
         />
         <FormField
             label="Geometry"
@@ -125,10 +124,12 @@ import FormUpload from "@/components/FormUpload";
 import Button from "@/components/Button";
 import Alert from "@/components/Alert";
 import StatusBadge from "@/components/StatusBadge";
+import CadAttachmentEditor from "@/components/CadAttachmentEditor";
 
 export default {
   name: 'PartShow',
   components: {
+    CadAttachmentEditor,
     StatusBadge,
     Alert,
     Button,
