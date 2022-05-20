@@ -23,6 +23,7 @@ PyYAML = "^5"
 uvicorn = "^0.17.6"
 python-magnetsetup = {path = "python_magnetsetup"}
 celery = {extras = ["redis"], version = "^5.2.6"}
+magnettools = {path = "/home/feelpp/magnettools-1.0.5/build/Python/dist/MagnetTools-0.1.0-py3-none-any.whl"}
 
 [tool.poetry.dev-dependencies]
 

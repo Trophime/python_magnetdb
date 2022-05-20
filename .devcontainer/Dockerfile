@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM trophime/magnettools:poetry
 
 USER root
 
@@ -12,18 +12,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=vscode
 ARG USER_UID=999
 ARG USER_GID=$USER_UID
-
-# install Feelpp from BinTray Debian repository
-RUN apt update && \
-    apt install -y lsb-release && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed main restricted"  |  tee -a /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed universe"  |  tee -a /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed multiverse"  |  tee -a /etc/apt/sources.list && \
-    apt install -y debian-keyring && \
-    cp /usr/share/keyrings/debian-maintainers.gpg /etc/apt/trusted.gpg.d && \
-    echo "deb http://euler.GRENOBLE.LNCMI.LOCAL/~trophime/debian/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/lncmi.list && \
-    apt update
-
 
 # Configure apt and install packages
 RUN apt-get update \
@@ -77,6 +65,7 @@ ENV DEBIAN_FRONTEND=dialog
 USER $USERNAME
 # Install backend stuff for database+api
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - 
+# eventually remove poetry.lock
 
 USER root
 
