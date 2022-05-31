@@ -10,7 +10,8 @@
 	],
 	"mounts": [
 		// "source=${localWorkspaceFolder}\\..\\python_magnetsetup\\data,target=/data,type=bind,consistency=cached"
-		"source=${localEnv:HOME}/github/python_magnetsetup/data,target=/data,type=bind,consistency=cached"
+		"source=${localEnv:HOME}/github/python_magnetsetup/data,target=/data,type=bind,consistency=cached",
+		"source=/home/singularity,target=/home/singularity,type=bind,consistency=cached"
 	],
 
 	// Set *default* container specific settings.json values on container create.
