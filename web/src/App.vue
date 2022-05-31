@@ -3,7 +3,7 @@
     <div class="topbar"  :class="{ 'topbar-admin': isInAdminMode }">
       <div class="container-center">
         <div class="topbar-left">
-          <router-link class="topbar-title" :to="{ name: 'root' }">
+          <router-link class="topbar-title" :to="{ name: 'home' }">
             MagnetDB
           </router-link>
           <div v-if="$store.getters.isLogged" class="topbar-link-list">

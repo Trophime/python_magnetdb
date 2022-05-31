@@ -3,7 +3,7 @@
     <template #header>
       <div class="flex justify-between items-center">
         <div class="flex items-center">
-          Visualize
+          {{ title || 'Visualize' }}
           <div v-if="dataSampled" class="ml-2 badge badge-primary">
             Data currently sampled
           </div>
@@ -74,7 +74,7 @@ function getRandomColor() {
 
 export default {
   name: 'VisualisationCard',
-  props: ['recordId'],
+  props: ['recordId', 'title', 'useRouting'],
   components: {
     Form,
     FormField,
@@ -141,20 +141,22 @@ export default {
           this.dataSampled = data.sampling_enabled
           this.columnOptions = Object.keys(data.columns)
 
-          this.$router.replace({
-            ...this.$route,
-            query: {
-              chartState: window.btoa(JSON.stringify({
-                x: this.xField,
-                y: this.yField,
-                xMin: this.xMin,
-                xMax: this.xMax,
-                yMin: this.yMin,
-                yMax: this.yMax,
-                colors: this.colors,
-              }))
-            },
-          })
+          if (this.useRouting) {
+            this.$router.replace({
+              ...this.$route,
+              query: {
+                chartState: window.btoa(JSON.stringify({
+                  x: this.xField,
+                  y: this.yField,
+                  xMin: this.xMin,
+                  xMax: this.xMax,
+                  yMin: this.yMin,
+                  yMax: this.yMax,
+                  colors: this.colors,
+                }))
+              },
+            })
+          }
         })
         .catch((error) => {
           this.error = error
@@ -182,7 +184,7 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.chartState) {
+    if (this.$route.query.chartState && this.useRouting) {
       try {
         const data = JSON.parse(window.atob(this.$route.query.chartState))
         this.xField = data.x

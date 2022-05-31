@@ -28,7 +28,7 @@ const router = new VueRouter({
     { name: 'admin_user', path: '/admin/users/:id', component: () => import('./views/admin/users/show') },
     { name: 'profile', path: '/profile', component: () => import('./views/profile') },
     { name: 'visualisation_bmap', path: '/visualisations/bmap', component: () => import('./views/visualisations/bmap') },
-    { name: 'root', path: '/', component: () => import('./views/root') },
+    { name: 'home', path: '/', component: () => import('./views/home/index') },
     { name: 'sign_in', path: '/sign_in', component: () => import('./views/signin') }
   ]
 })

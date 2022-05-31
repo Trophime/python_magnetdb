@@ -48,7 +48,7 @@
       </Form>
     </Card>
 
-    <VisualisationCard :recordId="record.id"></VisualisationCard>
+    <VisualisationCard :recordId="record.id" :useRouting="true"></VisualisationCard>
   </div>
   <Alert v-else-if="error" class="alert alert-danger" :error="error"/>
 </template>

@@ -10,18 +10,18 @@
       <p>An API also exists. To view the API docs and eventually test it, select the corresponding entry in the menubar.</p>
     </Card>
 
-    <div class="flex space-x-4">
-      <Card class="w-1/3">
+    <div class="grid grid-cols-4 gap-4">
+      <Card>
         <template #header>Sites by status</template>
         <canvas ref="siteChart"></canvas>
       </Card>
 
-      <Card class="w-1/3">
+      <Card>
         <template #header>Magnets by status</template>
         <canvas ref="magnetChart"></canvas>
       </Card>
 
-      <div class="w-1/3 flex flex-col space-y-6">
+      <div class="space-y-4">
         <Card>
           <template #header>Number of users</template>
           <div class="display-1">{{ users }}</div>
@@ -33,19 +33,23 @@
         </Card>
       </div>
     </div>
+
+    <LastRecordVisualisationCard />
   </div>
   <Alert v-else :error="error" class="alert alert-danger"></Alert>
 </template>
 
 <script>
+import {Chart} from "chart.js";
 import * as homeService from '@/services/homeService'
 import Card from '@/components/Card'
 import Alert from "@/components/Alert";
-import {Chart} from "chart.js";
+import LastRecordVisualisationCard from "@/views/home/LastRecordVisualisationCard";
 
 export default {
-  name: 'Root',
+  name: 'Home',
   components: {
+    LastRecordVisualisationCard,
     Alert,
     Card,
   },
@@ -60,45 +64,45 @@ export default {
   },
   async mounted() {
     homeService.find()
-      .then((res) => {
-        this.siteChart = new Chart(this.$refs.siteChart, {
-          type: 'pie',
-          data: {
-            labels: res.sites.map(v => v.status),
-            datasets: [
-              {
-                backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 205, 86)'
-                ],
-                data: res.sites.map(v => v.count),
-              }
-            ]
-          },
+        .then((res) => {
+          this.siteChart = new Chart(this.$refs.siteChart, {
+            type: 'pie',
+            data: {
+              labels: res.sites.map(v => v.status),
+              datasets: [
+                {
+                  backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)'
+                  ],
+                  data: res.sites.map(v => v.count),
+                }
+              ]
+            },
+          })
+          this.magnetChart = new Chart(this.$refs.magnetChart, {
+            type: 'pie',
+            data: {
+              labels: res.magnets.map(v => v.status),
+              datasets: [
+                {
+                  backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)'
+                  ],
+                  data: res.magnets.map(v => v.count),
+                }
+              ]
+            },
+          })
+          this.users = res.users_count
+          this.records = res.records_count
         })
-        this.magnetChart = new Chart(this.$refs.magnetChart, {
-          type: 'pie',
-          data: {
-            labels: res.magnets.map(v => v.status),
-            datasets: [
-              {
-                backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 205, 86)'
-                ],
-                data: res.magnets.map(v => v.count),
-              }
-            ]
-          },
+        .catch((error) => {
+          this.error = error
         })
-        this.users = res.users_count
-        this.records = res.records_count
-      })
-      .catch((error) => {
-        this.error = error
-      })
   },
 }
 </script>
