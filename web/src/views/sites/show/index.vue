@@ -181,15 +181,6 @@ export default {
             this.error = error
           })
     },
-    destroy() {
-      return siteService.destroy({id: this.$route.params.id})
-          .then(() => {
-            this.$router.push({ name: 'sites' })
-          })
-          .catch((error) => {
-            this.error = error
-          })
-    },
   },
   async mounted() {
     await this.fetch()

@@ -113,14 +113,12 @@ import FormSelect from "@/components/FormSelect";
 import FormUpload from "@/components/FormUpload";
 import Button from "@/components/Button";
 import Alert from "@/components/Alert";
-import VisualisationCard from "@/views/simulations/show/VisualisationCard";
 import StatusBadge from "@/components/StatusBadge";
 
 export default {
   name: 'SimulationShow',
   components: {
     StatusBadge,
-    VisualisationCard,
     Alert,
     Button,
     FormField,
