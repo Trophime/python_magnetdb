@@ -14,7 +14,6 @@ from .models.magnet import Magnet
 from .models.magnet_part import MagnetPart
 from .models.material import Material
 from .models.part import Part
-from .models.record import Record
 from .models.site import Site
 from .models.site_magnet import SiteMagnet
 from .storage import s3_client, s3_bucket
@@ -112,17 +111,6 @@ def create_magnet(obj):
         magnet.magnet_parts().save_many(map(generate_part, parts))
     return magnet
 
-
-def create_record(obj):
-    """create a record from file for site"""
-    file = obj.pop('file', None)
-    site = obj.pop('site', None)
-    if file is not None and site is not None:
-        record = Record(name=path.basename(path.join(data_directory, 'mrecords', file)))
-        record.attachment().associate(upload_attachment(path.join(data_directory, 'mrecords', file)))
-        record.site().associate(site)
-        record.save()
-        return record
 
 def query_part(name: str):
     """search a part object by name"""
