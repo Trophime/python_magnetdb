@@ -65,6 +65,8 @@ poetry run orator migrate -c python_magnetdb/database.py
    
 ```shell
 cd web
+npx browserslist@latest --update-db
+sudo npm install -g npm@8.11.0
 yarn install
 cd ..
 ```
@@ -103,7 +105,7 @@ export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_
 export DATA_DIR=/data
 poetry run python3 -m python_magnetdb.seeds
 poetry run python3 -m python_magnetdb.seed-again
-poetry run python3 -m python_magnetdb.seed-records.py
+poetry run python3 -m python_magnetdb.seed-records
 ```
 
 8. PgAdmin setup
