@@ -25,7 +25,8 @@ def run_simulation(simulation):
             print("Downloading setup archive...")
             simulation.setup_output_attachment.download(f"{tempdir}/setup.tar.gz")
             print("Extracting setup archive...")
-            proc = subprocess.check_output([f"tar xvf {tempdir}/setup.tar.gz -C {tempdir}"], shell=True)
+            exec_cmd = f"tar xvf {tempdir}/setup.tar.gz -C {tempdir}"
+            proc = subprocess.check_output(shlex.split(exec_cmd), shell=True)
             print("Finding config file...")
             config_file_path = None
             for file in os.listdir(tempdir):
