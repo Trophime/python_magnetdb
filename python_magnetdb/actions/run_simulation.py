@@ -11,38 +11,71 @@ def run_simulation(simulation):
     simulation.status = "in_progress"
     simulation.save()
 
+    import platform
+    system = platform.system()
+    if system != 'Linux':
+        print(f'run_simulation on localhost: got {system}, only Linux is supported so far')
+        simulation.status = "failed"
+        return
+
     with tempfile.TemporaryDirectory() as tempdir:
         subprocess.check_output([f"rm -rf {tempdir}"], shell=True)
         subprocess.check_output([f"mkdir -p {tempdir}"], shell=True)
 
         current_dir = os.getcwd()
         os.chdir(tempdir)
+
         try:
+            proc = subprocess.check_output(["pwd"], shell=False)
+            print(f'pwd: {proc.decode("utf-8")})')
+
             proc = subprocess.check_output(["whoami"], shell=False)
-            print(f"Whoami: {proc}")
-            
-            print("Downloading setup archive...")
-            simulation.setup_output_attachment.download(f"{tempdir}/setup.tar.gz")
+            print(f'Whoami: {proc.decode("utf-8")}')
+
+            # check number of process
+            proc = subprocess.check_output(shlex.split('/usr/bin/getconf _NPROCESSORS_ONLN'), shell=False)
+            print(f'Np_max: {proc.decode("utf-8")}')
+
+            # assumes multithreading is on
+            NP = int(int(proc.decode("utf-8"))/2)
+            print(f'Np: {NP}')
+
+            setup_archive = f'setup.tar.gz'
+            print(f'Downloading setup archive... {setup_archive}')
+            simulation.setup_output_attachment.download(setup_archive)
             print("Extracting setup archive...")
-            exec_cmd = f"tar xvf {tempdir}/setup.tar.gz -C {tempdir}"
-            proc = subprocess.check_output(shlex.split(exec_cmd), shell=True)
-            print("Finding config file...")
+            exec_cmd = f'tar -zxvf {setup_archive}'
+            proc = subprocess.check_output(shlex.split(exec_cmd), shell=False)
+
+            exec_cmd = f"ls -lrth {tempdir}"
+            proc = subprocess.check_output(shlex.split(exec_cmd), shell=False)
+            print(f'{tempdir}: {proc.decode("utf-8")})')
+
             config_file_path = None
             for file in os.listdir(tempdir):
                 if file.endswith('.cfg'):
                     config_file_path = f"{tempdir}/{file}"
                     break
-            print("Updating configuration...")
+            print(f'Finding config file... {config_file_path}')
+
             proc = subprocess.check_output([f"perl -pi -e 's|# mesh.scale =|mesh.scale =|' {config_file_path}"], shell=True, stderr=subprocess.STDOUT)
             proc = subprocess.check_output([f"perl -pi -e 's|mesh.filename=.*|mesh.filename=\$cfgdir/data/geometries/test-Axi_withAir.msh|' {config_file_path}"], shell=True, stderr=subprocess.STDOUT)
+            print("Updating configuration...")
+            
             exec_cmd = f"singularity exec -B {tempdir}:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif salome -w1 -t $HIFIMAGNET/HIFIMAGNET_Cmd.py args:test.yaml,--axi,--air,2,2,--wd,{tempdir}/data/geometries"
             proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT, env={"HIFIMAGNET": "/opt/SALOME-9.8.0-UB20.04/INSTALL/HIFIMAGNET/bin/salome"})
-            print("Generating Mesh...")
+            print("Generating CAD...")
+
             exec_cmd = f"singularity exec -B {tempdir}:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif python3 -m python_magnetgeo.xao test-Axi_withAir.xao --wd {tempdir}/data/geometries mesh --group CoolingChannels --geo test.yaml --lc=1"
             proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
-            print("Running simulation...")
-            exec_cmd = f"singularity exec  -B {tempdir}:{tempdir} /home/singularity/feelpp-toolboxes-v0.110.0-alpha.3.sif mpirun -np 8 feelpp_toolbox_coefficientformpdes --directory {tempdir} --config-file {config_file_path}"
+            print("Generating Mesh...")
+            
+            exec_cmd = f"singularity exec  -B $PWD:/home/feelpp/sim /home/singularity/feelpp-toolboxes-v0.110.0-alpha.3.sif mpirun -np {NP} feelpp_toolbox_coefficientformpdes --directory /home/feelpp/sim --config-file {config_file_path}"
             proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
+            print("Running simulation...")
+            
+            with open('res.log', 'w') as output:
+                output.write(proc.decode("utf-8"))
             print("Archiving results...")
             simulation_name = os.path.basename(os.path.splitext(config_file_path)[0])
             output_archive = f"{tempdir}/{simulation_name}.tar.gz"
@@ -54,9 +87,13 @@ def run_simulation(simulation):
         except subprocess.CalledProcessError as e:
             print(f'{e.cmd} stderr: {e.stdout.decode()}')
             simulation.status = "failed"
-            raise e
+            # raise e
+            pass
+
         except Exception as e:
             simulation.status = "failed"
-            raise e
+            # raise e
+            pass
+
         os.chdir(current_dir)
         simulation.save()

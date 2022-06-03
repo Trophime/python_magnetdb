@@ -24,6 +24,13 @@ def run_simulation_setup(simulation):
     simulation.setup_status = "in_progress"
     simulation.save()
 
+    import platform
+    system = platform.system()
+    if system != 'Linux':
+        print(f'run_simulation on localhost: got {system}, only Linux is supported so far')
+        simulation.status = "failed"
+        return
+
     with tempfile.TemporaryDirectory() as tempdir:
         subprocess.check_output([f"rm -rf {tempdir}"], shell=True)
         subprocess.check_output([f"mkdir -p {tempdir}"], shell=True)
@@ -37,7 +44,7 @@ def run_simulation_setup(simulation):
         data_dir = f"{tempdir}/data"
         current_dir = os.getcwd()
         os.chdir(tempdir)
-        
+
         args = Namespace(wd=tempdir,
                          datafile=f"{tempdir}/config.json",
                          method=simulation.method,
@@ -63,7 +70,7 @@ def run_simulation_setup(simulation):
                     config_file_path = f"{tempdir}/{file}"
                     break
             simulation_name = os.path.basename(os.path.splitext(config_file_path)[0])
-            output_archive = f"{tempdir}/setup-{simulation_name}.tar.gz"
+            output_archive = f"{tempdir}/setup.tar.gz"
             subprocess.check_output([f"tar cvzf {output_archive} *"], shell=True)
             print(f"Uploading setup archive... {basename(output_archive)}")
             attachment = Attachment.raw_upload(basename(output_archive), "application/x-tar", output_archive)
