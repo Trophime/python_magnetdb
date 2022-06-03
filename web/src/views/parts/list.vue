@@ -11,7 +11,7 @@
 
     <Card>
       <DataTable
-          :headers="headers" @fetch="fetch"
+          :headers="headers" @fetch="fetch" config-persistence-key="part-list"
           @item-selected="$router.push({ name: 'part', params: { id: $event.id } })"
       >
         <template v-slot:item.name="{ item }">

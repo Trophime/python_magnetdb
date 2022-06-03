@@ -11,7 +11,7 @@
 
     <Card>
       <DataTable
-        :headers="headers" @fetch="fetch"
+        :headers="headers" @fetch="fetch" config-persistence-key="simulation-list"
         @item-selected="$router.push({ name: 'simulation', params: { id: $event.id } })"
       >
         <template v-slot:item.resource="{ item }">
@@ -104,7 +104,7 @@ export default {
         perPage,
         query,
         sortBy,
-        sortDesc,
+        sortDesc: sortDesc === null ? true : sortDesc,
       }))
     },
   },

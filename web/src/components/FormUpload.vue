@@ -6,7 +6,7 @@
       <div v-if="$refs.input.files.length > 0" @click="clearFiles" class="do-not-open-upload">
         <TrashIcon class="h5 w-5" />
       </div>
-      <div v-else class="do-not-open-upload" @click="downloadFile">
+      <div v-else class="do-not-open-upload download-button" @click="downloadFile">
         <DownloadIcon class="h5 w-5" />
       </div>
     </div>
@@ -47,6 +47,10 @@ export default {
       this.$forceUpdate()
     },
     clearFiles() {
+      if (this.disabled) {
+        return
+      }
+
       this.inputKey = Date.now()
       this.fileName = this.defaultValue?.filename
       this.$forceUpdate()
@@ -69,6 +73,10 @@ export default {
 
 .form-upload-disabled {
   @apply bg-gray-100 cursor-not-allowed;
+}
+
+.download-button {
+  @apply cursor-pointer;
 }
 
 .form-upload-error {

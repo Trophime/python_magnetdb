@@ -12,7 +12,6 @@ def run_simulation(simulation):
     simulation.save()
 
     with tempfile.TemporaryDirectory() as tempdir:
-        tempdir = "/home/remi/test"
         subprocess.check_output([f"rm -rf {tempdir}"], shell=True)
         subprocess.check_output([f"mkdir -p {tempdir}"], shell=True)
 
@@ -45,7 +44,8 @@ def run_simulation(simulation):
             exec_cmd = f"singularity exec  -B {tempdir}:{tempdir} /home/singularity/feelpp-toolboxes-v0.110.0-alpha.3.sif mpirun -np 8 feelpp_toolbox_coefficientformpdes --directory {tempdir} --config-file {config_file_path}"
             proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
             print("Archiving results...")
-            output_archive = f"{tempdir}/output.tar.gz"
+            simulation_name = os.path.basename(os.path.splitext(config_file_path)[0])
+            output_archive = f"{tempdir}/{simulation_name}.tar.gz"
             proc = subprocess.check_output([f"tar cvzf {output_archive} *"], shell=True)
             attachment = Attachment.raw_upload(basename(output_archive), "application/x-tar", output_archive)
             simulation.output_attachment().associate(attachment)

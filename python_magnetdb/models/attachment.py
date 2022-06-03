@@ -29,3 +29,11 @@ class Attachment(Model):
         })
         s3_client.fput_object(s3_bucket, attachment.key, fileno, content_type=attachment.content_type)
         return attachment
+
+
+class AttachmentObserver(object):
+    def deleting(self, attachment):
+        s3_client.remove_object(s3_bucket, attachment.key)
+
+
+Attachment.observe(AttachmentObserver())

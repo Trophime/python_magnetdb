@@ -54,6 +54,17 @@ def show(id: int, user=Depends(get_user('read'))):
     return simulation.serialize()
 
 
+@router.delete("/api/simulations/{id}")
+def destroy(id: int, user=Depends(get_user('read'))):
+    simulation = Simulation.find(id)
+    if not simulation:
+        raise HTTPException(status_code=404, detail="Simulation not found")
+
+    AuditLog.log(user, "Simulation deleted", resource=simulation)
+    simulation.delete()
+    return simulation.serialize()
+
+
 @router.get("/api/simulations/{id}/config.json")
 def config(id: int, user=Depends(get_user('read'))):
     simulation = Simulation.find(id)

@@ -47,14 +47,26 @@
             type="text"
             :component="FormInput"
         />
-        <FormField
-            label="Material"
-            name="material"
-            :component="FormSelect"
-            :required="true"
-            :options="materialOptions"
-            :default-value="part.material.id"
-        />
+        <div class="flex items-center space-x-4">
+          <FormField
+              label="Material"
+              name="material"
+              :component="FormSelect"
+              :required="true"
+              :options="materialOptions"
+              :default-value="part.material.id"
+              class="w-full"
+          />
+          <FormValues v-slot="{ values }">
+            <router-link
+              :to="{ name: 'material', params: { id: values.material.value } }"
+              class="btn btn-primary" target="_blank" style="margin-top: 12px; height: 38px"
+            >
+              Open
+            </router-link>
+          </FormValues>
+
+        </div>
         <CadAttachmentEditor
             label="CAD"
             resource-type="part"
@@ -125,10 +137,12 @@ import Button from "@/components/Button";
 import Alert from "@/components/Alert";
 import StatusBadge from "@/components/StatusBadge";
 import CadAttachmentEditor from "@/components/CadAttachmentEditor";
+import FormValues from "@/components/FormValues";
 
 export default {
   name: 'PartShow',
   components: {
+    FormValues,
     CadAttachmentEditor,
     StatusBadge,
     Alert,

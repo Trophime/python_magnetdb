@@ -35,6 +35,8 @@
     </div>
 
     <LastRecordVisualisationCard />
+
+    <LastMagnetFieldCard />
   </div>
   <Alert v-else :error="error" class="alert alert-danger"></Alert>
 </template>
@@ -45,10 +47,12 @@ import * as homeService from '@/services/homeService'
 import Card from '@/components/Card'
 import Alert from "@/components/Alert";
 import LastRecordVisualisationCard from "@/views/home/LastRecordVisualisationCard";
+import LastMagnetFieldCard from "@/views/home/LastMagnetFieldCard";
 
 export default {
   name: 'Home',
   components: {
+    LastMagnetFieldCard,
     LastRecordVisualisationCard,
     Alert,
     Card,

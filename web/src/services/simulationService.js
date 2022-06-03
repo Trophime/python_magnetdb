@@ -28,6 +28,11 @@ export function runSimulation({ id }) {
     .then((res) => res.data)
 }
 
+export function deleteSimulation({ id }) {
+  return client.delete(`/api/simulations/${id}`)
+    .then((res) => res.data)
+}
+
 export function create(values) {
   const form = new FormData()
   for (const [key, value] of Object.entries(values)) {

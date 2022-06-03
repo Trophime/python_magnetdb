@@ -141,7 +141,11 @@ export default {
     },
     async fetch(values) {
       try {
-        const { results: data, params } = await visualisationService.bmap(values)
+        const { results: data, params } = await visualisationService.bmap({
+          ...values,
+          resource_id: this.$route.query.resource_id,
+          resource_type: this.$route.query.resource_type,
+        })
         this.params = params
         if (!this.chart) {
           this.chart = new Chart(this.$refs.chart, {
@@ -195,7 +199,13 @@ export default {
           ],
         }
         this.chart.update()
-        this.$router.replace({ name: this.$route.name, query: params }).catch(() => {})
+        this.$router.replace({
+          name: this.$route.name,
+          query: {
+            ...this.$route.query,
+            ...params,
+          },
+        }).catch(() => {})
       } catch (error) {
         this.error = error
       }

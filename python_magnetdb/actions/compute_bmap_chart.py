@@ -1,8 +1,12 @@
-import numpy as np
+import tempfile
 
-import MagnetTools.MagnetTools as mt
 import MagnetTools.Bmap as bmap
+import MagnetTools.MagnetTools as mt
+import numpy as np
+from python_magnetsetup.ana import magnet_setup
+from python_magnetsetup.config import appenv
 
+from python_magnetdb.actions.generate_magnet_directory import generate_magnet_directory
 
 plotmethod = {
     'Bz': (bmap.getBz, '[T]', 'Magnetic Field Bz'),
@@ -12,16 +16,22 @@ plotmethod = {
 }
 
 
-def prepare_bmap_chart_params(i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
-    fname = "HL-31.d"
-    single_file = '/data/optims/' + fname
-    Mdata = bmap.loadMagnet(single_file)
-    (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = Mdata
+def get_magnet_data(magnet_id):
+    with tempfile.TemporaryDirectory() as tempdir:
+        config_data = generate_magnet_directory(magnet_id, tempdir)
+        data_dir = f"{tempdir}/data"
+        env = appenv(envfile=None, url_api=data_dir, yaml_repo=f"{data_dir}/geometries", cad_repo=f"{data_dir}/cad",
+                     mesh_repo=data_dir, simage_repo=data_dir, mrecord_repo=data_dir, optim_repo=data_dir)
+        return magnet_setup(env, config_data, True)
+
+
+def prepare_bmap_chart_params(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
+    (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
     icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
 
     return (
-        i_h if i_h is not None else icurrents[0],
-        i_b if i_b is not None else icurrents[1],
+        i_h if i_h is not None else (icurrents[0] if len(icurrents) > 0 else 0),
+        i_b if i_b is not None else (icurrents[1] if len(icurrents) > 1 else 0),
         i_s if i_s is not None else 0,
         n if n is not None else 80,
         r0 if r0 is not None else 0,
@@ -33,13 +43,9 @@ def prepare_bmap_chart_params(i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
     )
 
 
-def compute_bmap_chart(i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
-    fname = "HL-31.d"
-    single_file = '/data/optims/' + fname
-    Mdata = bmap.loadMagnet(single_file)
-
+def compute_bmap_chart(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
     def update_current():
-        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = Mdata
+        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
 
         icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
         n_magnets = len(icurrents)
@@ -69,7 +75,7 @@ def compute_bmap_chart(i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
 
     def sine():
         print("panel_bmap: compute b")
-        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = Mdata
+        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
         if command == '1D_z':
             x = np.linspace(z[0], z[1], n)
             B_ = np.vectorize(plotmethod[pkey][0], excluded=[0, 2, 3, 4, 5])
@@ -83,7 +89,7 @@ def compute_bmap_chart(i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
             return x, Bval(x)
 
     def compute_max():
-        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = Mdata
+        (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
 
         # get current for max
         icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)

@@ -41,7 +41,6 @@
             name="config"
             type="text"
             :component="FormUpload"
-            :required="true"
             :default-value="site.config"
         />
         <Button type="submit" class="btn btn-primary">
@@ -169,7 +168,6 @@ export default {
     validate() {
       return Yup.object().shape({
         name: Yup.string().required(),
-        config: Yup.mixed().required(),
       })
     },
     fetch() {

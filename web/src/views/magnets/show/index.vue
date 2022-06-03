@@ -7,9 +7,18 @@
         </div>
         <StatusBadge :status="magnet.status"></StatusBadge>
       </div>
-      <Button v-if="magnet.status === 'in_stock'" class="btn btn-danger" type="button" @click="defunct">
-        Defunct
-      </Button>
+      <div class="flex items-center space-x-4">
+        <Button v-if="magnet.status === 'in_stock'" class="btn btn-danger" type="button" @click="defunct">
+          Defunct
+        </Button>
+        <router-link
+          class="btn btn-default"
+          :to="{ name: 'visualisation_bmap', query: { resource_type: 'magnet', resource_id: magnet.id } }"
+        >
+          BMAP
+        </router-link>
+      </div>
+
     </div>
 
     <Alert v-if="error" class="alert alert-danger mb-6" :error="error"/>

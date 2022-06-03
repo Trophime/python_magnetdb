@@ -20,3 +20,14 @@ class Simulation(Model):
     def output_attachment(self):
         from .attachment import Attachment
         return Attachment
+
+
+class SimulationObserver(object):
+    def deleting(self, simulation):
+        if simulation.setup_output_attachment is not None:
+            simulation.setup_output_attachment.delete()
+        if simulation.output_attachment is not None:
+            simulation.output_attachment.delete()
+
+
+Simulation.observe(SimulationObserver())

@@ -20,7 +20,12 @@
 
     <Card class="mb-6">
       <template #header>
-        Details
+        <div class="flex items-center justify-between">
+          <div>Details</div>
+          <Button class="btn btn-danger btn-small" @click="deleteSimulation">
+            Delete
+          </Button>
+        </div>
       </template>
 
       <Form :initial-values="simulation">
@@ -140,6 +145,11 @@ export default {
     }
   },
   methods: {
+    deleteSimulation() {
+      return simulationService.deleteSimulation({ id: this.simulation.id })
+          .then(() => this.$router.push({ name: 'simulations' }))
+          .catch((err) => alert(err.message))
+    },
     runSimulation() {
       return simulationService.runSimulation({ id: this.simulation.id })
           .then((res) => this.simulation.status = res.status)
