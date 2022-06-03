@@ -25,12 +25,12 @@ def run_simulation_setup(simulation):
     simulation.save()
 
     with tempfile.TemporaryDirectory() as tempdir:
-        subprocess.run([f"rm -rf {tempdir}"], shell=True)
-        subprocess.run([f"mkdir -p {tempdir}"], shell=True)
+        subprocess.check_output([f"rm -rf {tempdir}"], shell=True)
+        subprocess.check_output([f"mkdir -p {tempdir}"], shell=True)
 
         print(f"generating config in {tempdir}...")
         prepare_directory(simulation, tempdir)
-        subprocess.run([f"ls -lR {tempdir}"], shell=True)
+        subprocess.check_output([f"ls -lR {tempdir}"], shell=True)
         print("generating config done")
 
         print("running setup...")
@@ -64,7 +64,8 @@ def run_simulation_setup(simulation):
                     break
             simulation_name = os.path.basename(os.path.splitext(config_file_path)[0])
             output_archive = f"{tempdir}/setup-{simulation_name}.tar.gz"
-            subprocess.run([f"tar cvzf {output_archive} *"], shell=True)
+            subprocess.check_output([f"tar cvzf {output_archive} *"], shell=True)
+            print(f"Uploading setup archive... {basename(output_archive)}")
             attachment = Attachment.raw_upload(basename(output_archive), "application/x-tar", output_archive)
             simulation.setup_output_attachment().associate(attachment)
             simulation.setup_status = "done"
