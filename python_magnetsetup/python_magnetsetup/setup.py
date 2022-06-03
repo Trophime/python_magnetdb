@@ -75,7 +75,7 @@ def magnet_simfile(MyEnv, confdata: str, addAir: bool = False, debug: bool = Fal
 
             # loop on mtype
             for obj in confdata[mtype]:
-                if debug: 
+                if debug:
                     print(f'obj: {obj}')
                 cad = None
                 yamlfile = obj["geom"]
@@ -257,10 +257,10 @@ def setup(MyEnv, args, confdata, jsonfile, session=None):
 
     # load appropriate templates
     # TODO force millimeter when args.method == "HDG"
-    method_data = [args.method, args.time, args.geom, args.model, args.cooling, "meter"]
+    method_data = [args.method, args.time, args.geom, args.model, args.cooling, "meter", args.nonlinear]
 
     # TODO: if HDG meter -> millimeter
-    templates = loadtemplates(MyEnv, AppCfg, method_data, (not args.nonlinear))
+    templates = loadtemplates(MyEnv, AppCfg, method_data)
 
     mdict = {}
     mmat = {}
@@ -365,7 +365,8 @@ def setup(MyEnv, args, confdata, jsonfile, session=None):
     # create list of files to be archived
     sim_files = [cfgfile, jsonfile]
     if args.method == "cfpdes":
-        if args.debug: print("cwd=", cwd)
+        if args.debug:
+            print("cwd=", cwd)
         from shutil import copyfile
         for jfile in material_generic_def:
             filename = AppCfg[args.method][args.time][args.geom][args.model]["filename"][jfile]
