@@ -92,7 +92,7 @@ poetry run uvicorn python_magnetdb.web:app --reload --log-level=debug
 ```shell
 export API_ENDPOINT=http://localhost:8000
 export S3_ENDPOINT=localhost:9000 S3_ACCESS_KEY=minio S3_SECRET_KEY=minio123 S3_BUCKET=magnetdb
-poetry run celery -A python_magnetdb.worker worker --loglevel=info
+poetry run watchmedo auto-restart -d ./python_magnetdb/ -p '**/*.py' -- poetry run celery -A python_magnetdb.worker worker --loglevel=info
 ```
 
 7. Run seeds:
