@@ -384,15 +384,17 @@ def setup(MyEnv, args, confdata, jsonfile, session=None):
         sim_files.append(mesh)
     except:
         if "geom" in confdata:
-            print("geo:", name)
+            print(f'magnet geo: {confdata["geom"]}')
             yamlfile = confdata["geom"]
             sim_files += magnet_simfile(MyEnv, confdata, addAir)
         else:
+            print(f'site geo: {confdata["name"]}')
             yamlfile = confdata["name"] + ".yaml"
             sim_files += msite_simfile(MyEnv, confdata, addAir, session)
 
     if args.debug:
         print("List of simulations files:", sim_files)
+    print("List of simulations files:", sim_files)
     tarfilename = cfgfile.replace('cfg', 'tgz')
     if args.skip_archive is not True:
         import tarfile
@@ -401,12 +403,20 @@ def setup(MyEnv, args, confdata, jsonfile, session=None):
         tar = tarfile.open(tarfilename, "w:gz")
         for filename in sim_files:
             # TODO skip xao and brep if Axi args.geom?
-            if args.geom == 'Axi' and (filename.endswith('.xao') or filename.endswith('.brep')):
-                if args.debug:
-                    print(f"skip {filename}")
+            if args.geom == 'Axi':
+                if (filename.endswith('.xao') or filename.endswith('.brep')):
+                    if args.debug:
+                        print(f"skip {filename}")
+                elif filename.endswith('_salome.dat'):
+                    if args.debug:
+                        print(f"skip {filename}")
+                else:
+                    print(f"add {filename} to {tarfilename}")
+                    tar.add(filename)
             else:
                 if args.debug:
                     print(f"add {filename} to {tarfilename}")
+                print(f"add {filename} to {tarfilename}")
                 tar.add(filename)
                 for mname in material_generic_def:
                     if mname in filename:

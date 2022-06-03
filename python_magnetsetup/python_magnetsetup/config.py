@@ -8,7 +8,7 @@ from decouple import Config, RepositoryEnv
 from .machines import load_machines
 
 class appenv():
-    
+
     def __init__(self, envfile: str = "settings.env", debug: bool = False, url_api: str = None,
                  yaml_repo: str = None, cad_repo: str = None, mesh_repo: str = None, template_repo: str = None,
                  simage_repo: str = None, mrecord_repo: str = None, optim_repo: str = None):
@@ -92,7 +92,7 @@ def loadmachine(server: str):
         raise ValueError(f"loadmachine: {server} no such server defined")
     pass
 
-def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear: bool=True, debug: bool=False):
+def loadtemplates(appenv: appenv, appcfg: dict, method_data: List[str], debug: bool = False):
     """
     Load templates into a dict
 
@@ -104,8 +104,8 @@ def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear:
     cooling
 
     """
-    
-    [method, time, geom, model, cooling, units_def] = method_data
+
+    [method, time, geom, model, cooling, units_def, linear] = method_data
     template_path = os.path.join(appenv.template_path(), method, geom, model)
 
     cfg_model = appcfg[method][time][geom][model]["cfg"]
@@ -113,11 +113,10 @@ def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear:
     if linear:
         conductor_model = appcfg[method][time][geom][model]["conductor-linear"]
     else:
-        if geom == "3D": 
+        if geom == "3D":
             json_model = appcfg[method][time][geom][model]["model-nonlinear"]
         conductor_model = appcfg[method][time][geom][model]["conductor-nonlinear"]
     insulator_model = appcfg[method][time][geom][model]["insulator"]
-    
     fcfg = os.path.join(template_path, cfg_model)
     if debug:
         print("fcfg:", fcfg, type(fcfg))
@@ -128,7 +127,7 @@ def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear:
         cooling_model = appcfg[method][time][geom][model]["cooling"][cooling]
         flux_model = appcfg[method][time][geom][model]["cooling-post"][cooling]
         stats_T_model = appcfg[method][time][geom][model]["stats_T"]
-    
+
         fcooling = os.path.join(template_path, cooling_model)
         frobin = os.path.join(template_path, appcfg[method][time][geom][model]["cooling"]["robin"])
         fflux = os.path.join(template_path, flux_model)
@@ -159,7 +158,7 @@ def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear:
         dict["robin"] = frobin
         dict["flux"] = fflux
         dict["stats"].append(fstats_T)
-    
+
     #if model != 'mag' and model != 'mag_hcurl' and model != 'mqs' and model != 'mqs_hcurl':
     dict["stats"].append(fstats_Power)
     dict["stats"].append(fstats_Current)
@@ -167,7 +166,7 @@ def loadtemplates(appenv: appenv, appcfg: dict , method_data: List[str], linear:
     if check_templates(dict):
         pass
 
-    return dict    
+    return dict
 
 def check_templates(templates: dict):
     """
@@ -182,9 +181,10 @@ def check_templates(templates: dict):
         elif isinstance(templates[key], str):
             for s in templates[key]:
                 print(key, s)
-                with open(s, "r") as f: pass
+                with open(s, "r") as f:
+                    pass
     print("==========================\n\n")
-    
+
     return True
 
 def supported_models(Appcfg, method: str, geom: str, time: str) -> List:

@@ -10,7 +10,7 @@ from .utils import NMerge
 from .file_utils import MyOpen, findfile, search_paths
 
 def Insert_simfile(MyEnv, confdata: dict, cad: Insert, addAir: bool = False):
-    print("Insert_simfile: %s" % cad.name)
+    print(f'Insert_simfile: {cad.name}')
 
     files = []
 
@@ -49,14 +49,17 @@ def Insert_simfile(MyEnv, confdata: dict, cad: Insert, addAir: bool = False):
             except:
                 pass
 
-            if hhelix.m3d.with_shapes:
-                with MyOpen(hhelix.name + str("_cut_with_shapes_salome.dat"), "r", paths=search_paths(MyEnv, "geom")) as fcut:
-                    files.append(fcut.name)
-                with MyOpen(hhelix.shape.profile, "r", paths=search_paths(MyEnv, "geom")) as fshape:
-                    files.append(fshape.name)
-            else:
-                with MyOpen(hhelix.name + str("_cut_salome.dat"), "r", paths=search_paths(MyEnv, "geom")) as fcut:
-                    files.append(fcut.name)
+            try:
+                if hhelix.m3d.with_shapes:
+                    with MyOpen(hhelix.name + str("_cut_with_shapes_salome.dat"), "r", paths=search_paths(MyEnv, "geom")) as fcut:
+                        files.append(fcut.name)
+                    with MyOpen(hhelix.shape.profile, "r", paths=search_paths(MyEnv, "geom")) as fshape:
+                        files.append(fshape.name)
+                else:
+                    with MyOpen(hhelix.name + str("_cut_salome.dat"), "r", paths=search_paths(MyEnv, "geom")) as fcut:
+                        files.append(fcut.name)
+            except:
+                pass
 
     for ring in cad.Rings:
         try:
@@ -258,7 +261,7 @@ def Insert_setup(MyEnv, confdata: dict, cad: Insert, method_data: List, template
         "current_H": currentH_data
     }
     if 'th' in method_data[3]:
-        mpost["flux"] = {f'index_h: 0:{str(NChannels)}'}
+        mpost["flux"] = {'index_h': f'0:{str(NChannels)}'}
         mpost["meanT_H"] = meanT_data
 
     # check mpost output
@@ -280,13 +283,14 @@ def Insert_setup(MyEnv, confdata: dict, cad: Insert, method_data: List, template
                 item = {"name": "U_" + marker, "value":"1"}
                 index = params.index(item)
                 mat = mmat[marker]
-                print(f"mat[{marker}]: {mat}")
+                if debug:
+                    print(f"mat[{marker}]: {mat}")
                 # print("U=", params[index], mat['sigma'], R1[i], pitch_h[j])
                 sigma = 0
                 if method_data[6]:
-                    sigma = float(mat['sigma0'])
-                else:
                     sigma = float(mat['sigma'])
+                else:
+                    sigma = float(mat['sigma0'])
                 I_s = I0 * turns_h[i][j]
                 j1 = I_s / (math.log(R2[i]/R1[i]) * (R1[i] * 1.e-3) *(pitch[j]*1.e-3) * turns[j])
                 U_s = 2 * math.pi * (R1[i] * 1.e-3) * j1 / sigma
