@@ -452,14 +452,20 @@ def setup_cmds(MyEnv, args, name, cfgfile, jsonfile, xaofile, meshfile):
     from .machines import load_machines
 
     machines = load_machines()
-    if args.debug:
-        print(f"machine={MyEnv.compute_server} type={type(MyEnv.compute_server)}")
     server = machines[MyEnv.compute_server]
+    # server = loadmachine(args.machine)
+    if args.debug:
+        print(f'setup_cmds: {server}')
     NP = server.cores
     if server.multithreading:
         NP = int(NP/2)
     if args.debug:
         print(f"NP={NP} {type(NP)}")
+    if args.np > 0:
+        if args.np > NP:
+            print(f'requested number of cores {args.np} exceed {server.name} capability (max: {NP})')
+        else:
+            NP = args.np
 
     simage_path = MyEnv.simage_path()
     hifimagnet = AppCfg["mesh"]["hifimagnet"]
