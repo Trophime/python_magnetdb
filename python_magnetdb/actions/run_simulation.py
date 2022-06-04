@@ -58,24 +58,30 @@ def run_simulation(simulation):
                     break
             print(f'Finding config file... {config_file_path}')
 
+            # TODO get real yaml file
+            # only for HL-test so far
+            print("Generating CAD...")
+            exec_cmd = f"singularity exec -B $PWD:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif salome -w1 -t $HIFIMAGNET/HIFIMAGNET_Cmd.py args:test.yaml,--axi,--air,2,2,--wd,{tempdir}/data/geometries"
+            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT, env={"HIFIMAGNET": "/opt/SALOME-9.8.0-UB20.04/INSTALL/HIFIMAGNET/bin/salome"})
+
+            # TODO get real xao file
+            # only for Axi so far
+            print("Generating Mesh...")
+            exec_cmd = f"singularity exec -B $PWD:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif python3 -m python_magnetgeo.xao test-Axi_withAir.xao --wd {tempdir}/data/geometries mesh --group CoolingChannels --geo test.yaml --lc=1"
+            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
+            
+            # TODO get real mesh file
+            print("Updating configuration...")
             proc = subprocess.check_output([f"perl -pi -e 's|# mesh.scale =|mesh.scale =|' {config_file_path}"], shell=True, stderr=subprocess.STDOUT)
             proc = subprocess.check_output([f"perl -pi -e 's|mesh.filename=.*|mesh.filename=\$cfgdir/data/geometries/test-Axi_withAir.msh|' {config_file_path}"], shell=True, stderr=subprocess.STDOUT)
-            print("Updating configuration...")
-            
-            exec_cmd = f"singularity exec -B {tempdir}:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif salome -w1 -t $HIFIMAGNET/HIFIMAGNET_Cmd.py args:test.yaml,--axi,--air,2,2,--wd,{tempdir}/data/geometries"
-            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT, env={"HIFIMAGNET": "/opt/SALOME-9.8.0-UB20.04/INSTALL/HIFIMAGNET/bin/salome"})
-            print("Generating CAD...")
 
-            exec_cmd = f"singularity exec -B {tempdir}:{tempdir} /home/singularity/hifimagnet-salome-9.8.0.sif python3 -m python_magnetgeo.xao test-Axi_withAir.xao --wd {tempdir}/data/geometries mesh --group CoolingChannels --geo test.yaml --lc=1"
-            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
-            print("Generating Mesh...")
-            
-            exec_cmd = f"singularity exec  -B $PWD:/home/feelpp/sim /home/singularity/feelpp-toolboxes-v0.110.0-alpha.3.sif mpirun -np {NP} feelpp_toolbox_coefficientformpdes --directory /home/feelpp/sim --config-file {config_file_path}"
-            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
             print("Running simulation...")
+            exec_cmd = f"singularity exec  -B $PWD:{tempdir} /home/singularity/feelpp-toolboxes-v0.110.0-alpha.3.sif mpirun -np {NP} feelpp_toolbox_coefficientformpdes --directory {tempdir} --config-file {config_file_path}"
+            proc = subprocess.check_output([exec_cmd], shell=True, stderr=subprocess.STDOUT)
             
             with open('res.log', 'w') as output:
                 output.write(proc.decode("utf-8"))
+
             print("Archiving results...")
             simulation_name = os.path.basename(os.path.splitext(config_file_path)[0])
             output_archive = f"{tempdir}/{simulation_name}.tar.gz"
