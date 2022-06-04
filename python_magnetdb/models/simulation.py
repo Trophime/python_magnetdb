@@ -24,10 +24,16 @@ class Simulation(Model):
 
 class SimulationObserver(object):
     def deleting(self, simulation):
-        if simulation.setup_output_attachment is not None:
-            simulation.setup_output_attachment.delete()
-        if simulation.output_attachment is not None:
-            simulation.output_attachment.delete()
+        from .attachment import Attachment
+
+        if simulation.setup_output_attachment_id is not None:
+            setup_output_attachment = Attachment.find(simulation.setup_output_attachment_id)
+            if setup_output_attachment is not None:
+                setup_output_attachment.delete()
+        if simulation.output_attachment_id is not None:
+            output_attachment = Attachment.find(simulation.output_attachment_id)
+            if output_attachment is not None:
+                output_attachment.delete()
 
 
 Simulation.observe(SimulationObserver())

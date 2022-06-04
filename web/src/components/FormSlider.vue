@@ -13,7 +13,7 @@ import 'nouislider/dist/nouislider.css';
 
 export default {
   name: 'FormSlider',
-  props: ['min', 'max', 'value'],
+  props: ['min', 'max', 'value', 'step'],
   data: () => ({
     slider: null,
   }),
@@ -27,6 +27,7 @@ export default {
       start: this.value,
       connect: true,
       behaviour: 'drag',
+      step: this.step,
       range: {
         'min': this.min,
         'max': this.max,

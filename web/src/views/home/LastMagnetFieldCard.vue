@@ -1,7 +1,7 @@
 <template>
   <Card v-show="display">
     <template #header>
-      Magnetic field of the last created magnet
+      Magnetic field of {{magnetName}}
     </template>
 
     <canvas ref="chart"></canvas>
@@ -20,29 +20,32 @@ export default {
   data() {
     return {
       display: false,
+      magnetName: '',
     }
   },
   async mounted() {
     try {
       const magnets = await magnetService.list({ page: 1, perPage: 1, sortBy: 'created_at', sortDesc: true })
       if (magnets.items.length === 1) {
-        const { results: data } = await visualisationService.bmap({
+        const { results: data, params } = await visualisationService.bmap({
           resource_id: magnets.items[0].id,
           resource_type: 'magnet',
+          n: 200,
         })
+        this.magnetName = magnets.items[0].name
         this.chart = new Chart(this.$refs.chart, {
           type: 'line',
           data: {
             labels: data.x,
             datasets: [
               {
-                label: `Y`,
+                label: params.pkey,
                 backgroundColor: '#FF0000',
                 borderColor: '#FF0000',
                 data: data.y,
               },
               {
-                label: `Y`,
+                label: `${params.pkey} Max`,
                 backgroundColor: '#00FF00',
                 borderColor: '#00FF00',
                 data: data.ymax,

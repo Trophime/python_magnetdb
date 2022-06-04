@@ -41,6 +41,7 @@
                 :component="FormSlider"
                 :min="50"
                 :max="1000"
+                :step="1"
             />
           </div>
           <div class="w-1/3">
