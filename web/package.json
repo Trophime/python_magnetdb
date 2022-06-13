@@ -17,6 +17,7 @@
     "core-js": "^3.6.5",
     "lodash": "^4.17.21",
     "mathjs": "^10.1.0",
+    "nouislider": "^15.6.0",
     "vue": "^2.6.11",
     "vue-reactive-provide": "^0.3.0",
     "vue-router": "^3.5.3",

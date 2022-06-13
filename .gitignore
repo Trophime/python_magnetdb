@@ -77,3 +77,12 @@ core
 *log
 *orig
 
+pgadmin-data
+minio-data
+postgres-data
+lemonldap-ng-data
+
+http
+certs
+poetry-cache
+

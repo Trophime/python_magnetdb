@@ -57,7 +57,7 @@ td {
 
 .btn {
   @apply flex justify-center items-center h-10 px-5 transition-colors duration-150 rounded-md border shadow-sm
-  font-semibold focus:outline-none;
+  font-semibold focus:outline-none text-base;
   width: fit-content;
 }
 

@@ -34,6 +34,7 @@ export default {
       deep: true,
       handler() {
         this.computeDirty()
+        this.$emit('change', this.values)
       },
     },
     initialValues: {

@@ -97,7 +97,10 @@ export default {
       return simulationService.create({
         ...values,
         magnet: undefined,
-        magnet_id: values.magnet.value,
+        resource_type: 'magnet',
+        resource_id: values.magnet.value,
+        static: values.static === 'on',
+        non_linear: values.non_linear === 'on',
       })
           .then((simulation) => {
             this.$router.push({ name: 'simulation', params: { id: simulation.id } })

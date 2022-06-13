@@ -7,6 +7,8 @@ const router = new VueRouter({
     { name: 'sites', path: '/sites', component: () => import('./views/sites/list') },
     { name: 'new_site', path: '/sites/new', component: () => import('./views/sites/new') },
     { name: 'site', path: '/sites/:id', component: () => import('./views/sites/show') },
+    { name: 'simulation', path: '/simulations/:id', component: () => import('./views/simulations/show') },
+    { name: 'simulations', path: '/simulations', component: () => import('./views/simulations/list') },
     { name: 'new_simulation', path: '/simulations/new', component: () => import('./views/simulations/new') },
     { name: 'magnets', path: '/magnets', component: () => import('./views/magnets/list') },
     { name: 'new_magnet', path: '/magnets/new', component: () => import('./views/magnets/new') },
@@ -25,7 +27,8 @@ const router = new VueRouter({
     { name: 'admin_users', path: '/admin/users', component: () => import('./views/admin/users/list') },
     { name: 'admin_user', path: '/admin/users/:id', component: () => import('./views/admin/users/show') },
     { name: 'profile', path: '/profile', component: () => import('./views/profile') },
-    { name: 'root', path: '/', component: () => import('./views/root') },
+    { name: 'visualisation_bmap', path: '/visualisations/bmap', component: () => import('./views/visualisations/bmap') },
+    { name: 'home', path: '/', component: () => import('./views/home/index') },
     { name: 'sign_in', path: '/sign_in', component: () => import('./views/signin') }
   ]
 })

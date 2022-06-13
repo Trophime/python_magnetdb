@@ -3,7 +3,7 @@
     <div class="topbar"  :class="{ 'topbar-admin': isInAdminMode }">
       <div class="container-center">
         <div class="topbar-left">
-          <router-link class="topbar-title" :to="{ name: 'root' }">
+          <router-link class="topbar-title" :to="{ name: 'home' }">
             MagnetDB
           </router-link>
           <div v-if="$store.getters.isLogged" class="topbar-link-list">
@@ -148,7 +148,7 @@ export default {
 }
 
 .topbar-dropdown-content {
-  @apply top-7 left-0 absolute w-64 bg-white border border-gray-100 shadow-md rounded-md flex flex-col;
+  @apply top-7 left-0 absolute w-64 bg-white border border-gray-100 shadow-md rounded-md flex flex-col z-10;
 }
 
 .topbar-dropdown-link {

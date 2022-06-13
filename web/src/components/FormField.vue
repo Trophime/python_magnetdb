@@ -1,5 +1,5 @@
 <template>
-  <div class="form-field">
+  <div class="form-field" :class="fieldClass">
     <div :class="{ 'form-field-inline': inline }">
       <label v-if="label" :for="fieldName" class="form-field-label">
         {{label}}
@@ -33,7 +33,7 @@ import { createFormField } from '@/mixins/createFormField'
 export default {
   name: 'FormField',
   inheritAttrs: false,
-  props: ['component', 'name', 'inline', 'label', 'required'],
+  props: ['component', 'name', 'inline', 'label', 'required', 'fieldClass'],
   mixins: [createFormField()],
 }
 </script>

@@ -33,6 +33,11 @@ Vue.filter('statusName', (status) => ({
   in_study: 'In study',
   in_operation: 'In operation',
   defunct: 'Defunct',
+  pending: 'Pending',
+  in_progress: 'In progress',
+  done: 'Done',
+  failed: 'Failed',
+  scheduled: 'Scheduled',
 }[status]))
 
 Vue.filter('roleName', (role) => ({

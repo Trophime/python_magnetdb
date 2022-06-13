@@ -24,7 +24,7 @@
 <script>
 export default {
   name: 'Button',
-  props: ['loading', 'disabled'],
+  props: ['loading', 'disabled', 'skipForm'],
   data() {
     return { internalLoading: false }
   },
@@ -33,10 +33,10 @@ export default {
   },
   computed: {
     currentlyLoading() {
-      return this.loading || this.form?.loading || this.internalLoading
+      return this.loading || (!this.skipForm && this.form?.loading) || this.internalLoading
     },
     currentlyDisabled() {
-      return this.disabled || this.currentlyLoading || (this.form && !this.form.dirty)
+      return this.disabled || this.currentlyLoading || (!this.skipForm && this.form && !this.form.dirty)
     },
   },
   methods: {

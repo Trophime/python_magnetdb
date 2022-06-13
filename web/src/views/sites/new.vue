@@ -24,7 +24,6 @@
             name="config"
             type="file"
             :component="FormUpload"
-            :required="true"
         />
         <Button type="submit" class="btn btn-primary">
           Save
@@ -70,7 +69,6 @@ export default {
     validate() {
       return Yup.object().shape({
         name: Yup.string().required(),
-        config: Yup.mixed().required(),
       })
     },
   },

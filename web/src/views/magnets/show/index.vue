@@ -7,9 +7,18 @@
         </div>
         <StatusBadge :status="magnet.status"></StatusBadge>
       </div>
-      <Button v-if="magnet.status === 'in_stock'" class="btn btn-danger" type="button" @click="defunct">
-        Defunct
-      </Button>
+      <div class="flex items-center space-x-4">
+        <Button v-if="magnet.status === 'in_stock'" class="btn btn-danger" type="button" @click="defunct">
+          Defunct
+        </Button>
+        <router-link
+          class="btn btn-default"
+          :to="{ name: 'visualisation_bmap', query: { resource_type: 'magnet', resource_id: magnet.id } }"
+        >
+          BMAP
+        </router-link>
+      </div>
+
     </div>
 
     <Alert v-if="error" class="alert alert-danger mb-6" :error="error"/>
@@ -39,12 +48,11 @@
             type="text"
             :component="FormInput"
         />
-        <FormField
-            label="CAO"
-            name="cao"
-            type="file"
-            :component="FormUpload"
-            :default-value="magnet.cao"
+        <CadAttachmentEditor
+          label="CAD"
+          resource-type="magnet"
+          :resource-id="magnet.id"
+          :default-attachments="magnet.cad"
         />
         <FormField
             label="Geometry"
@@ -182,10 +190,12 @@ import Alert from "@/components/Alert";
 import AddPartToMagnetModal from "@/views/magnets/show/AddPartToMagnetModal";
 import AttachMagnetToSiteModal from "@/views/magnets/show/AttachMagnetToSiteModal";
 import StatusBadge from "@/components/StatusBadge";
+import CadAttachmentEditor from "@/components/CadAttachmentEditor";
 
 export default {
   name: 'MagnetShow',
   components: {
+    CadAttachmentEditor,
     StatusBadge,
     AttachMagnetToSiteModal,
     AddPartToMagnetModal,

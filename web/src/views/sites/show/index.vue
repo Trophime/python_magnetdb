@@ -41,7 +41,6 @@
             name="config"
             type="text"
             :component="FormUpload"
-            :required="true"
             :default-value="site.config"
         />
         <Button type="submit" class="btn btn-primary">
@@ -169,22 +168,12 @@ export default {
     validate() {
       return Yup.object().shape({
         name: Yup.string().required(),
-        config: Yup.mixed().required(),
       })
     },
     fetch() {
       return siteService.find({id: this.$route.params.id})
           .then((site) => {
             this.site = site
-          })
-          .catch((error) => {
-            this.error = error
-          })
-    },
-    destroy() {
-      return siteService.destroy({id: this.$route.params.id})
-          .then(() => {
-            this.$router.push({ name: 'sites' })
           })
           .catch((error) => {
             this.error = error

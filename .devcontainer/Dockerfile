@@ -1,10 +1,18 @@
-FROM ubuntu:focal
+FROM trophime/magnettools:poetry
 
 USER root
 EXPOSE 8000
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Setup demo environment variables
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    OMPI_MCA_btl_vader_single_copy_mechanism=none \
+    GOPATH=${HOME}/go \
+    PATH=${PATH}:/usr/local/go/bin
 
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
@@ -14,18 +22,11 @@ ARG USERNAME=vscode
 ARG USER_UID=999
 ARG USER_GID=$USER_UID
 
-# install Feelpp from BinTray Debian repository
-RUN apt update && \
-    apt install -y lsb-release && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed main restricted"  |  tee -a /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed universe"  |  tee -a /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu $(lsb_release -cs)-proposed multiverse"  |  tee -a /etc/apt/sources.list && \
-    apt install -y debian-keyring && \
-    cp /usr/share/keyrings/debian-maintainers.gpg /etc/apt/trusted.gpg.d && \
-    echo "deb http://euler.GRENOBLE.LNCMI.LOCAL/~trophime/debian/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/lncmi.list && \
-    apt update
-
-
+ARG SVERSION=3.7.4
+ARG GVERSION=1.14.12
+ARG OS=linux
+ARG ARCH=amd64
+    
 # Configure apt and install packages
 RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
@@ -42,6 +43,20 @@ RUN apt-get update \
     && apt-get -y install python3-gmsh \
     && apt-get -y remove pyflakes python-pkg-resources python-pyflakes libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal \
     && apt-get -y install nmap vim-nox \
+    #\
+    # install singularity \
+    && apt-get install -y  build-essential uuid-dev libgpgme-dev squashfs-tools libseccomp-dev pkg-config cryptsetup-bin \
+    && cd /usr/local \
+    && wget https://dl.google.com/go/go$GVERSION.$OS-$ARCH.tar.gz \
+    && tar -C /usr/local -xzvf go$GVERSION.$OS-$ARCH.tar.gz \
+    && rm go$GVERSION.$OS-$ARCH.tar.gz \
+    && wget https://github.com/hpcng/singularity/releases/download/v${SVERSION}/singularity-${SVERSION}.tar.gz \
+    && tar -xzf singularity-${SVERSION}.tar.gz \
+    && rm -f singularity-${SVERSION}.tar.gz \
+    && cd singularity \
+    && ./mconfig \
+    && make -C ./builddir \
+    && make -C ./builddir install \
     #\
     # Install frontend stuff \
     && python -m pip install --upgrade pip \
@@ -78,6 +93,7 @@ ENV DEBIAN_FRONTEND=dialog
 USER $USERNAME
 # Install backend stuff for database+api
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - 
+# eventually remove poetry.lock
 
 USER root
 
@@ -86,5 +102,6 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=C.UTF-8 \
     OMPI_MCA_btl_vader_single_copy_mechanism=none \
-    PATH=$PATH:$HOME/.poetry/bin
+    GOPATH=${HOME}/go \
+    PATH=$PATH:${GOPATH}/bin:$HOME/.poetry/bin
 

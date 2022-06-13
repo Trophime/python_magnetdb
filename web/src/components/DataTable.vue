@@ -52,7 +52,8 @@
             :class="{ 'cursor-pointer': $listeners['item-selected'] }" @click="$emit('item-selected', item)"
           >
             <td v-for="header in currentHeaders" :key="header.key">
-              <slot :name="`item.${header.key}`" :item="item" :items="items"></slot>
+              <slot v-if="$scopedSlots[`item.${header.key}`]" :name="`item.${header.key}`" :item="item" :items="items" />
+              <template v-else>{{ item[header.key] }}</template>
             </td>
           </tr>
         </tbody>
@@ -103,7 +104,7 @@ export default {
     ChevronDownIcon,
     ArrowUpIcon,
   },
-  props: ['headers', 'itemKey'],
+  props: ['headers', 'itemKey', 'configPersistenceKey'],
   data() {
     return {
       currentHeaders: [],
@@ -114,7 +115,7 @@ export default {
       currentPage: 1,
       lastPage: 0,
       sortBy: null,
-      sortDesc: false,
+      sortDesc: null,
       query: '',
       currentHeaderHover: '',
       columnsDropdownActive: false,
@@ -125,7 +126,7 @@ export default {
     currentHeaders: {
       deep: true,
       handler(headers) {
-        this.writeQueryState({
+        this.writeState({
           page: this.currentPage,
           perPage: this.perPage,
           sortBy: this.sortBy,
@@ -159,7 +160,7 @@ export default {
         this.sortBy = res.sortBy
         this.sortDesc = res.sortDesc
         this.query = res.query
-        this.writeQueryState({
+        this.writeState({
           page, perPage, sortBy, sortDesc, query, headers: this.currentHeaders
         })
       } catch (error) {
@@ -224,7 +225,7 @@ export default {
     search: debounce(function (query) {
       this.fetch({ query, page: 1 })
     }, 2000),
-    writeQueryState({ page, perPage, sortBy, sortDesc, query, headers }) {
+    writeState({ page, perPage, sortBy, sortDesc, query, headers }) {
       const queryPayload = {}
       if (page !== 1) {
         queryPayload.page = page
@@ -248,7 +249,10 @@ export default {
         queryPayload.headers = headers.map(header => header.key).join(',')
       }
       if (Object.entries(queryPayload).length > 0 || Object.entries(this.$route.query).length > 0) {
-        this.$router.replace({ ...this.$route, query: queryPayload })
+        this.$router.replace({ ...this.$route, query: queryPayload }).catch(() => {})
+      }
+      if (this.configPersistenceKey) {
+        localStorage.setItem(`mdb-datatable-${this.configPersistenceKey}`, JSON.stringify({ ...queryPayload }))
       }
     },
   },
@@ -265,26 +269,35 @@ export default {
   },
   created() {
     try {
-      if (this.$route.query.page) {
-        this.currentPage = parseInt(this.$route.query.page, 10)
+      let rawDefaultParams = {}
+      if (this.configPersistenceKey) {
+        const persistedConfig = localStorage.getItem(`mdb-datatable-${this.configPersistenceKey}`)
+        if (persistedConfig) {
+          rawDefaultParams = { ...rawDefaultParams, ...JSON.parse(persistedConfig) }
+        }
       }
-      if (this.$route.query.per_page) {
-        this.perPage = parseInt(this.$route.query.per_page, 10)
+      rawDefaultParams = { ...rawDefaultParams, ...this.$route.query }
+
+      if (rawDefaultParams.page) {
+        this.currentPage = parseInt(rawDefaultParams.page, 10)
       }
-      if (this.$route.query.sort_by) {
-        this.sortBy = this.$route.query.sort_by
+      if (rawDefaultParams.per_page) {
+        this.perPage = parseInt(rawDefaultParams.per_page, 10)
       }
-      if (this.$route.query.sort_desc) {
+      if (rawDefaultParams.sort_by) {
+        this.sortBy = rawDefaultParams.sort_by
+      }
+      if (rawDefaultParams.sort_desc) {
         this.sortDesc = true
       }
-      if (this.$route.query.sort_desc) {
+      if (rawDefaultParams.sort_desc) {
         this.sortDesc = true
       }
-      if (this.$route.query.query) {
-        this.query = this.$route.query.query
+      if (rawDefaultParams.query) {
+        this.query = rawDefaultParams.query
       }
-      if (this.$route.query.headers) {
-        this.currentHeaders = this.$route.query.headers.split(',').map(
+      if (rawDefaultParams.headers) {
+        this.currentHeaders = rawDefaultParams.headers.split(',').map(
           (key) => this.headers.find((header) => header.key === key.trim())
         )
       }

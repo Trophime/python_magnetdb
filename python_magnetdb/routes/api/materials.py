@@ -1,5 +1,6 @@
 from typing import Optional
 
+import orator
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Query, Depends
 
@@ -46,7 +47,11 @@ def index(user=Depends(get_user('read')), page: int = 1, per_page: int = Query(d
 
 @router.post("/api/materials")
 def create(payload: MaterialPayload, user=Depends(get_user('create'))):
-    material = Material.create(payload.dict(exclude_unset=True))
+    material = Material(payload.dict(exclude_unset=True))
+    try:
+        material.save()
+    except orator.exceptions.query.QueryException as e:
+        raise HTTPException(status_code=422, detail="Name already taken.") if e.message.find('materials_name_unique') != -1 else e
     AuditLog.log(user, "Material created", resource=material)
     return material.serialize()
 

@@ -25,18 +25,6 @@
             type="text"
             :component="FormInput"
         />
-        <FormField
-            label="CAO"
-            name="cao"
-            type="file"
-            :component="FormUpload"
-        />
-        <FormField
-            label="Geometry"
-            name="geometry"
-            type="file"
-            :component="FormUpload"
-        />
         <Button type="submit" class="btn btn-primary">
           Save
         </Button>
