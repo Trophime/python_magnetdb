@@ -7,12 +7,43 @@
         </div>
         <StatusBadge :status="site.status"></StatusBadge>
       </div>
-      <Button v-if="site.status === 'in_study'" class="btn btn-success" type="button" @click="putInOperation">
-        Put in operation
-      </Button>
-      <Button v-else-if="site.status === 'in_operation'" class="btn btn-danger" type="button" @click="shutdown">
-        Shutdown site
-      </Button>
+      <div class="flex items-center space-x-4">
+        <Button v-if="site.status === 'in_study'" class="btn btn-success" type="button" @click="putInOperation">
+          Put in operation
+        </Button>
+        <Button v-else-if="site.status === 'in_operation'" class="btn btn-danger" type="button" @click="shutdown">
+          Shutdown site
+        </Button>
+
+        <Popover>
+          <Button class="btn btn-default">
+            Visualiser
+          </Button>
+
+          <template #content>
+            <div class="space-y-2">
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_bmap', query: { resource_type: 'site', resource_id: site.id } }"
+              >
+                BMAP
+              </router-link>
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_stress_map', query: { resource_type: 'site', resource_id: site.id } }"
+              >
+                Stress map
+              </router-link>
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_bmap_2d', query: { resource_type: 'site', resource_id: site.id } }"
+              >
+                BMAP 2D
+              </router-link>
+            </div>
+          </template>
+        </Popover>
+      </div>
     </div>
 
     <Alert v-if="error" class="alert alert-danger mb-6" :error="error"/>
@@ -114,10 +145,12 @@ import Button from "@/components/Button";
 import Alert from "@/components/Alert";
 import AttachMagnetToSiteModal from "@/views/sites/show/AttachMagnetToSiteModal";
 import StatusBadge from "@/components/StatusBadge";
+import Popover from "@/components/Popover";
 
 export default {
   name: 'SiteShow',
   components: {
+    Popover,
     StatusBadge,
     AttachMagnetToSiteModal,
     Alert,

@@ -6,12 +6,19 @@ from python_magnetdb.actions.generate_simulation_config import generate_magnet_c
 from python_magnetdb.models.magnet import Magnet
 
 
+def mkdir(dir):
+    try:
+        os.mkdir(dir)
+    except FileExistsError:
+        pass
+
+
 def generate_magnet_directory(magnet_id, directory):
     magnet = Magnet.with_('magnet_parts.part.geometry', 'magnet_parts.part.cad.attachment', 'geometry',
                           'magnet_parts.part.material', 'site_magnets.site', 'cad.attachment').find(magnet_id)
-    os.mkdir(f"{directory}/data")
-    os.mkdir(f"{directory}/data/geometries")
-    os.mkdir(f"{directory}/data/cad")
+    mkdir(f"{directory}/data")
+    mkdir(f"{directory}/data/geometries")
+    mkdir(f"{directory}/data/cad")
     shutil.copyfile(f"{os.getcwd()}/flow_params.json", f"{directory}/flow_params.json")
     if magnet.geometry:
         magnet.geometry.download(f"{directory}/data/geometries/{magnet.geometry.filename}")

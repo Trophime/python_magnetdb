@@ -11,12 +11,34 @@
         <Button v-if="magnet.status === 'in_stock'" class="btn btn-danger" type="button" @click="defunct">
           Defunct
         </Button>
-        <router-link
-          class="btn btn-default"
-          :to="{ name: 'visualisation_bmap', query: { resource_type: 'magnet', resource_id: magnet.id } }"
-        >
-          BMAP
-        </router-link>
+        <Popover>
+          <Button class="btn btn-default">
+            Visualiser
+          </Button>
+
+          <template #content>
+            <div class="space-y-2">
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_bmap', query: { resource_type: 'magnet', resource_id: magnet.id } }"
+              >
+                BMAP
+              </router-link>
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_stress_map', query: { resource_type: 'magnet', resource_id: magnet.id } }"
+              >
+                Stress map
+              </router-link>
+              <router-link
+                  class="btn btn-default btn-block"
+                  :to="{ name: 'visualisation_bmap_2d', query: { resource_type: 'magnet', resource_id: magnet.id } }"
+              >
+                BMAP 2D
+              </router-link>
+            </div>
+          </template>
+        </Popover>
       </div>
 
     </div>
@@ -191,10 +213,12 @@ import AddPartToMagnetModal from "@/views/magnets/show/AddPartToMagnetModal";
 import AttachMagnetToSiteModal from "@/views/magnets/show/AttachMagnetToSiteModal";
 import StatusBadge from "@/components/StatusBadge";
 import CadAttachmentEditor from "@/components/CadAttachmentEditor";
+import Popover from "@/components/Popover";
 
 export default {
   name: 'MagnetShow',
   components: {
+    Popover,
     CadAttachmentEditor,
     StatusBadge,
     AttachMagnetToSiteModal,

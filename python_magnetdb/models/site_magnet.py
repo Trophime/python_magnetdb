@@ -6,6 +6,10 @@ class SiteMagnet(Model):
     __table__ = "site_magnets"
     __fillable__ = ['commissioned_at', 'decommissioned_at']
 
+    @property
+    def active(self):
+        return self.decommissioned_at is None
+
     @belongs_to('magnet_id')
     def magnet(self):
         from .magnet import Magnet

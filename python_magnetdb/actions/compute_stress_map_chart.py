@@ -2,7 +2,6 @@ import MagnetTools.Bmap as bmap
 import MagnetTools.MagnetTools as mt
 import numpy as np
 
-
 plotmethod = {
     'Bz': (bmap.getBz, '[T]', 'Magnetic Field Bz'),
     'Br': (bmap.getBr, '[T]', 'Magnetic Field Bz'),
@@ -11,7 +10,7 @@ plotmethod = {
 }
 
 
-def prepare_bmap_chart_params(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
+def prepare_stress_map_chart_params(data, i_h, i_b, i_s, n, r0, z, pkey):
     (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
     icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
 
@@ -21,16 +20,13 @@ def prepare_bmap_chart_params(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, comman
         i_s if i_s is not None else (icurrents[2] if len(icurrents) > 2 else 0),
         n if n is not None else 80,
         r0 if r0 is not None else 0,
-        z0 if z0 is not None else 0,
-        r if r is not None else (0, 3.14),
-        z if z is not None else (-3.14, 3.14),
+        z if z is not None else (-0.2, 0.2),
         pkey if pkey is not None else "Bz",
-        command if command is not None else "1D_z",
         ["i_h", "i_b", "i_s"][:len(icurrents)],
     )
 
 
-def compute_bmap_chart(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
+def compute_stress_map_chart(data, i_h, i_b, i_s, n, r0, z, pkey):
     def update_current():
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
 
@@ -61,19 +57,11 @@ def compute_bmap_chart(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
         print("Bz0=", Bz0)
 
     def sine():
-        print("panel_bmap: compute b")
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
-        if command == '1D_z':
-            x = np.linspace(z[0], z[1], n)
-            B_ = np.vectorize(plotmethod[pkey][0], excluded=[0, 2, 3, 4, 5])
-            Bval = lambda y: B_(r0, x, Tubes, Helices, BMagnets, UMagnets)
-            return x, Bval(x)
-
-        if command == '1D_r':
-            x = np.linspace(r[0], r[1], n)
-            B_ = np.vectorize(plotmethod[pkey][0], excluded=[1, 2, 3, 4, 5])
-            Bval = lambda y: B_(x, z0, Tubes, Helices, BMagnets, UMagnets)
-            return x, Bval(x)
+        x = np.linspace(z[0], z[1], n)
+        B_ = np.vectorize(plotmethod[pkey][0], excluded=[0, 2, 3, 4, 5])
+        Bval = lambda y: B_(r0, x, Tubes, Helices, BMagnets, UMagnets)
+        return x, Bval(x)
 
     def compute_max():
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data

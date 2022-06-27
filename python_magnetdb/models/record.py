@@ -4,7 +4,7 @@ from orator.orm import belongs_to
 
 class Record(Model):
     __table__ = "records"
-    __fillable__ = ['name', 'description', 'site_id', 'attachment_id']
+    __fillable__ = ['name', 'description', 'site_id', 'attachment_id', 'created_at']
 
     @belongs_to('site_id')
     def site(self):

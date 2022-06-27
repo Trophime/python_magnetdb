@@ -1,9 +1,9 @@
 <template>
   <div class="space-y-4">
-    <Alert :error="error"/>
+    <Alert :error="error" />
 
     <div v-if="resource" class="display-1">
-      {{ resource.name }}
+      {{resource.name}}
     </div>
 
     <Card v-if="params">
@@ -40,53 +40,24 @@
             />
           </div>
         </div>
-        <FormValues v-slot="{ values }">
-          <div class="flex items-center space-x-4">
-            <div class="w-1/3">
-              <FormField
-                  label="N"
-                  name="n"
-                  :component="FormSlider"
-                  :min="50"
-                  :max="1000"
-                  :step="1"
-              />
-            </div>
-            <div v-if="values.command === '1D_r'" class="w-1/3">
-              <FormField
-                  label="R"
-                  name="r"
-                  :component="FormSlider"
-                  :min="0"
-                  :max="10"
-              />
-            </div>
-            <div v-if="values.command === '1D_z'" class="w-1/3">
-              <FormField
-                  label="Z"
-                  name="z"
-                  :component="FormSlider"
-                  :min="-10"
-                  :max="10"
-              />
-            </div>
-          </div>
-        </FormValues>
         <div class="flex items-center space-x-4">
           <div class="w-1/3">
             <FormField
-                label="R0"
-                name="r0"
-                type="number"
-                :component="FormInput"
+                label="N"
+                name="n"
+                :component="FormSlider"
+                :min="50"
+                :max="1000"
+                :step="1"
             />
           </div>
           <div class="w-1/3">
             <FormField
-                label="Z0"
-                name="z0"
-                type="number"
-                :component="FormInput"
+                label="Z"
+                name="z"
+                :component="FormSlider"
+                :min="-0.2"
+                :max="0.2"
             />
           </div>
         </div>
@@ -97,14 +68,6 @@
                 name="pkey"
                 :component="FormSelect"
                 :options="['A', 'Br', 'Bz', 'B']"
-            />
-          </div>
-          <div class="w-1/3">
-            <FormField
-                label="Command"
-                name="command"
-                :component="FormSelect"
-                :options="['1D_z', '1D_r']"
             />
           </div>
         </div>
@@ -118,8 +81,6 @@
 
 <script>
 import * as visualisationService from '@/services/visualisationService'
-import * as siteService from '@/services/siteService'
-import * as magnetService from '@/services/magnetService'
 import {Chart} from "chart.js";
 import Card from "@/components/Card";
 import FormSlider from "@/components/FormSlider";
@@ -128,12 +89,12 @@ import FormField from "@/components/FormField";
 import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import Alert from "@/components/Alert";
-import FormValues from "@/components/FormValues";
+import * as siteService from "@/services/siteService";
+import * as magnetService from "@/services/magnetService";
 
 export default {
-  name: 'BMapVisualisation',
+  name: 'StressMapVisualisation',
   components: {
-    FormValues,
     Alert,
     FormField,
     Form,
@@ -157,16 +118,16 @@ export default {
     },
     async fetch(values) {
       try {
-        const {results: data, params, allowed_currents: allowedCurrents} = await visualisationService.bmap({
+        const { results: data, params, allowed_currents: allowedCurrents } = await visualisationService.stressMap({
           ...values,
           resource_id: this.$route.query.resource_id,
           resource_type: this.$route.query.resource_type,
         })
-        this.allowedCurrents = allowedCurrents
         this.params = params
+        this.allowedCurrents = allowedCurrents
         if (!this.chart) {
           this.chart = new Chart(this.$refs.chart, {
-            type: 'line',
+            type: 'bar',
             data: {},
             options: {
               scales: {
@@ -202,13 +163,13 @@ export default {
           labels: data.x,
           datasets: [
             {
-              label: `Y`,
+              label: `I`,
               backgroundColor: '#FF0000',
               borderColor: '#FF0000',
               data: data.y,
             },
             {
-              label: `Y`,
+              label: `I nominal`,
               backgroundColor: '#00FF00',
               borderColor: '#00FF00',
               data: data.ymax,
@@ -222,8 +183,7 @@ export default {
             ...this.$route.query,
             ...params,
           },
-        }).catch(() => {
-        })
+        }).catch(() => {})
       } catch (error) {
         this.error = error
       }
@@ -236,10 +196,10 @@ export default {
         const resourceId = this.$route.query.resource_id
         switch (this.$route.query.resource_type) {
           case 'site':
-            this.resource = await siteService.find({id: resourceId})
+            this.resource = await siteService.find({ id: resourceId })
             break
           case 'magnet':
-            this.resource = await magnetService.find({id: resourceId})
+            this.resource = await magnetService.find({ id: resourceId })
             break
         }
       })(),
