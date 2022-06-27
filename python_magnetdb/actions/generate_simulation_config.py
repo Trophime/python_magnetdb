@@ -1,3 +1,5 @@
+from python_magnetdb.models.site import Site
+
 from python_magnetdb.models.magnet import Magnet
 from python_magnetdb.models.material import Material
 
@@ -39,7 +41,13 @@ def generate_magnet_config(magnet_id):
 
 
 def generate_site_config(site_id):
-    raise Exception('Not implemented yet')
+    site = Site.with_('site_magnets').find(site_id)
+    payload = {'magnets': []}
+    for site_magnet in site.site_magnets:
+        if not site_magnet.active:
+            continue
+        payload['magnets'].append(generate_magnet_config(site_magnet.magnet_id))
+    return payload
 
 
 def generate_simulation_config(simulation):

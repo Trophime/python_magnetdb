@@ -21,10 +21,11 @@ param = "^1.12.0"
 pandas = "^1.4.1"
 PyYAML = "^5"
 uvicorn = "^0.17.6"
-python-magnetsetup = {path = "python_magnetsetup"}
 celery = {extras = ["redis"], version = "^5.2.6"}
 numpy = "^1.22.3"
 magnettools = {path = "/home/feelpp/magnettools-1.0.6/build/Python/dist/MagnetTools-0.1.0-py3-none-any.whl"}
+python-magnetsetup = {path = "python_magnetsetup"}
+python-magnetgeo = {path = "python_magnetgeo"}
 watchdog = "^2.1.8"
 
 [tool.poetry.dev-dependencies]

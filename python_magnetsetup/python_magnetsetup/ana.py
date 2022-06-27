@@ -244,7 +244,7 @@ def magnet_setup(MyEnv, confdata: str, debug: bool=False):
     return (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims)
 
 
-def msite_setup(MyEnv, confdata: str, debug: bool=False, session=None):
+def msite_setup(MyEnv, confdata: str, debug: bool=False):
     """
     Creating MagnetTools data struct for setup for msite
     """
@@ -261,18 +261,9 @@ def msite_setup(MyEnv, confdata: str, debug: bool=False, session=None):
 
     for magnet in confdata["magnets"]:
         print("magnet:", magnet, "type(magnet)=", type(magnet), "debug=", debug)
-        try:
-            mconfdata = load_object(MyEnv, magnet + "-data.json", magnet, debug)
-        except:
-            print("setup: failed to load %s, look into magnetdb" % (magnet + "-data.json") )
-            try:
-                mconfdata = load_object_from_db(MyEnv, "magnet", magnet, debug, session)
-            except:
-                raise Exception(f"setup: failed to load {magnet} from magnetdb")
-                    
         if debug:
-            print("mconfdata[geom]:", mconfdata["geom"])
-        tmp = magnet_setup(MyEnv, mconfdata, debug)
+            print("mconfdata[geom]:", magnet["geom"])
+        tmp = magnet_setup(MyEnv, magnet, debug)
         
         # pack magnets
         for item in tmp[0]:
