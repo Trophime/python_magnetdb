@@ -1,4 +1,4 @@
-FROM trophime/magnettools:poetry
+FROM trophime/magnettools:1.0.6-poetry
 
 USER root
 EXPOSE 8000
