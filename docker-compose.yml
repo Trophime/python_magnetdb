@@ -46,14 +46,14 @@ services:
       - ./minio-data:/data
 
   lemonldap-app:
-    # image: tiredofit/lemonldap:2.0-alpine-latest
-    image: tiredofit/lemonldap:latest
+    # image: tiredofit/lemonldap:latest
+    image: tiredofit/lemonldap:2.0.24
     container_name: lemonldap-app
     volumes:
-    - ./lemonldap-ng-data/etc/lemonldap-ng:/etc/lemonldap-ng
+    #- ./lemonldap-ng-data/etc/lemonldap-ng:/etc/lemonldap-ng
     - ./lemonldap-ng-data/conf:/var/lib/lemonldap-ng/conf
-    - ./lemonldap-ng-data/sessions:/var/lib/lemonldap-ng/sessions
-    - ./lemonldap-ng-data/psessions:/var/lib/lemonldap-ng/psessions
+    #- ./lemonldap-ng-data/sessions:/var/lib/lemonldap-ng/sessions
+    #- ./lemonldap-ng-data/psessions:/var/lib/lemonldap-ng/psessions
     - ./logs:/www/logs
     #- ./assets/custom:/assets/custom
     environment:
