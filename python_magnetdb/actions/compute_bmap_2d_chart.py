@@ -22,8 +22,8 @@ def prepare_bmap_2d_chart_params(data, i_h, i_b, i_s, nr, r0, r1, nz, z0, z1, pk
         nr if nr is not None else 10,
         r0 if r0 is not None else 0,
         r1 if r1 is not None else 0.2,
-        nz if nz is not None else 10,
-        z0 if z0 is not None else 0,
+        nz if nz is not None else 21,
+        z0 if z0 is not None else -0.2,
         z1 if z1 is not None else 0.2,
         pkey if pkey is not None else "Bz",
         ["i_h", "i_b", "i_s"][:len(icurrents)],
@@ -60,15 +60,15 @@ def compute_bmap_2d_chart(data, i_h, i_b, i_s, nr, r0, r1, nz, z0, z1, pkey):
         Bz0 = mt.MagneticField(Tubes, Helices, BMagnets, UMagnets, 0, 0)[1]
         print("Bz0=", Bz0)
 
+    (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
+    
     update_current()
 
-    (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
     y = np.linspace(z0, z1, nz)
     x = np.linspace(r0, r1, nr)
     B_ = np.vectorize(plotmethod[pkey][0], excluded=[2, 3, 4, 5])
 
     values = []
     for y_value in y:
-        for x_value in x:
-            values.append(B_(x_value, y_value, Tubes, Helices, BMagnets, UMagnets).tolist())
+        values.append(B_(x, y_value, Tubes, Helices, BMagnets, UMagnets).tolist())
     return dict(x=x.tolist(), y=y.tolist(), values=values, yaxis=plotmethod[pkey][1])
