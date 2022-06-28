@@ -38,7 +38,7 @@ poetry install
 docker-compose up
 ```
 
-Note: if you see error messages about pgadmin, try to fix permissions on pgadmin-data directory by running `sudo chmod -R 5050:5050 pgadmin-data`
+Note: if you see error messages about pgadmin, try to fix permissions on pgadmin-data directory by running `sudo chown -R 5050:5050 pgadmin-data`
 
 5. Configure LemonLDAP (https://github.com/LemonLDAPNG/lemonldap-ng-docker):
    1. Sign in to http://sso.grenoble.lncmi.local/ with dwho/dwho
