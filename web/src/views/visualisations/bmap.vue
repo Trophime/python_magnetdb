@@ -12,7 +12,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_h')"
-                label="I h"
+                label="I h [A]"
                 name="i_h"
                 :component="FormSlider"
                 :min="0"
@@ -22,7 +22,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_b')"
-                label="I b"
+                label="I b [A]"
                 name="i_b"
                 :component="FormSlider"
                 :min="0"
@@ -32,7 +32,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_s')"
-                label="I s"
+                label="I s [A]"
                 name="i_s"
                 :component="FormSlider"
                 :min="0"
@@ -54,7 +54,7 @@
             </div>
             <div v-if="values.command === '1D_r'" class="w-1/3">
               <FormField
-                  label="R"
+                  label="R [m]"
                   name="r"
                   :component="FormSlider"
                   :min="0"
@@ -63,7 +63,7 @@
             </div>
             <div v-if="values.command === '1D_z'" class="w-1/3">
               <FormField
-                  label="Z"
+                  label="Z |m]"
                   name="z"
                   :component="FormSlider"
                   :min="-10"
@@ -96,7 +96,7 @@
                 label="Pkey"
                 name="pkey"
                 :component="FormSelect"
-                :options="['A', 'Br', 'Bz', 'B']"
+                :options="['A', 'Br', 'Bz', 'B', 'G']"
             />
           </div>
           <div class="w-1/3">
@@ -202,13 +202,13 @@ export default {
           labels: data.x,
           datasets: [
             {
-              label: `Y`,
+              label: `Actual`,
               backgroundColor: '#FF0000',
               borderColor: '#FF0000',
               data: data.y,
             },
             {
-              label: `Y`,
+              label: `Nominal`,
               backgroundColor: '#00FF00',
               borderColor: '#00FF00',
               data: data.ymax,

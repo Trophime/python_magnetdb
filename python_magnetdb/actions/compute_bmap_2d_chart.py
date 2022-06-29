@@ -4,10 +4,11 @@ import numpy as np
 
 
 plotmethod = {
-    'Bz': (bmap.getBz, '[T]', 'Magnetic Field Bz'),
-    'Br': (bmap.getBr, '[T]', 'Magnetic Field Bz'),
-    'B': (bmap.getB, '[T]', 'Magnetic Field'),
-    'A': (bmap.getA, '[A/m]', 'Magnetic Potential'),
+    'Bz': (bmap.getBz, '[T]', 'Magnetic Field Bz', [2, 3, 4, 5]),
+    'Br': (bmap.getBr, '[T]', 'Magnetic Field Bz', [2, 3, 4, 5]),
+    'B': (bmap.getB, '[T]', 'Magnetic Field', [2, 3, 4, 5]),
+    'A': (bmap.getA, '[A/m]', 'Magnetic Potential', [2, 3, 4, 5]),
+    'G': (bmap.getGradMagnetoGravPotential, '[%]', 'He Levitation Force Homogeneity', [2, 3, 4, 5, 6]),
 }
 
 
@@ -66,9 +67,14 @@ def compute_bmap_2d_chart(data, i_h, i_b, i_s, nr, r0, r1, nz, z0, z1, pkey):
 
     y = np.linspace(z0, z1, nz)
     x = np.linspace(r0, r1, nr)
-    B_ = np.vectorize(plotmethod[pkey][0], excluded=[2, 3, 4, 5])
-
     values = []
-    for y_value in y:
-        values.append(B_(x, y_value, Tubes, Helices, BMagnets, UMagnets).tolist())
-    return dict(x=x.tolist(), y=y.tolist(), values=values, yaxis=plotmethod[pkey][1])
+    B_ = np.vectorize(plotmethod[pkey][0], excluded=plotmethod[pkey][-1])
+    print(f"plot {pkey}")
+    if pkey == "G":
+        for y_value in y:
+            values.append(B_(x, y_value, Tubes, Helices, BMagnets, UMagnets, Shims, G0=-2050).tolist())
+    else:
+        for y_value in y:
+            values.append(B_(x, y_value, Tubes, Helices, BMagnets, UMagnets).tolist())
+
+    return dict(x=x.tolist(), y=y.tolist(), values=values, xaxis={'title':{'text': "r[m]"}}, yaxis={'title':{'text': "z[m]"}}, colorbar={'title': plotmethod[pkey][1]})

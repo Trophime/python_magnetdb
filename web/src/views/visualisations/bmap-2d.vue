@@ -12,7 +12,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_h')"
-                label="I h"
+                label="I h [A]"
                 name="i_h"
                 :component="FormSlider"
                 :min="0"
@@ -22,7 +22,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_b')"
-                label="I b"
+                label="I b [A]"
                 name="i_b"
                 :component="FormSlider"
                 :min="0"
@@ -32,7 +32,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_s')"
-                label="I s"
+                label="I s [A]"
                 name="i_s"
                 :component="FormSlider"
                 :min="0"
@@ -53,7 +53,7 @@
           </div>
           <div class="w-1/3">
             <FormField
-                label="R"
+                label="R [m]"
                 name="r"
                 :component="FormSlider"
                 :min="0"
@@ -75,7 +75,7 @@
           </div>
           <div class="w-1/3">
             <FormField
-                label="Z"
+                label="Z [m]"
                 name="z"
                 :component="FormSlider"
                 :min="-1"
@@ -90,7 +90,7 @@
                 label="Pkey"
                 name="pkey"
                 :component="FormSelect"
-                :options="['A', 'Br', 'Bz', 'B']"
+                :options="['A', 'Br', 'Bz', 'B', 'G']"
             />
           </div>
         </div>
@@ -158,9 +158,15 @@ export default {
             z: data.values,
             x: data.x,
             y: data.y,
-            type: 'contour'
+            type: 'contour',
+            colorbar: data.colorbar,
           }
-        ])
+        ],
+	{
+            xaxis: data.xaxis,
+            yaxis: data.yaxis,
+	}
+	)
 
         this.$router.replace({
           name: this.$route.name,
