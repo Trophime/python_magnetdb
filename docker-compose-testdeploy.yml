@@ -1,6 +1,6 @@
 version: '3'
   web-api:
-    image: trophime/magnettools:poetry
+    image: trophime/magnettools:1.0.6-poetry
     container_name: web-api
     command: poetry run uvicorn python_magnetdb.web:app --reload --host 0.0.0.0
     working_dir: /home/feelpp/test
@@ -28,7 +28,7 @@ version: '3'
       REDIS_ADDR: redis://localhost:6379/0
       DATABASE_HOST: localhost
   web-worker:
-    image: trophime/magnettools:poetry
+    image: trophime/magnettools:1.0.6-poetry
     container_name: web-worker
     command: watchmedo auto-restart -d ./python_magnetdb/ -p '**/*.py' -- poetry run celery -A python_magnetdb.worker worker --loglevel=info
     working_dir: /home/feelpp/test
@@ -104,13 +104,13 @@ version: '3'
 
   lemonldap-app:
     # image: tiredofit/lemonldap:2.0-alpine-latest
-    image: tiredofit/lemonldap:latest
+    image: tiredofit/lemonldap:2.0.24
     container_name: lemonldap-app
     volumes:
-    - ./lemonldap-ng-data/etc/lemonldap-ng:/etc/lemonldap-ng
+    #- ./lemonldap-ng-data/etc/lemonldap-ng:/etc/lemonldap-ng
     - ./lemonldap-ng-data/conf:/var/lib/lemonldap-ng/conf
-    - ./lemonldap-ng-data/sessions:/var/lib/lemonldap-ng/sessions
-    - ./lemonldap-ng-data/psessions:/var/lib/lemonldap-ng/psessions
+    #- ./lemonldap-ng-data/sessions:/var/lib/lemonldap-ng/sessions
+    #- ./lemonldap-ng-data/psessions:/var/lib/lemonldap-ng/psessions
     - ./logs:/www/logs
     #- ./assets/custom:/assets/custom
     environment:
