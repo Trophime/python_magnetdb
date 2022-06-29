@@ -12,7 +12,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_h')"
-                label="I h"
+                label="I h [A]"
                 name="i_h"
                 :component="FormSlider"
                 :min="0"
@@ -22,7 +22,7 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_b')"
-                label="I b"
+                label="I b [A]"
                 name="i_b"
                 :component="FormSlider"
                 :min="0"
@@ -32,42 +32,11 @@
           <div class="w-1/3">
             <FormField
                 v-if="allowedCurrents.includes('i_s')"
-                label="I s"
+                label="I s [A]"
                 name="i_s"
                 :component="FormSlider"
                 :min="0"
                 :max="37000"
-            />
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <div class="w-1/3">
-            <FormField
-                label="N"
-                name="n"
-                :component="FormSlider"
-                :min="50"
-                :max="1000"
-                :step="1"
-            />
-          </div>
-          <div class="w-1/3">
-            <FormField
-                label="Z"
-                name="z"
-                :component="FormSlider"
-                :min="-0.2"
-                :max="0.2"
-            />
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <div class="w-1/3">
-            <FormField
-                label="Pkey"
-                name="pkey"
-                :component="FormSelect"
-                :options="['A', 'Br', 'Bz', 'B']"
             />
           </div>
         </div>
@@ -134,7 +103,7 @@ export default {
                 x: {
                   title: {
                     display: true,
-                    text: '[m]'
+                    text: ''
                   },
                 },
                 y: {
@@ -163,13 +132,13 @@ export default {
           labels: data.x,
           datasets: [
             {
-              label: `I`,
+              label: `Actual`,
               backgroundColor: '#FF0000',
               borderColor: '#FF0000',
               data: data.y,
             },
             {
-              label: `I nominal`,
+              label: `Nominal`,
               backgroundColor: '#00FF00',
               borderColor: '#00FF00',
               data: data.ymax,
