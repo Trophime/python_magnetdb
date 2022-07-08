@@ -22,10 +22,14 @@ def format_material(material):
 
 
 def generate_magnet_config(magnet_id):
+    # print(f'generate_magnet_config: {magnet_id}')
     magnet = Magnet \
         .with_('magnet_parts.part.geometry', 'magnet_parts.part.material', 'site_magnets.site', 'geometry') \
         .find(magnet_id)
-    payload = {'geom': magnet.geometry.filename}
+    geomfilename = 'tutu'
+    if hasattr(magnet.geometry, 'filename'):
+        geomfilename = magnet.geometry.filename
+    payload = {'geom': geomfilename}
     insulator_payload = format_material(Material.where('name', 'MAT_ISOLANT').first())
     for magnet_part in magnet.magnet_parts:
         if not magnet_part.active:
@@ -41,6 +45,7 @@ def generate_magnet_config(magnet_id):
 
 
 def generate_site_config(site_id):
+    # print(f'generate_site_configt: {site_id}')
     site = Site.with_('site_magnets').find(site_id)
     payload = {'magnets': []}
     for site_magnet in site.site_magnets:
