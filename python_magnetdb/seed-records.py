@@ -150,7 +150,7 @@ def query_site(name: str):
         return None
     else:
         return Site.where('name', name).first()
- 
+
 with Model.get_connection_resolver().transaction():
     # Get parts from previous defs
     M9_M18110501 = query_site('M9_M18110501')

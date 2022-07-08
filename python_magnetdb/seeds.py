@@ -858,6 +858,7 @@ with Model.get_connection_resolver().transaction():
         'status': 'in_study',
         'parts': [M9BI, M9BE],
         'site': M9_M19061901,
+        'geometry': 'M9Bitters.yaml',
         'design_office_reference': 'M9Bitters'
     })
 
