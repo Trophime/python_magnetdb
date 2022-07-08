@@ -66,7 +66,7 @@ poetry run orator migrate -c python_magnetdb/database.py
 ```shell
 cd web
 npx browserslist@latest --update-db
-sudo npm install --location=global npm@8.13.1
+sudo npm install --location=global npm@8.13.2
 yarn install
 cd ..
 ```
