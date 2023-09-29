@@ -2,31 +2,34 @@
 name = "python_magnetdb"
 version = "0.1.0"
 description = ""
-authors = ["Remi Caumette <remicaumette@icloud.com>", "Christophe Trophime <christophe.trophime@lncmi.cnrs.fr>"]
+authors = ["Christophe Trophime <christophe.trophime@lncmi.cnrs.fr>",
+           "Remi Caumette <remicaumette@icloud.com>" 
+          ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 fastapi = "^0.75.0"
-WTForms = "^3.0.1"
-Starlette-WTF = "^0.4.3"
-Pint = "^0.18"
+#WTForms = "^3.0.1"
+#Starlette-WTF = "^0.4.3"
 pydantic = "^1.9.0"
 python-multipart = "^0.0.5"
 minio = "^7.1.5"
-psycopg2 = "^2.9.3"
+#psycopg2 = "^2.9.3"
 orator = "^0.9.9"
 PyJWT = "^2.3.0"
 requests = "^2.27.1"
-param = "^1.12.0"
-pandas = "^1.4.1"
-PyYAML = "^5"
+cryptography = "^3.3.1"
+#param = "^1.12.0"
+#pandas = "^1.4.1"
+#PyYAML = "5.3.1"
+#Pint = "^0.18"
 uvicorn = "^0.17.6"
 celery = {extras = ["redis"], version = "^5.2.6"}
-numpy = "^1.22.3"
-magnettools = {path = "/home/feelpp/magnettools-1.0.6/build/Python/dist/MagnetTools-0.1.0-py3-none-any.whl"}
+#numpy = "^1.22.3"
+magnettools = {path = "/home/feelpp/magnettools-1.0.7/build/Python/dist/MagnetTools-1.0.7-py3-none-any.whl"}
 python-magnetsetup = {path = "python_magnetsetup"}
-python-magnetgeo = {path = "python_magnetgeo"}
-watchdog = "^2.1.8"
+#python-magnetgeo = {path = "python_magnetgeo"}
+watchdog="^1.0.2"
 
 [tool.poetry.dev-dependencies]
 

@@ -37,50 +37,125 @@
             label="RPE"
             name="rpe"
             type="number"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'Pascal',
+                  value: 'Pa',
+                  symbol: 'Pa',
+                  default: true,
+                },
+                {
+                  name: 'Mega Pascal',
+                  value: 'MPa',
+                  symbol: 'MPa',
+                },
+                {
+                  name: 'Bar',
+                  value: 'bar',
+                  symbol: 'bar',
+                },
+            ]"
             :required="true"
         />
         <FormField
             label="T Ref"
             name="t_ref"
-            type="number"
             placeholder="20"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'Celsius',
+                  value: 'celsius',
+                  symbol: '°C',
+                },
+                {
+                  name: 'Kelvin',
+                  value: 'kelvin',
+                  symbol: 'K',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Volumic Mass"
             name="volumic_mass"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'kg/m^3',
+                  value: 'kg/m^3',
+                  symbol: 'kg/m³',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Alpha"
             name="alpha"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: '1/Celsius',
+                  value: 'celsius^-1',
+                  symbol: '1/°C',
+                },
+                {
+                  name: '1/Kelvin',
+                  value: 'kelvin^-1',
+                  symbol: '1/K',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Specific Heat"
             name="specific_heat"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'J/K/kg',
+                  value: 'J/K/kg',
+                  symbol: 'J/K/kg',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Electrical Conductivity"
             name="electrical_conductivity"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: '1/ohm/m',
+                  value: 'ohm^-1*m^-1',
+                  symbol: 'S',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Thermal Conductivity"
             name="thermal_conductivity"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'W/m/K',
+                  value: 'W/K/m',
+                  symbol: 'W/K/m',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Magnet Permeability"
@@ -94,7 +169,31 @@
             name="young"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            target-unit="Pa"
+            :unit-options="[
+                {
+                  name: 'Pascal',
+                  value: 'Pa',
+                  symbol: 'Pa',
+                },
+                {
+                  name: 'Giga Pascal',
+                  value: 'GPa',
+                  symbol: 'GPa',
+                  default: true,
+                },
+                {
+                  name: 'Mega Pascal',
+                  value: 'MPa',
+                  symbol: 'MPa',
+                },
+                {
+                  name: 'Bar',
+                  value: 'bar',
+                  symbol: 'bar',
+                },
+            ]"
         />
         <FormField
             label="Poisson"
@@ -108,7 +207,20 @@
             name="expansion_coefficient"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: '1/Celsius',
+                  value: 'celsius^-1',
+                  symbol: '1/°C',
+                },
+                {
+                  name: '1/Kelvin',
+                  value: 'kelvin^-1',
+                  symbol: '1/K',
+                  default: true,
+                }
+            ]"
         />
         <Button type="submit" class="btn btn-primary">
           Save
@@ -160,6 +272,7 @@ import Card from '@/components/Card'
 import Form from "@/components/Form";
 import FormField from "@/components/FormField";
 import FormInput from "@/components/FormInput";
+import FormInputWithUnit from "@/components/FormInputWithUnit";
 import FormSelect from "@/components/FormSelect";
 import Button from "@/components/Button";
 import Alert from "@/components/Alert";
@@ -179,6 +292,7 @@ export default {
     return {
       FormInput,
       FormSelect,
+      FormInputWithUnit,
       error: null,
       material: null,
     }

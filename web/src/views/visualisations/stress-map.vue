@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <Alert :error="error" />
+    <Alert v-if="error" :error="error" class="alert alert-danger" />
 
     <div v-if="resource" class="display-1">
       {{resource.name}}
@@ -40,10 +40,22 @@
             />
           </div>
         </div>
+        <div v-if="$route.query.resource_type === 'site'" class="flex items-center space-x-4">
+          <div class="w-1/3">
+            <FormField
+              label="Magnet Type"
+              name="magnet_type"
+              :component="FormSelect"
+              :options="magnetTypeOptions"
+            />
+          </div>
+        </div>
       </Form>
     </Card>
     <Card>
-      <canvas ref="chart"></canvas>
+      <LoadingOverlay :loading="loading">
+        <canvas ref="chart"></canvas>
+      </LoadingOverlay>
     </Card>
   </div>
 </template>
@@ -60,10 +72,12 @@ import FormSelect from "@/components/FormSelect";
 import Alert from "@/components/Alert";
 import * as siteService from "@/services/siteService";
 import * as magnetService from "@/services/magnetService";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 export default {
   name: 'StressMapVisualisation',
   components: {
+    LoadingOverlay,
     Alert,
     FormField,
     Form,
@@ -74,11 +88,17 @@ export default {
       FormSlider,
       FormInput,
       FormSelect,
+      loading: true,
       params: null,
       chart: null,
       error: null,
       resource: null,
       allowedCurrents: [],
+      magnetTypeOptions: [
+        {name: 'Helices', value: 'H'},
+        {name: 'Bitter', value: 'B'},
+        {name: 'Supra', value: 'S'},
+      ],
     }
   },
   methods: {
@@ -86,13 +106,18 @@ export default {
       return this.fetch(values)
     },
     async fetch(values) {
+      this.loading = true
       try {
         const { results: data, params, allowed_currents: allowedCurrents } = await visualisationService.stressMap({
           ...values,
+          magnet_type: values.magnet_type?.value,
           resource_id: this.$route.query.resource_id,
           resource_type: this.$route.query.resource_type,
         })
-        this.params = params
+        this.params = {
+          ...params,
+          magnet_type: this.magnetTypeOptions.find((opt) => opt.value === params.magnet_type),
+        }
         this.allowedCurrents = allowedCurrents
         if (!this.chart) {
           this.chart = new Chart(this.$refs.chart, {
@@ -103,13 +128,14 @@ export default {
                 x: {
                   title: {
                     display: true,
-                    text: ''
+                    text: '[m]'
                   },
                 },
                 y: {
+                  type: 'linear',
                   title: {
                     display: true,
-                    text: ''
+                    text: '[MPa]'
                   },
                 },
               },
@@ -127,18 +153,17 @@ export default {
           })
         }
 
-        this.chart.options.scales.y.title.text = data.yaxis
         this.chart.data = {
           labels: data.x,
           datasets: [
             {
-              label: `Actual`,
+              label: `I`,
               backgroundColor: '#FF0000',
               borderColor: '#FF0000',
               data: data.y,
             },
             {
-              label: `Nominal`,
+              label: `I nominal`,
               backgroundColor: '#00FF00',
               borderColor: '#00FF00',
               data: data.ymax,
@@ -153,6 +178,8 @@ export default {
             ...params,
           },
         }).catch(() => {})
+        this.loading = false
+        this.error = null
       } catch (error) {
         this.error = error
       }
@@ -160,7 +187,10 @@ export default {
   },
   async mounted() {
     await Promise.all([
-      this.fetch(this.$route.query),
+      this.fetch({
+        ...this.$route.query,
+        magnet_type: this.magnetTypeOptions.find((opt) => opt.value === this.$route.query.magnet_type),
+      }),
       (async () => {
         const resourceId = this.$route.query.resource_id
         switch (this.$route.query.resource_type) {

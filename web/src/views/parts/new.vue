@@ -63,6 +63,7 @@
             :component="FormSelect"
             :required="true"
             :options="materialOptions"
+            @search="searchMaterial"
         />
         <Button type="submit" class="btn btn-primary">
           Save
@@ -102,6 +103,14 @@ export default {
     }
   },
   methods: {
+    searchMaterial(query, loading) {
+      loading(true)
+      materialService.list({ query })
+        .then((res) => {
+          this.materialOptions = res.items.map(item => ({name: item.name, value: item.id}))
+        })
+        .finally(() => loading(false))
+    },
     submit(values, {setRootError}) {
       return partService.create({
         ...values,
@@ -122,11 +131,8 @@ export default {
     },
   },
   async mounted() {
-    const materialsRes = await materialService.list()
-    this.materialOptions = materialsRes.items.map(material => ({
-      name: material.name,
-      value: material.id,
-    }))
+    const res = await materialService.list()
+    this.materialOptions = res.items.map(item => ({name: item.name, value: item.id}))
   },
 }
 </script>

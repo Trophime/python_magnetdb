@@ -123,17 +123,20 @@ export default {
       }
       return recordService.visualize(payload)
         .then((data) => {
-          this.chart.data.labels = Object.keys(data.result)
+          const entries = Object.entries(data.result).map(([key, values]) => {
+            return { key: parseFloat(key), values }
+          })
+          entries.sort(({ key: a }, { key: b }) => a - b)
+          this.chart.data.labels = entries.map((entry) => entry.key)
           this.chart.data.datasets = this.yField.map((fieldName, index) => {
             if (!this.colors[fieldName]) {
               this.colors[fieldName] = getRandomColor()
             }
-
             return {
               label: `${fieldName} (${data.columns[fieldName]})`,
               backgroundColor: this.colors[fieldName],
               borderColor: this.colors[fieldName],
-              data: Object.values(data.result).map(value => value[index]),
+              data: entries.map(entry => entry.values[index]),
             }
           })
           this.chart.options.scales.x.title.text = `${this.xField} (${data.columns[this.xField]})`
@@ -209,6 +212,7 @@ export default {
       options: {
         scales: {
           x: {
+            type: 'linear',
             title: {
               display: true,
               text: ''

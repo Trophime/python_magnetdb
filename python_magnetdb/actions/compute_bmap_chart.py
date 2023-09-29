@@ -8,6 +8,8 @@ plotmethod = {
     'Br': (bmap.getBr, '[T]', 'Magnetic Field Bz'),
     'B': (bmap.getB, '[T]', 'Magnetic Field'),
     'A': (bmap.getA, '[A/m]', 'Magnetic Potential'),
+    # 'dBz/dz': (bmap.getdBzdz, '[T/m]', 'Gradient of Magnetic Field Bz'),
+    # 'd2Bz/dz2': (bmap.getdBzdz, '[T/m²]', 'Second order Derivative of Magnetic Field Bz'),
 }
 
 
@@ -37,14 +39,14 @@ def compute_bmap_chart(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
         icurrents = mt.get_currents(Tubes, Helices, BMagnets, UMagnets)
         n_magnets = len(icurrents)
         mcurrents = icurrents
-        print("n_magnets", n_magnets)
-        print("icurrents", icurrents)
-        for j,Tube in enumerate(Tubes):
-            print(f"Tube[{j}]", Tube.get_n_elem(), Tube.get_index())
-            for i in range(Tube.get_n_elem()):
-                print(f"H[{i}]: j={Helices[i + Tube.get_index()].get_CurrentDensity()}")
+        # print("n_magnets", n_magnets)
+        # print("icurrents", icurrents)
+        # for j,Tube in enumerate(Tubes):
+        #     print(f"Tube[{j}]", Tube.get_n_elem(), Tube.get_index())
+        #     for i in range(Tube.get_n_elem()):
+        #         print(f"H[{i}]: j={Helices[i + Tube.get_index()].get_CurrentDensity()}")
         Bz0 = mt.MagneticField(Tubes, Helices, BMagnets, UMagnets, 0, 0)[1]
-        print("Bz0=", Bz0)
+        print(f"Bz0={Bz0} T")
 
         # update Ih, Ib, Is range
         vcurrents = list(icurrents)
@@ -56,12 +58,12 @@ def compute_bmap_chart(data, i_h, i_b, i_s, n, r0, z0, r, z, pkey, command):
         currents = mt.DoubleVector(vcurrents)
         print(f"currents= set to {vcurrents}")
         mt.set_currents(Tubes, Helices, BMagnets, UMagnets, OHelices, currents)
-        print("actual currents", mt.get_currents(Tubes, Helices, BMagnets, UMagnets) )
+        print(f"actual currents={mt.get_currents(Tubes, Helices, BMagnets, UMagnets)}" )
         Bz0 = mt.MagneticField(Tubes, Helices, BMagnets, UMagnets, 0, 0)[1]
-        print("Bz0=", Bz0)
+        print(f"Bz0={Bz0} T")
 
     def sine():
-        print("panel_bmap: compute b")
+        # print("panel_bmap: compute b")
         (Tubes,Helices,OHelices,BMagnets,UMagnets,Shims) = data
         if command == '1D_z':
             x = np.linspace(z[0], z[1], n)

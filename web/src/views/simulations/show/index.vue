@@ -10,11 +10,21 @@
         <Button class="btn btn-primary" @click="runSetup">
           Run Setup
         </Button>
-        <Button class="btn btn-primary" @click="runSimulation" :disabled="simulation.setup_status !== 'done'">
+        <Button
+          class="btn btn-primary"
+          @click="runSimulationModalOpen = true"
+          :disabled="simulation.setup_status !== 'done'"
+        >
           Run Simulation
         </Button>
       </div>
     </div>
+
+    <RunSimulationModal
+      v-model="runSimulationModalOpen"
+      :simulation-id="simulation.id"
+      @triggered="simulation.status = $event.status"
+    />
 
     <Alert v-if="error" class="alert alert-danger mb-6" :error="error"/>
 
@@ -77,13 +87,21 @@
             :disabled="true"
             :default-value="simulation.setup_output_attachment"
         />
-        <FormField
-            label="Simulation Output"
-            name="output"
-            :component="FormUpload"
-            :disabled="true"
-            :default-value="simulation.output_attachment"
-        />
+        <div class="flex items-center space-x-4">
+          <FormField
+              label="Simulation Output"
+              name="output"
+              :component="FormUpload"
+              :disabled="true"
+              :default-value="simulation.output_attachment"
+              class="w-full"
+          />
+          <div v-if="simulation.log_attachment" class="whitespace-nowrap">
+            <a :href="logAttachmentUrl" class="btn btn-primary" target="_blank" style="margin-top: 12px; height: 38px">
+              View logs
+            </a>
+          </div>
+        </div>
         <FormField
             label="Static"
             name="static"
@@ -100,10 +118,35 @@
             :disabled="true"
             :checked="simulation.non_linear"
         />
+        <FormField
+            v-for="(current, index) in simulation.currents"
+            :key="current.magnet.id"
+            :label="`Current for ${current.magnet.name}`"
+            :name="`currents.${index}.value`"
+            :component="FormInputWithUnit"
+            type="number"
+            :required="true"
+            :disabled="true"
+            :default-value="current.value"
+            :unit-options="[
+              {
+                name: 'Ampère',
+                value: 'A',
+                symbol: 'A',
+                default: true,
+              },
+              {
+                name: 'Kilo Ampère',
+                value: 'kA',
+                symbol: 'kA',
+                default: false,
+              }
+            ]"
+        />
       </Form>
     </Card>
 
-<!--    <VisualisationCard :simulationId="simulation.id"></VisualisationCard>-->
+    <MeasuresCard :simulation-id="simulation.id" />
   </div>
   <Alert v-else-if="error" class="alert alert-danger" :error="error"/>
 </template>
@@ -114,15 +157,21 @@ import Card from '@/components/Card'
 import Form from "@/components/Form";
 import FormField from "@/components/FormField";
 import FormInput from "@/components/FormInput";
+import FormInputWithUnit from "@/components/FormInputWithUnit";
 import FormSelect from "@/components/FormSelect";
 import FormUpload from "@/components/FormUpload";
 import Button from "@/components/Button";
 import Alert from "@/components/Alert";
 import StatusBadge from "@/components/StatusBadge";
+import MeasuresCard from "@/views/simulations/show/MeasuresCard";
+import RunSimulationModal from "@/views/simulations/show/RunSimulationModal";
+import client from "@/services/client";
 
 export default {
   name: 'SimulationShow',
   components: {
+    RunSimulationModal,
+    MeasuresCard,
     StatusBadge,
     Alert,
     Button,
@@ -133,26 +182,28 @@ export default {
   data() {
     return {
       FormInput,
+      FormInputWithUnit,
       FormSelect,
       FormUpload,
       error: null,
       simulation: null,
+      runSimulationModalOpen: false,
       resourceOptions: [],
       methodOptions: ['cfpdes', 'CG', 'HDG', 'CRB'],
-      modelOptions: ['thelec', 'mag', 'thmag', 'thmagel'],
+      modelOptions: ['thelec', 'mag', 'thmag', 'thmagel', 'mag_hcurl', 'thmag_hcurl', 'thmagel_hcurl'],
       geometryOptions: ['Axi', '3D'],
       coolingOptions: ['mean', 'grad', 'meanH', 'gradH'],
     }
+  },
+  computed: {
+    logAttachmentUrl() {
+      return `${client.defaults.baseURL}/api/attachments/${this.simulation.log_attachment_id}/download?auth_token=${this.$store.state.token}`
+    },
   },
   methods: {
     deleteSimulation() {
       return simulationService.deleteSimulation({ id: this.simulation.id })
           .then(() => this.$router.push({ name: 'simulations' }))
-          .catch((err) => alert(err.message))
-    },
-    runSimulation() {
-      return simulationService.runSimulation({ id: this.simulation.id })
-          .then((res) => this.simulation.status = res.status)
           .catch((err) => alert(err.message))
     },
     runSetup() {

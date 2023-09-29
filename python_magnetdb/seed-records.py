@@ -38,6 +38,7 @@ Model.set_connection_resolver(db)
 data_directory = getenv('DATA_DIR')
 
 
+<<<<<<< HEAD
 def upload_attachment(file: str) -> Attachment:
     """upload file as attachment in s3_bucket"""
     attachment = Attachment.create({
@@ -151,6 +152,8 @@ def query_site(name: str):
     else:
         return Site.where('name', name).first()
 
+=======
+>>>>>>> 78d26153c3f80a6cb14a23e52002bd8925e23353
 with Model.get_connection_resolver().transaction():
     # Get parts from previous defs
     M9_M18110501 = query_site('M9_M18110501')

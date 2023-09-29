@@ -29,7 +29,26 @@
             label="RPE"
             name="rpe"
             type="number"
-            :component="FormInput"
+            placeholder="0"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'Pascal',
+                  value: 'Pa',
+                  symbol: 'Pa',
+                  default: true,
+                },
+                {
+                  name: 'Mega Pascal',
+                  value: 'MPa',
+                  symbol: 'MPa',
+                },
+                {
+                  name: 'Bar',
+                  value: 'bar',
+                  symbol: 'bar',
+                },
+            ]"
             :required="true"
         />
         <FormField
@@ -44,16 +63,6 @@
                   symbol: '°C',
                 },
                 {
-                  name: 'Fahrenheit',
-                  value: 'fahrenheit',
-                  symbol: '°F',
-                },
-                {
-                  name: 'Rankine',
-                  value: 'rankine',
-                  symbol: '°R',
-                },
-                {
                   name: 'Kelvin',
                   value: 'kelvin',
                   symbol: 'K',
@@ -66,35 +75,80 @@
             name="volumic_mass"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'kg/m^3',
+                  value: 'kg/m^3',
+                  symbol: 'kg/m³',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Alpha"
             name="alpha"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: '1/Celsius',
+                  value: 'celsius^-1',
+                  symbol: '1/°C',
+                },
+                {
+                  name: '1/Kelvin',
+                  value: 'kelvin^-1',
+                  symbol: '1/K',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Specific Heat"
             name="specific_heat"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'J/K/kg',
+                  value: 'J/K/kg',
+                  symbol: 'J/K/kg',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Electrical Conductivity"
             name="electrical_conductivity"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: '1/ohm/m',
+                  value: 'ohm^-1*m^-1',
+                  symbol: 'S',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Thermal Conductivity"
             name="thermal_conductivity"
             type="number"
             placeholder="0"
-            :component="FormInput"
+            :component="FormInputWithUnit"
+            :unit-options="[
+                {
+                  name: 'W/m/K',
+                  value: 'W/K/m',
+                  symbol: 'W/K/m',
+                  default: true,
+                }
+            ]"
         />
         <FormField
             label="Magnet Permeability"
@@ -109,11 +163,17 @@
             type="number"
             placeholder="0"
             :component="FormInputWithUnit"
+            target-unit="Pa"
             :unit-options="[
                 {
                   name: 'Pascal',
                   value: 'Pa',
                   symbol: 'Pa',
+                },
+                {
+                  name: 'Giga Pascal',
+                  value: 'GPa',
+                  symbol: 'GPa',
                   default: true,
                 },
                 {
@@ -144,22 +204,12 @@
             :unit-options="[
                 {
                   name: '1/Celsius',
-                  value: 'celsius',
+                  value: 'celsius^-1',
                   symbol: '1/°C',
                 },
                 {
-                  name: '1/Fahrenheit',
-                  value: 'fahrenheit',
-                  symbol: '1/°F',
-                },
-                {
-                  name: '1/Rankine',
-                  value: 'rankine',
-                  symbol: '1/°R',
-                },
-                {
                   name: '1/Kelvin',
-                  value: 'kelvin',
+                  value: 'kelvin^-1',
                   symbol: '1/K',
                   default: true,
                 }
@@ -213,7 +263,6 @@ export default {
     validate() {
       return Yup.object().shape({
         name: Yup.string().required(),
-        rpe: Yup.string().required(),
       })
     },
   },

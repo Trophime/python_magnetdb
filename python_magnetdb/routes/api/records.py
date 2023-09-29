@@ -1,6 +1,9 @@
+from typing import Optional
+
 from datetime import datetime
 
 import pandas as pd
+from pydantic import BaseModel
 from fastapi import APIRouter, Query, HTTPException, Form, UploadFile, File, Depends
 
 from ...dependencies import get_user
@@ -16,11 +19,10 @@ router = APIRouter()
 @router.get("/api/records")
 def index(user=Depends(get_user('read')), page: int = 1, per_page: int = Query(default=25, lte=100),
           query: str = Query(None), sort_by: str = Query(None), sort_desc: bool = Query(False)):
-    records = Record
+    records = Record \
+        .order_by(sort_by or 'created_at', 'desc' if sort_desc else 'asc')
     if query is not None and query.strip() != '':
         records = records.where('name', 'ilike', f'%{query}%')
-    if sort_by is not None:
-        records = records.order_by(sort_by, 'desc' if sort_desc else 'asc')
     records = records.paginate(per_page, page)
     return {
         "current_page": records.current_page,
@@ -41,9 +43,36 @@ def create(user=Depends(get_user('create')), name: str = Form(...), description:
     record.attachment().associate(Attachment.upload(attachment))
     record.site().associate(site)
     record.save()
-    AuditLog.log(user, "Record created", resource=record)
+    AuditLog.log(user, f"Record created {attachment.filename}", resource=record)
     return record.serialize()
 
+class RecordPayload(BaseModel):
+    name: str
+    description: Optional[str]
+    site_id: int
+    attachment_id: int
+    
+@router.post("/api/clirecords")
+def clicreate(payload: RecordPayload, user=Depends(get_user('create'))):
+    print(f'record/clicreate: name={payload.name}, attachment_id={payload.attachment_id}')
+    site = Site.find(payload.site_id)
+    if not site:
+        raise HTTPException(status_code=404, detail="Site not found")
+    print(f'site: {site}')
+
+    attachment = Attachment.find(payload.attachment_id)
+    if not attachment:
+        raise HTTPException(status_code=404, detail="Attachment not found")
+    print(f'attachment: {attachment}')
+
+    record = Record(name=payload.name, description=payload.description)
+    record.attachment().associate(attachment)
+    print(f'record/clicreate: associate attachment done')
+    record.site().associate(site)
+    print(f'record/clicreate: associate site done')
+    record.save()
+    AuditLog.log(user, f"Record cli created {payload.name}", resource=record)
+    return record.serialize()
 
 @router.get("/api/records/{id}")
 def show(id: int, user=Depends(get_user('read'))):
@@ -66,6 +95,8 @@ def visualize(id: int, user=Depends(get_user('read')),
     # data prep
     time_format = "%Y.%m.%d %H:%M:%S"
     data = pd.read_csv(record.attachment.download(), sep=r'\s+', skiprows=1)
+    # cleanup: remove empty columns
+    data = data.loc[:, (data != 0.0).any(axis=0)]
     t0 = datetime.strptime(data['Date'].iloc[0] + " " + data['Time'].iloc[0], time_format)
     data["t"] = data.apply(
         lambda row: (datetime.strptime(row.Date + " " + row.Time, time_format) - t0).total_seconds(),

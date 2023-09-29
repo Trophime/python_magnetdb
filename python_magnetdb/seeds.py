@@ -2,21 +2,11 @@
 Create a basic magnetdb
 """
 
-from datetime import datetime
-from uuid import uuid4
+from os import getenv
 
-from os import getenv, path, listdir
 from orator import DatabaseManager, Schema, Model
 
-from .models.attachment import Attachment
-from .models.cad_attachment import CadAttachment
-from .models.magnet import Magnet
-from .models.magnet_part import MagnetPart
-from .models.material import Material
-from .models.part import Part
-from .models.site import Site
-from .models.site_magnet import SiteMagnet
-from .storage import s3_client, s3_bucket
+from .crud import create_material, create_part, create_site, create_magnet
 
 db = DatabaseManager({
     'postgres': {
@@ -34,104 +24,9 @@ Model.set_connection_resolver(db)
 data_directory = getenv('DATA_DIR')
 
 
-def upload_attachment(file: str) -> Attachment:
-    """upload file as attachment in s3_bucket"""
-    attachment = Attachment.create({
-        "key": str(uuid4()),
-        "filename": path.basename(file),
-        "content_type": 'text/tsv',
-    })
-    s3_client.fput_object(s3_bucket, attachment.key, file, content_type=attachment.content_type)
-    return attachment
-
-
-def create_material(obj):
-    """create material"""
-    return Material.create(obj)
-
-
-def create_part(obj):
-    """create part"""
-    material = obj.pop('material', None)
-    geometry = obj.pop('geometry', None)
-    cad = obj.pop('cad', None)
-    part = Part(obj)
-    if material is not None:
-        part.material().associate(material)
-    if geometry is not None:
-        part.geometry().associate(upload_attachment(path.join(data_directory, 'geometries', f"{geometry}.yaml")))
-    part.save()
-    if cad is not None:
-        def generate_cad_attachment(file):
-            cad_attachment = CadAttachment()
-            cad_attachment.resource().associate(part)
-            cad_attachment.attachment().associate(upload_attachment(path.join(data_directory, 'cad', file)))
-            return cad_attachment
-        part.cad().save_many(map(generate_cad_attachment, [f"{cad}.xao", f"{cad}.brep"]))
-    return part
-
-
-def create_site(obj):
-    """create site"""
-    config = obj.pop('config', None)
-    site = Site(obj)
-    if config is not None:
-        site.config().associate(upload_attachment(path.join(data_directory, 'conf', f"{config}")))
-    site.save()
-    return site
-
-
-def create_magnet(obj):
-    """create magnet"""
-    site = obj.pop('site', None)
-    parts = obj.pop('parts', None)
-    geometry = obj.pop('geometry', None)
-    cad = obj.pop('cad', None)
-    magnet = Magnet(obj)
-    if geometry is not None:
-        magnet.geometry().associate(upload_attachment(path.join(data_directory, 'geometries', f"{geometry}.yaml")))
-    magnet.save()
-    if cad is not None:
-        def generate_cad_attachment(file):
-            cad_attachment = CadAttachment()
-            cad_attachment.resource().associate(magnet)
-            cad_attachment.attachment().associate(upload_attachment(path.join(data_directory, 'cad', file)))
-            return cad_attachment
-        magnet.cad().save_many(map(generate_cad_attachment, [f"{cad}.xao", f"{cad}.brep"]))
-    if site is not None:
-        site_magnet = SiteMagnet(commissioned_at=datetime.now())
-        site_magnet.site().associate(site)
-        magnet.site_magnets().save(site_magnet)
-    if parts is not None:
-        def generate_part(part):
-            magnet_part = MagnetPart(commissioned_at=datetime.now())
-            print('part:', part.name)
-            magnet_part.part().associate(part)
-            return magnet_part
-        magnet.magnet_parts().save_many(map(generate_part, parts))
-    return magnet
-
-def extract_date_from_filename(filename):
-    for match in re.finditer(r".+_(\d{4}).(\d{2}).(\d{2})---(\d{2})-(\d{2})-(\d{2}).+", filename):
-        return datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)),
-                        int(match.group(4)), int(match.group(5)), int(match.group(6)))
-    return None
-
-def create_record(file, site):
-    created_at = extract_date_from_filename(path.basename(file))
-    if created_at is None:
-        created_at = datetime.now()
-
-    record = Record(name=path.basename(file), created_at=created_at)
-    record.attachment().associate(upload_attachment(file))
-    record.site().associate(site)
-    record.save()
-    return record
-
-
 with Model.get_connection_resolver().transaction():
     MA15101601 = create_material({
-    'name': 'MA15101601',
+        'name': 'MA15101601',
         'description': 'H1',
         'nuance': 'CuAg5.5',
         't_ref': 293,
@@ -421,9 +316,9 @@ with Model.get_connection_resolver().transaction():
 
 
     H15101601 = create_part({
-    'name': 'H15101601',
+        'name': 'H15101601',
         'type': 'helix',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MA15101601,
         'geometry': 'HL-31_H1',
         'cad': 'HL-31_H1',
@@ -431,7 +326,7 @@ with Model.get_connection_resolver().transaction():
     H15061703 = create_part({
         'name': 'H15061703',
         'type': 'helix',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MA15061703,
         'geometry': 'HL-31_H2',
         'cad': 'HL-31_H2',
@@ -439,7 +334,7 @@ with Model.get_connection_resolver().transaction():
     H15061801 = create_part({
         'name': 'H15061801',
         'type': 'helix',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MA15061801,
         'geometry': 'HL-31_H3',
         'cad': 'HL-31_H3',
@@ -545,9 +440,9 @@ with Model.get_connection_resolver().transaction():
     })
 
     M19061901_R1 = create_part({
-    'name': 'M19061901_R1',
+        'name': 'M19061901_R1',
         'type': 'ring',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT1_RING,
         'geometry': 'Ring-H1H2',
         'cad': 'Ring-H1H2',
@@ -555,7 +450,7 @@ with Model.get_connection_resolver().transaction():
     M19061901_R2 = create_part({
         'name': 'M19061901_R2',
         'type': 'ring',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT1_RING,
         'geometry': 'Ring-H2H3',
         'cad': 'Ring-H2H3',
@@ -650,9 +545,9 @@ with Model.get_connection_resolver().transaction():
     })
 
     M19061901_iL1 = create_part({
-    'name': 'M19061901_iL1',
+        'name': 'M19061901_iL1',
         'type': 'lead',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT_LEAD,
         'geometry': 'inner',
         'cad': 'Inner',
@@ -660,14 +555,14 @@ with Model.get_connection_resolver().transaction():
     M19061901_oL2 = create_part({
         'name': 'M19061901_oL2',
         'type': 'lead',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT_LEAD,
         'geometry': 'outer-H14',
         'cad': 'Outer-H14',
     })
 
     MAT_TEST1 = create_material({
-    'name': 'MAT_TEST1',
+        'name': 'MAT_TEST1',
         'description': 'R1, R2',
         'nuance': 'Cu5Ag5,08',
         't_ref': 293,
@@ -700,20 +595,20 @@ with Model.get_connection_resolver().transaction():
     })
 
     HLTESTH1 = create_part({
-    'name': 'HL-34_H1',
+        'name': 'HL-34_H1',
         'type': 'helix',
         'design_office_reference': 'HL-34-001-A',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT_TEST1,
         'geometry': 'HL-31_H1',
         'cad': 'HL-31_H1',
     })
 
     HLTESTH2 = create_part({
-    'name': 'HL-34_H2',
+        'name': 'HL-34_H2',
         'type': 'helix',
         'design_office_reference': 'HL-34-001-A',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT_TEST2,
         'geometry': 'HL-31_H2',
         'cad': 'HL-31_H2',
@@ -722,20 +617,25 @@ with Model.get_connection_resolver().transaction():
         'name': 'Ring-H1H2',
         'type': 'ring',
         'design_office_reference': 'HL-34-001-A',
-        'status': 'in_study',
+        'status': 'in_operation',
         'material': MAT_TEST2,
         'geometry': 'Ring-H1H2',
         'cad': 'Ring-H1H2',
     })
 
     MTEST = create_site({
-    'name': 'MTest',
+        'name': 'MTest',
         'status': 'in_study'
         # 'config': 'HL-test2-cfpdes-thelec-Axi-sim', # TODO MagConfile instead
     })
 
+    MTest2 = create_site({
+        'name': 'MTest2',
+        'status': 'defunct',
+    })
+
     HLtest = create_magnet({
-    'name': 'HL-test',
+        'name': 'HL-test',
         'status': 'in_study',
         'site': MTEST,
         'parts': [HLTESTH1, HLTESTH2, HLTESTR1],
@@ -841,14 +741,14 @@ with Model.get_connection_resolver().transaction():
         'design_office_reference': 'BI-03-002-A',
         'status': 'in_study',
         'material': CUAG01,
-        'geometry': 'M9Bitters_Bi',
+        'geometry': 'M9_Bi',
     })
 
     M9BE = create_part({
     'name': 'M9Be',
         'type': 'bitter',
         'design_office_reference': 'BE-03-002-A',
-        'geometry': 'M9Bitters_Be',
+        'geometry': 'M9_Be',
         'status': 'in_study',
         'material': CUAG01
     })
@@ -858,7 +758,7 @@ with Model.get_connection_resolver().transaction():
         'status': 'in_study',
         'parts': [M9BI, M9BE],
         'site': M9_M19061901,
-        'geometry': 'M9Bitters.yaml',
+        'geometry': 'M9Bitters',
         'design_office_reference': 'M9Bitters'
     })
 
@@ -866,7 +766,7 @@ with Model.get_connection_resolver().transaction():
     'name': 'M10Bi',
         'type': 'bitter',
         'design_office_reference': 'BI-03-002-A',
-        'geometry': 'M10Bitters_Bi',
+        'geometry': 'M10_Bi',
         'status': 'in_study',
         'material': CUAG01
     })
@@ -875,7 +775,7 @@ with Model.get_connection_resolver().transaction():
     'name': 'M10Be',
         'type': 'bitter',
         'design_office_reference': 'BE-03-002-A',
-        'geometry': 'M10Bitters_Be',
+        'geometry': 'M10_Be',
         'status': 'in_study',
         'material': CUAG01
     })
@@ -966,33 +866,4 @@ with Model.get_connection_resolver().transaction():
         'site':M8,
     })
 
-    HTS = create_material({
-    'name': "HTS",
-        'nuance': "HTS",
-        't_ref': 293,
-        'volumic_mass': 9e+3,
-        'specific_heat': 380,
-        'alpha': 3.6e-3,
-        'electrical_conductivity': 1.e+10,
-        'thermal_conductivity': 360,
-        'magnet_permeability': 1,
-        'young': 127e+9,
-        'poisson': 0.335,
-        'expansion_coefficient': 18e-6,
-        'rpe': 481000000.0
-    })
-
-    NOUGAT = create_part({
-    'name': 'Nougat',
-        'type': 'supra',
-        'geometry': 'Nougat',
-        'status': 'in_study',
-        'material': HTS
-    })
-
-    MNOUGAT = create_magnet({
-    'name': "NougatHTS",
-        'status': 'in_study',
-        'parts': [NOUGAT],
-    })
 

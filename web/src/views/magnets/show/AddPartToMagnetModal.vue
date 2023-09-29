@@ -6,11 +6,12 @@
     <template>
       <Form ref="form" @submit="submit" @validate="validate">
         <FormField
-            label="Part"
-            name="part"
-            :component="FormSelect"
-            :required="true"
-            :options="partOptions"
+          label="Part"
+          name="part"
+          :component="FormSelect"
+          :required="true"
+          :options="partOptions"
+          @search="searchPart"
         />
       </Form>
     </template>
@@ -53,6 +54,14 @@ export default {
     }
   },
   methods: {
+    searchPart(query, loading) {
+      loading(true)
+      partService.list({ query, status: ['in_study', 'in_stock'] })
+        .then((parts) => {
+          this.partOptions = parts.items.map((item) => ({name: item.name, value: item.id}))
+        })
+        .finally(() => loading(false))
+    },
     submit(values, {setRootError}) {
       let payload = {
         magnetId: this.magnetId,
@@ -60,8 +69,8 @@ export default {
       }
 
       return magnetService.addPart(payload)
-          .then(() => this.$emit('close', true))
-          .catch(setRootError)
+        .then(() => this.$emit('close', true))
+        .catch(setRootError)
     },
     validate() {
       return Yup.object().shape({
@@ -70,9 +79,8 @@ export default {
     },
   },
   async mounted() {
-    const parts = await partService.list()
-    this.partOptions = parts.items.filter((item) => ['in_study', 'in_stock'].includes(item.status))
-                                  .map((item) => ({ name: item.name, value: item.id }))
+    const parts = await partService.list({ status: ['in_study', 'in_stock'] })
+    this.partOptions = parts.items.map((item) => ({name: item.name, value: item.id}))
   }
 }
 </script>

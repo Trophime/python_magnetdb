@@ -25,14 +25,23 @@
             type="text"
             :component="FormInput"
         />
-        <FormField
-            label="Site"
-            name="site"
-            :component="FormSelect"
-            :required="true"
-            :options="siteOptions"
-            :default-value="record.site.id"
-        />
+        <div class="flex items-center space-x-4">
+          <FormField
+              label="Site"
+              name="site"
+              :component="FormSelect"
+              :required="true"
+              :options="siteOptions"
+              :default-value="record.site.id"
+              class="w-full"
+          />
+          <router-link
+            :to="{ name: 'site', params: { id: record.site.id } }"
+            class="btn btn-primary" target="_blank" style="margin-top: 12px; height: 38px"
+          >
+            Open
+          </router-link>
+        </div>
         <FormField
             label="File"
             name="attachment"

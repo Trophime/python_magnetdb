@@ -1,8 +1,29 @@
 <template>
   <div>
     <div ref="slider" />
-    <div class="text-center text-gray-700 text-sm font-semibold mt-1">
-      {{displayableValue}}
+    <div class="flex items-center justify-center mt-2 space-x-2">
+      <template v-if="isArray">
+        <FormInput
+          class="border border-gray-200 py-0.5 px-2 text-center"
+          :value="value[0]"
+          style="width: 25%"
+          @value="handleChange([$event, value[1]])"
+        />
+        <div>-</div>
+        <FormInput
+          class="border border-gray-200 py-0.5 px-2 text-center"
+          :value="value[1]"
+          style="width: 25%"
+          @value="handleChange([value[0], $event])"
+        />
+      </template>
+      <FormInput
+        v-else
+        class="border border-gray-200 py-0.5 px-2 text-center"
+        :value="value"
+        style="width: 25%"
+        @value="handleChange([$event])"
+      />
     </div>
   </div>
 </template>
@@ -10,16 +31,30 @@
 <script>
 import noUiSlider from 'nouislider'
 import 'nouislider/dist/nouislider.css';
+import FormInput from "@/components/FormInput.vue";
 
 export default {
   name: 'FormSlider',
+  components: {FormInput},
   props: ['min', 'max', 'value', 'step'],
   data: () => ({
     slider: null,
   }),
   computed: {
+    isArray() {
+      return this.value instanceof Array
+    },
     displayableValue() {
-      return this.value?.join?.(' - ') ?? this.value
+      return this.isArray ? this.value.join(' - ') : this.value
+    },
+  },
+  methods: {
+    handleChange(values) {
+      this.slider.set(values)
+      const range = values.map((event) => parseFloat(event))
+      if (range.every((value) => !Number.isNaN(value))) {
+        this.$emit('value', range.length === 1 ? range[0] : range)
+      }
     },
   },
   mounted() {

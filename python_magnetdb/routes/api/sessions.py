@@ -6,7 +6,8 @@ from uuid import uuid4 as uuid
 
 from ...models.audit_log import AuditLog
 from ...models.user import User
-from ...security import generate_user_token, authorization_server, client_id, client_secret
+from ...security import generate_user_token, front_authorization_server, authorization_server, \
+    authorization_host_server, client_id, client_secret
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ def generate_authorization_url(redirect_uri: str = Form(...)):
         "client_id": client_id,
         "redirect_uri": redirect_uri,
     }
-    return {"url": f"{authorization_server}/oauth2/authorize?{urlencode(params)}"}
+    return {"url": f"{front_authorization_server}/oauth2/authorize?{urlencode(params)}"}
 
 
 @router.post("/api/sessions")
@@ -31,11 +32,14 @@ def create(code: str = Form(...), redirect_uri: str = Form(...)):
         "code": code,
         "redirect_uri": redirect_uri,
     }
-    token_req = requests.post(f"{authorization_server}/oauth2/token", data=payload)
+    headers = {}
+    if authorization_host_server is not None:
+        headers["Host"] = authorization_host_server
+    token_req = requests.post(f"{authorization_server}/oauth2/token", data=payload, headers=headers, verify=False)
     token_data = token_req.json()
 
-    userinfo_req = requests.get(f"{authorization_server}/oauth2/userinfo",
-                                headers={"Authorization": f"{token_data['token_type']} {token_data['access_token']}"})
+    headers["Authorization"] = f"{token_data['token_type']} {token_data['access_token']}"
+    userinfo_req = requests.get(f"{authorization_server}/oauth2/userinfo", headers=headers, verify=False)
     userinfo_data = userinfo_req.json()
 
     user = User.where('username', userinfo_data['sub']).first()

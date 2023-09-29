@@ -7,6 +7,7 @@ from ...models.audit_log import AuditLog
 from ...models.magnet import Magnet
 from ...models.site import Site
 from ...models.site_magnet import SiteMagnet
+from ...models.status import Status
 
 router = APIRouter()
 
@@ -21,8 +22,9 @@ def create(site_id: int, user=Depends(get_user('create')), magnet_id: int = Form
         raise HTTPException(status_code=404, detail="Magnet not found")
 
     for site_magnet in magnet.site_magnets:
-        if site_magnet.site.status == 'in_study':
+        if site_magnet.site.status == Status.IN_STUDY:
             site_magnet.delete()
+            AuditLog.log(user, "Magnet detached from Site", resource=magnet)
 
     site_magnet = SiteMagnet(commissioned_at=datetime.now())
     site_magnet.site().associate(site)

@@ -36,7 +36,17 @@ export default {
   },
   methods: {
     openUpload(event) {
-      if (this.disabled || event.path.some(el => el.classList?.contains('do-not-open-upload'))) {
+      // Written in ES5 for compatibility with browsers that weren't obsolete
+      // yet when the question was posted, although they are now
+      var path = event.composedPath ? event.composedPath() : event.path;
+      if (path) {
+         // You got some path information
+         console.log('path defined')
+      } else {
+         // This browser doesn't supply path information
+         console.log('path not defined')
+      }
+      if (this.disabled || path.some(el => el.classList?.contains('do-not-open-upload'))) {
         return
       }
       this.$refs.input.click()

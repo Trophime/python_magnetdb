@@ -36,3 +36,12 @@ class Magnet(Model):
     def sites(self):
         from .site import Site
         return Site
+
+    def get_type(self):
+        for part in self.magnet_parts:
+            if part.part.type == 'helix':
+                return 'helix'
+            elif part.part.type == 'bitter':
+                return 'bitter'
+            elif part.part.type == 'supra':
+                return 'supra'
