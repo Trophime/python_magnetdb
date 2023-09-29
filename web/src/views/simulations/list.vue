@@ -23,6 +23,9 @@
         <template v-slot:item.setup_status="{ item }">
           <StatusBadge :status="item.setup_status"></StatusBadge>
         </template>
+        <template v-slot:item.owner="{ item }">
+          {{ item.owner.name }}
+        </template>
         <template v-slot:item.created_at="{ item }">
           {{ item.created_at | datetime }}
         </template>
@@ -63,22 +66,31 @@ export default {
         {
           key: 'method',
           name: 'Method',
+          default: true,
         },
         {
           key: 'model',
           name: 'Model',
+          default: true,
         },
         {
           key: 'geometry',
           name: 'Geometry',
+          default: true,
         },
         {
           key: 'cooling',
           name: 'Cooling',
+          default: true,
         },
         {
           key: 'setup_status',
           name: 'Setup Status',
+          default: true,
+        },
+        {
+          key: 'owner',
+          name: 'Owner',
           default: true,
         },
         {

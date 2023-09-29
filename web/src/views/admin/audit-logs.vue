@@ -76,8 +76,8 @@ export default {
         items: res.items,
         perPage,
         query,
-        sortBy,
-        sortDesc,
+        sortBy: sortBy === null ? 'created_at' : sortBy,
+        sortDesc: sortDesc === null ? true : sortDesc,
       }))
     },
   },

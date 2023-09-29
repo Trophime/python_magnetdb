@@ -1,7 +1,6 @@
-FROM trophime/magnettools:1.0.6-poetry
+FROM trophime/magnettools:latest-poetry
 
 USER root
-EXPOSE 8000
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -91,17 +90,4 @@ RUN apt-get update \
 ENV DEBIAN_FRONTEND=dialog
 
 USER $USERNAME
-# Install backend stuff for database+api
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - 
-# eventually remove poetry.lock
-
-USER root
-
-# Setup demo environment variables
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
-    LC_ALL=C.UTF-8 \
-    OMPI_MCA_btl_vader_single_copy_mechanism=none \
-    GOPATH=${HOME}/go \
-    PATH=$PATH:${GOPATH}/bin:$HOME/.poetry/bin
 

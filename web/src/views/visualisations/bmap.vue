@@ -1,13 +1,13 @@
 <template>
   <div class="space-y-4">
-    <Alert :error="error"/>
+    <Alert v-if="error" :error="error" class="alert alert-danger"/>
 
     <div v-if="resource" class="display-1">
       {{ resource.name }}
     </div>
 
     <Card v-if="params">
-      <Form :initial-values="params" @change="handleChanges">
+      <Form ref="form" :initial-values="params" @change="handleChanges">
         <div class="flex items-center space-x-4">
           <div class="w-1/3">
             <FormField
@@ -47,7 +47,7 @@
                   label="N"
                   name="n"
                   :component="FormSlider"
-                  :min="50"
+                  :min="120"
                   :max="1000"
                   :step="1"
               />
@@ -63,7 +63,7 @@
             </div>
             <div v-if="values.command === '1D_z'" class="w-1/3">
               <FormField
-                  label="Z |m]"
+                  label="Z [m]"
                   name="z"
                   :component="FormSlider"
                   :min="-10"
@@ -75,7 +75,7 @@
         <div class="flex items-center space-x-4">
           <div class="w-1/3">
             <FormField
-                label="R0"
+                label="R0 [m]"
                 name="r0"
                 type="number"
                 :component="FormInput"
@@ -83,7 +83,7 @@
           </div>
           <div class="w-1/3">
             <FormField
-                label="Z0"
+                label="Z0 [m]"
                 name="z0"
                 type="number"
                 :component="FormInput"
@@ -96,7 +96,7 @@
                 label="Pkey"
                 name="pkey"
                 :component="FormSelect"
-                :options="['A', 'Br', 'Bz', 'B', 'G']"
+                :options="['A', 'Br', 'Bz', 'B', 'dBr/dr', 'dBr/dz', 'dBz/dr', 'dBz/dz', 'G']"
             />
           </div>
           <div class="w-1/3">
@@ -157,6 +157,7 @@ export default {
     },
     async fetch(values) {
       try {
+        this.error = null
         const {results: data, params, allowed_currents: allowedCurrents} = await visualisationService.bmap({
           ...values,
           resource_id: this.$route.query.resource_id,
@@ -198,22 +199,24 @@ export default {
         }
 
         this.chart.options.scales.y.title.text = data.yaxis
-        this.chart.data = {
-          labels: data.x,
-          datasets: [
-            {
-              label: `Actual`,
-              backgroundColor: '#FF0000',
-              borderColor: '#FF0000',
-              data: data.y,
-            },
-            {
-              label: `Nominal`,
-              backgroundColor: '#00FF00',
-              borderColor: '#00FF00',
-              data: data.ymax,
-            },
-          ],
+        if (this.$refs.form) {
+          this.chart.data = {
+            labels: data.x,
+            datasets: [
+              {
+                label: this.$refs.form.values.pkey,
+                backgroundColor: '#FF0000',
+                borderColor: '#FF0000',
+                data: data.y,
+              },
+              {
+                label: `${this.$refs.form.values.pkey} max`,
+                backgroundColor: '#00FF00',
+                borderColor: '#00FF00',
+                data: data.ymax,
+              },
+            ],
+          }
         }
         this.chart.update()
         this.$router.replace({

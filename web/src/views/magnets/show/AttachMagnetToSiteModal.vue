@@ -11,6 +11,7 @@
             :component="FormSelect"
             :required="true"
             :options="siteOptions"
+            @search="searchSite"
         />
       </Form>
     </template>
@@ -52,6 +53,14 @@ export default {
     }
   },
   methods: {
+    searchSite(query, loading) {
+      loading(true)
+      siteService.list({ query, status: ['in_study'] })
+        .then((sites) => {
+          this.siteOptions = sites.items.map((item) => ({name: item.name, value: item.id}))
+        })
+        .finally(() => loading(false))
+    },
     submit(values, {setRootError}) {
       let payload = {
         magnetId: this.magnetId,
@@ -69,10 +78,8 @@ export default {
     },
   },
   async mounted() {
-    const sites = await siteService.list()
-    this.siteOptions = sites.items
-        .filter((item) => item.status === 'in_study')
-        .map((item) => ({ name: item.name, value: item.id }))
+    const sites = await siteService.list({ status: ['in_study', 'in_stock'] })
+    this.siteOptions = sites.items.map((item) => ({ name: item.name, value: item.id }))
   }
 }
 </script>

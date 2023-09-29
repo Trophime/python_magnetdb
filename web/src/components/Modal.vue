@@ -34,7 +34,17 @@ export default {
       if (!this.closeable) {
         return
       }
-      if (event.path.includes(this.$refs.container) && !event.path.includes(this.$refs.root)) {
+      // Written in ES5 for compatibility with browsers that weren't obsolete
+      // yet when the question was posted, although they are now
+      var path = event.composedPath ? event.composedPath() : event.path;
+      if (path) {
+         // You got some path information
+         console.log('path defined')
+      } else {
+         // This browser doesn't supply path information
+         console.log('path not defined')
+      }
+      if (path.includes(this.$refs.container) && !path.includes(this.$refs.root)) {
         this.close()
       }
     },

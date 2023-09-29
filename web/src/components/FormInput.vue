@@ -4,17 +4,20 @@
     :class="{ 'form-input-error': hasError }"
     @input="onInput"
     :type="type"
+    v-bind="type === 'checkbox' ? { checked: value } : { value }"
   />
 </template>
 
 <script>
 export default {
   name: 'FormInput',
-  props: ['hasError', 'type'],
+  props: ['hasError', 'type', 'value'],
   methods: {
     onInput(event) {
       if (this.type === 'file') {
         this.$emit('value', event.target.files)
+      } else if (this.type === 'checkbox') {
+        this.$emit('value', event.target.checked)
       } else {
         this.$emit('value', event.target.value)
       }

@@ -1,6 +1,6 @@
 import client from "./client";
 
-export function list({ query, page, perPage, sortBy, sortDesc } = {}) {
+export function list({ query, page, perPage, sortBy, sortDesc, status } = {}) {
   return client.get('/api/sites', {
     params: {
       page,
@@ -8,6 +8,7 @@ export function list({ query, page, perPage, sortBy, sortDesc } = {}) {
       sort_by: sortBy,
       sort_desc: sortDesc,
       per_page: perPage,
+      status
     },
   })
     .then((res) => res.data)

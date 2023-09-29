@@ -80,7 +80,7 @@ export default {
         perPage,
         query,
         sortBy,
-        sortDesc,
+        sortDesc: sortDesc === null ? true : sortDesc,
       }))
     },
   },

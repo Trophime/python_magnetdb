@@ -14,6 +14,11 @@ class Site(Model):
         return Attachment
 
     @has_many
+    def records(self):
+        from .record import Record
+        return Record
+
+    @has_many
     def site_magnets(self):
         return SiteMagnet
 

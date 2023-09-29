@@ -30,30 +30,30 @@
             :required="true"
         />
         <FormField
-            label="Role"
-            name="role"
-            :component="FormSelect"
-            :required="true"
-            :clearable="false"
-            :options="[
-              {
-                name: 'Guest',
-                value: 'guest'
-              },
-              {
-                name: 'User',
-                value: 'user'
-              },
-              {
-                name: 'Designer',
-                value: 'designer'
-              },
-              {
-                name: 'Admin',
-                value: 'admin'
-              },
-            ]"
-            :default-value="$store.state.user.role"
+          label="Role"
+          name="role"
+          :component="FormSelect"
+          :required="true"
+          :clearable="false"
+          :options="[
+            {
+              name: 'Guest',
+              value: 'guest'
+            },
+            {
+              name: 'User',
+              value: 'user'
+            },
+            {
+              name: 'Designer',
+              value: 'designer'
+            },
+            {
+              name: 'Admin',
+              value: 'admin'
+            },
+          ]"
+          :default-value="user.role"
         />
         <Button type="submit" class="btn btn-primary">
           Save

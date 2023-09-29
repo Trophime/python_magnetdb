@@ -62,6 +62,7 @@ ENV/
 *.xao
 .yaml
 *~
+\#*\#
 pint/*
 fastapi/*
 team/*
@@ -73,16 +74,11 @@ flask/*
 .DS_Store
 data
 core
+poetry-cache
+/images
+/certs
 
-*log
-*orig
-
-pgadmin-data
 minio-data
 postgres-data
 lemonldap-ng-data
-
-http
-certs
-poetry-cache
-
+*.orig

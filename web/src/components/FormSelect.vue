@@ -1,5 +1,7 @@
 <template>
   <VueSelect
+    v-bind="$attrs"
+    v-on="$listeners"
     label="name"
     :class="{ 'form-select-error': hasError, 'form-select-disabled': disabled }"
     :value="value"
@@ -80,7 +82,8 @@ export default {
   @apply bg-gray-100 cursor-not-allowed;
 }
 
-.vs--disabled .vs__search {
-  @apply bg-gray-100;
+.vs--disabled .vs__search,
+.vs--disabled .vs__clear {
+  @apply hidden;
 }
 </style>

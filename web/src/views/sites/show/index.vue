@@ -80,7 +80,7 @@
       </Form>
     </Card>
 
-    <Card>
+    <Card class="mb-6">
       <template #header>
         <div class="flex items-center justify-between">
           <div>Magnets</div>
@@ -116,6 +116,36 @@
               </td>
               <td>
                 <StatusBadge :status="siteMagnet.magnet.status"></StatusBadge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Card>
+
+    <Card>
+      <template #header>
+        <div>Records</div>
+      </template>
+
+      <div class="table-responsive">
+        <table>
+          <thead class="bg-white">
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="record in site.records" :key="record.id">
+              <td>
+                <router-link :to="{ name: 'record', params: { id: record.id } }" class="link">
+                  {{ record.name }}
+                </router-link>
+              </td>
+              <td>
+                <template v-if="record.description">{{ record.description }}</template>
+                <span v-else class="text-gray-500 italic">Not available</span>
               </td>
             </tr>
           </tbody>

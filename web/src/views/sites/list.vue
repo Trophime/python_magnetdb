@@ -30,6 +30,12 @@
         <template v-slot:item.updated_at="{ item }">
           {{ item.updated_at | datetime }}
         </template>
+        <template v-slot:item.commissioned_at="{ item }">
+          {{ item.commissioned_at | datetime }}
+        </template>
+        <template v-slot:item.decommissioned_at="{ item }">
+          {{ item.decommissioned_at | datetime }}
+        </template>
       </DataTable>
     </Card>
   </div>
@@ -77,6 +83,16 @@ export default {
           name: 'Updated At',
           sortable: true,
         },
+        {
+          key: 'commissioned_at',
+          name: 'Commissioned At',
+          sortable: true,
+        },
+        {
+          key: 'decommissioned_at',
+          name: 'Decommissioned At',
+          sortable: true,
+        },
       ]
     }
   },
@@ -89,7 +105,7 @@ export default {
         perPage,
         query,
         sortBy,
-        sortDesc,
+        sortDesc: sortDesc === null ? true : sortDesc,
       }))
     },
   },

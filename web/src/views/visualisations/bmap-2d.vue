@@ -90,14 +90,16 @@
                 label="Pkey"
                 name="pkey"
                 :component="FormSelect"
-                :options="['A', 'Br', 'Bz', 'B', 'G']"
+                :options="['A', 'Br', 'Bz', 'B']"
             />
           </div>
         </div>
       </Form>
     </Card>
     <Card>
-      <div ref="chart"></div>
+      <LoadingOverlay :loading="loading">
+        <div ref="chart"></div>
+      </LoadingOverlay>
     </Card>
   </div>
 </template>
@@ -114,10 +116,12 @@ import FormField from "@/components/FormField";
 import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import Alert from "@/components/Alert";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 export default {
   name: 'BMap2DVisualisation',
   components: {
+    LoadingOverlay,
     Alert,
     FormField,
     Form,
@@ -128,6 +132,7 @@ export default {
       FormSlider,
       FormInput,
       FormSelect,
+      loading: false,
       params: null,
       chart: null,
       error: null,
@@ -141,6 +146,7 @@ export default {
     },
     async fetch(values) {
       try {
+        this.loading = true
         const { results: data, params, allowed_currents: allowedCurrents } = await visualisationService.bmap2d({
           ...values,
           z0: values.z?.[0],
@@ -158,15 +164,9 @@ export default {
             z: data.values,
             x: data.x,
             y: data.y,
-            type: 'contour',
-            colorbar: data.colorbar,
+            type: 'contour'
           }
-        ],
-	{
-            xaxis: data.xaxis,
-            yaxis: data.yaxis,
-	}
-	)
+        ], {}, { responsive: true })
 
         this.$router.replace({
           name: this.$route.name,
@@ -178,6 +178,8 @@ export default {
       } catch (error) {
         console.error(error)
         this.error = error
+      } finally {
+        this.loading = false
       }
     },
   },
