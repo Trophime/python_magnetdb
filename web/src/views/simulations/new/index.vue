@@ -92,7 +92,7 @@ export default {
       methodOptions: ['cfpdes', 'CG', 'HDG', 'CRB'],
       modelOptions: [],
       geometryOptions: ['Axi', '3D'],
-      coolingOptions: ['mean', 'grad', 'meanH', 'gradH'],
+      coolingOptions: ['mean', 'grad', 'meanH', 'gradH', 'gradHZ'],
       resourceOptions: [],
       availableModels: [],
     }

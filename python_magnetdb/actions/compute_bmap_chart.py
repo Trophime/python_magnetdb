@@ -8,8 +8,8 @@ plotmethod = {
     'Br': (bmap.getBr, '[T]', 'Magnetic Field Bz'),
     'B': (bmap.getB, '[T]', 'Magnetic Field'),
     'A': (bmap.getA, '[A/m]', 'Magnetic Potential'),
-    # 'dBz/dz': (bmap.getdBzdz, '[T/m]', 'Gradient of Magnetic Field Bz'),
-    # 'd2Bz/dz2': (bmap.getdBzdz, '[T/m²]', 'Second order Derivative of Magnetic Field Bz'),
+    'dBz/dz': (bmap.getdBzdz, '[T/m]', 'Gradient of Magnetic Field Bz'),
+    'd²Bz/dz²': (bmap.getd2Bzdz2, '[T/m²]', 'Second order Derivative of Magnetic Field Bz'),
 }
 
 
