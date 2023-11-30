@@ -192,7 +192,7 @@ export default {
       methodOptions: ['cfpdes', 'CG', 'HDG', 'CRB'],
       modelOptions: ['thelec', 'mag', 'thmag', 'thmagel', 'mag_hcurl', 'thmag_hcurl', 'thmagel_hcurl'],
       geometryOptions: ['Axi', '3D'],
-      coolingOptions: ['mean', 'grad', 'meanH', 'gradH'],
+      coolingOptions: ['mean', 'grad', 'meanH', 'gradH', 'gradHZ'],
     }
   },
   computed: {
